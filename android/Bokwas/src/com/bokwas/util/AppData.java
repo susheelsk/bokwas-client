@@ -1,0 +1,27 @@
+package com.bokwas.util;
+
+public class AppData {
+
+	private static AppData instance = null;
+	private boolean isDevMode = true;
+
+	public boolean isDevMode() {
+		return isDevMode;
+	}
+
+	public void setDevMode(boolean isDevMode) {
+		this.isDevMode = isDevMode;
+	}
+	
+	private AppData() {
+		
+	}
+	
+	public static AppData getAppData() {
+		if(instance == null) {
+			return new AppData();
+		}
+		return instance;
+	}
+	
+}

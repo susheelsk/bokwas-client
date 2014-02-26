@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="@drawable/rectangle_transparent"
+    android:orientation="vertical" >
+    
+    <ImageView
+        android:id="@+id/post_profile_pic" 
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rectangle_transparent"/>
+    
+    <TextView
+        android:id="@+id/post_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/post_profile_pic"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/post_profile_pic"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="Evil Philanthropist"
+        android:textColor="#777777"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/post_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_below="@+id/post_name"
+        android:layout_marginTop="6dp"
+        android:layout_alignLeft="@+id/post_name"
+        android:layout_alignBottom="@+id/post_profile_pic"
+        android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
+        android:textColor="#777777"
+        android:textSize="16sp"
+        android:textStyle="normal" />
+    
+    <View
+        android:id="@+id/post_line_separator" 
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/post_profile_pic"
+        android:layout_marginTop="12dp"
+        android:background="#bbbbbb"/>
+    
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/post_line_separator"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="6dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#777777"
+        android:text="18 COMMENTS"/>
+
+</RelativeLayout>
