@@ -4,7 +4,7 @@ This repo contains the code for client implementation(s) for Bokwas. All the cli
 
 Installation
 
-The downloads section will have the latest binaries of the Bokwas client. Please install the appropriate binary. If there is none there, it probably means that we haven't made anything yet.
+The downloads section will have the latest binaries of the Bokwas client. Please install the appropriate binary. If there is/are none there, it probably means that we haven't made anything yet.
 
 Setting Code On Your Machine
 
