@@ -28,6 +28,7 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
+import com.bokwas.datasets.UserDataStore;
 import com.google.gson.Gson;
 
 public class LocalStorage {

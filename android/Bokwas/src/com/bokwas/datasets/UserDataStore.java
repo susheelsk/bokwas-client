@@ -1,4 +1,4 @@
-package com.bokwas.util;
+package com.bokwas.datasets;
 /**
  * 
  * @author sk
@@ -71,7 +71,7 @@ public class UserDataStore {
 		
 	}
 	
-	public UserDataStore getStore() {
+	public static synchronized UserDataStore getStore() {
 		if(instance == null) {
 			return new UserDataStore();
 		}
