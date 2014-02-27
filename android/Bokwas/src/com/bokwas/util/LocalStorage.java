@@ -76,8 +76,8 @@ public class LocalStorage {
 				byte[] encryptedData = encryptMsg(jsonData,
 						generateKey(context));
 				String encryptedString = new String(encryptedData);
-				writeFileToInternalStorage(context, "userStore",
-						encryptedString);
+				writeFileToInternalStorage(context, obj.getClass()
+						.getSimpleName(), encryptedString);
 			} catch (Exception e) {
 				Log.d(TAG, "Writing UserData failed");
 				e.printStackTrace();
@@ -86,7 +86,8 @@ public class LocalStorage {
 	}
 
 	public static <T> T readObj(Context context, Class<T> cls) {
-		String jsonData = readFileFromInternalStorage(context, "userStore");
+		String jsonData = readFileFromInternalStorage(context,
+				cls.getSimpleName());
 		Gson gson = new Gson();
 		try {
 			String decryptedString = decryptMsg(jsonData.getBytes(),
@@ -168,16 +169,13 @@ public class LocalStorage {
 
 				md = MessageDigest.getInstance("SHA");
 				md.update(signature.toByteArray());
-				String something = new String(Base64.encode(md.digest(), 0));
-				Log.d("Hash key", something);
+				String keyHash = new String(Base64.encode(md.digest(), 0));
+				Log.d("Hash key", keyHash);
+				return keyHash;
 			}
 		} catch (NameNotFoundException e1) {
-			// TODO Auto-generated catch block
 			Log.e("name not found", e1.toString());
-		}
-
-		catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+		} catch (NoSuchAlgorithmException e) {
 			Log.e("no such an algorithm", e.toString());
 		} catch (Exception e) {
 			Log.e("exception", e.toString());
