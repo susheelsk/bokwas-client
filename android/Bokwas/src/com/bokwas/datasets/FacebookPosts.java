@@ -10,8 +10,16 @@ public class FacebookPosts {
 	private long timestamp;
 	private String postUpdaterImageLink;
 	private String postText;
+	private int numUpvotes;
 	private List<Comment> comment = new ArrayList<Comment>();
 	
+	public int getNumUpvotes() {
+		return numUpvotes;
+	}
+	public void setNumUpvotes(int numUpvotes) {
+		this.numUpvotes = numUpvotes;
+	}
+
 	public String getPostText() {
 		return postText;
 	}

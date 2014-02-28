@@ -10,7 +10,15 @@ public class BokwasPosts {
 	private long timestamp;
 	private int postUpdaterAvatarId;
 	private String postText;
+	private int numUpvotes;
 	private List<Comment> comment = new ArrayList<Comment>();
+	
+	public int getNumUpvotes() {
+		return numUpvotes;
+	}
+	public void setNumUpvotes(int numUpvotes) {
+		this.numUpvotes = numUpvotes;
+	}
 	
 	public String getPostText() {
 		return postText;

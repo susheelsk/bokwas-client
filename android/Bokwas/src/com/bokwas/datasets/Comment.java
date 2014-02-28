@@ -6,6 +6,14 @@ public class Comment {
 	private String commentUpdaterAvatarId;
 	private String timestamp;
 	private String commentText;
+	private int numUpvotes;
+	
+	public int getNumUpvotes() {
+		return numUpvotes;
+	}
+	public void setNumUpvotes(int numUpvotes) {
+		this.numUpvotes = numUpvotes;
+	}
 	
 	public String getCommentUpdaterName() {
 		return commentUpdaterName;
