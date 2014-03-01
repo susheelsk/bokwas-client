@@ -1765,6 +1765,7 @@ android.support.v4.widget.SearchViewCompatHoneycomb$OnQueryTextListenerCompatBri
 com.bokwas.BuildConfig: BuildConfig()
 com.bokwas.LoginActivity
 com.bokwas.LoginActivity: LoginActivity()
+com.bokwas.LoginActivity: void onClick(android.view.View)
 com.bokwas.R: R()
 com.bokwas.R$attr: int confirm_logout
 com.bokwas.R$attr: int done_button_background
@@ -1806,6 +1807,12 @@ com.bokwas.R$dimen: int com_facebook_profilepictureview_preset_size_small
 com.bokwas.R$dimen: int com_facebook_usersettingsfragment_profile_picture_height
 com.bokwas.R$dimen: int com_facebook_usersettingsfragment_profile_picture_width
 com.bokwas.R$dimen: R$dimen()
+com.bokwas.R$drawable: int bg_texture_darkblue
+com.bokwas.R$drawable: int bg_texture_gray
+com.bokwas.R$drawable: int bg_texture_lightblue
+com.bokwas.R$drawable: int button_generic
+com.bokwas.R$drawable: int button_generic_selected
+com.bokwas.R$drawable: int circle_grey
 com.bokwas.R$drawable: int com_facebook_button_check
 com.bokwas.R$drawable: int com_facebook_button_check_off
 com.bokwas.R$drawable: int com_facebook_button_check_on
@@ -1837,7 +1844,17 @@ com.bokwas.R$drawable: int com_facebook_profile_picture_blank_square
 com.bokwas.R$drawable: int com_facebook_top_background
 com.bokwas.R$drawable: int com_facebook_top_button
 com.bokwas.R$drawable: int com_facebook_usersettingsfragment_background_gradient
+com.bokwas.R$drawable: int dialog_bg
+com.bokwas.R$drawable: int fb_login_main_button
+com.bokwas.R$drawable: int fconnect_login
+com.bokwas.R$drawable: int fconnect_login_feedback
+com.bokwas.R$drawable: int generic_button
 com.bokwas.R$drawable: int ic_launcher
+com.bokwas.R$drawable: int rectangle_grey_topcorner
+com.bokwas.R$drawable: int rectangle_transparent
+com.bokwas.R$drawable: int texture_darkblue
+com.bokwas.R$drawable: int texture_gray
+com.bokwas.R$drawable: int texture_lightblue
 com.bokwas.R$drawable: R$drawable()
 com.bokwas.R$id: int action_settings
 com.bokwas.R$id: int com_facebook_login_activity_progress_bar
@@ -1859,12 +1876,22 @@ com.bokwas.R$id: int com_facebook_placepickerfragment_search_box_stub
 com.bokwas.R$id: int com_facebook_usersettingsfragment_login_button
 com.bokwas.R$id: int com_facebook_usersettingsfragment_logo_image
 com.bokwas.R$id: int com_facebook_usersettingsfragment_profile_name
+com.bokwas.R$id: int dialog_button_ok
+com.bokwas.R$id: int dialog_description
+com.bokwas.R$id: int dialog_title
+com.bokwas.R$id: int facebookButton
 com.bokwas.R$id: int large
+com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int normal
 com.bokwas.R$id: int picker_subtitle
+com.bokwas.R$id: int post_content
+com.bokwas.R$id: int post_line_separator
+com.bokwas.R$id: int post_name
+com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int search_box
 com.bokwas.R$id: int small
 com.bokwas.R$id: int textView1
+com.bokwas.R$id: int whyFacebookLoginButton
 com.bokwas.R$id: R$id()
 com.bokwas.R$layout: int com_facebook_friendpickerfragment
 com.bokwas.R$layout: int com_facebook_login_activity_layout
@@ -1879,7 +1906,9 @@ com.bokwas.R$layout: int com_facebook_picker_title_bar_stub
 com.bokwas.R$layout: int com_facebook_placepickerfragment
 com.bokwas.R$layout: int com_facebook_placepickerfragment_list_row
 com.bokwas.R$layout: int com_facebook_usersettingsfragment
+com.bokwas.R$layout: int dialog_generic_singlebutton
 com.bokwas.R$layout: int login_page
+com.bokwas.R$layout: int post_list_item
 com.bokwas.R$layout: int spash_screen
 com.bokwas.R$layout: R$layout()
 com.bokwas.R$menu: int splash_screen
@@ -1945,6 +1974,8 @@ com.bokwas.R$styleable: int com_facebook_profile_picture_view_preset_size
 com.bokwas.R$styleable: R$styleable()
 com.bokwas.SplashScreen
 com.bokwas.SplashScreen: SplashScreen()
+com.bokwas.datasets.Comment: Comment()
+com.bokwas.util.LocalStorage: LocalStorage()
 com.bokwas.util.UserDetails: UserDetails()
 com.facebook.AccessTokenSource: com.facebook.AccessTokenSource[] values()
 com.facebook.AccessTokenSource: com.facebook.AccessTokenSource valueOf(java.lang.String)
@@ -2192,3 +2223,69 @@ com.facebook.widget.SimpleGraphObjectCursor: SimpleGraphObjectCursor()
 com.facebook.widget.UrlRedirectCache: UrlRedirectCache()
 com.facebook.widget.UserSettingsFragment: UserSettingsFragment()
 com.facebook.widget.WorkQueue: WorkQueue()
+com.google.gson.DefaultDateTypeAdapter: DefaultDateTypeAdapter()
+com.google.gson.FieldNamingPolicy: com.google.gson.FieldNamingPolicy[] values()
+com.google.gson.FieldNamingPolicy: com.google.gson.FieldNamingPolicy valueOf(java.lang.String)
+com.google.gson.Gson: Gson()
+com.google.gson.Gson$FutureTypeAdapter: Gson$FutureTypeAdapter()
+com.google.gson.GsonBuilder: GsonBuilder()
+com.google.gson.JsonArray: JsonArray()
+com.google.gson.JsonElement: JsonElement()
+com.google.gson.JsonNull: JsonNull()
+com.google.gson.JsonObject: JsonObject()
+com.google.gson.JsonParser: JsonParser()
+com.google.gson.LongSerializationPolicy: com.google.gson.LongSerializationPolicy[] values()
+com.google.gson.LongSerializationPolicy: com.google.gson.LongSerializationPolicy valueOf(java.lang.String)
+com.google.gson.TypeAdapter: TypeAdapter()
+com.google.gson.internal.$Gson$Preconditions: $Gson$Preconditions()
+com.google.gson.internal.Excluder: Excluder()
+com.google.gson.internal.JsonReaderInternalAccess: JsonReaderInternalAccess()
+com.google.gson.internal.LinkedTreeMap: LinkedTreeMap()
+com.google.gson.internal.LinkedTreeMap$1: LinkedTreeMap$1()
+com.google.gson.internal.LinkedTreeMap$Node: LinkedTreeMap$Node()
+com.google.gson.internal.Streams: Streams()
+com.google.gson.internal.Streams$AppendableWriter$CurrentWrite: Streams$AppendableWriter$CurrentWrite()
+com.google.gson.internal.UnsafeAllocator: UnsafeAllocator()
+com.google.gson.internal.UnsafeAllocator$4: UnsafeAllocator$4()
+com.google.gson.internal.bind.ArrayTypeAdapter$1: ArrayTypeAdapter$1()
+com.google.gson.internal.bind.DateTypeAdapter: DateTypeAdapter()
+com.google.gson.internal.bind.DateTypeAdapter$1: DateTypeAdapter$1()
+com.google.gson.internal.bind.JsonTreeReader$1: JsonTreeReader$1()
+com.google.gson.internal.bind.JsonTreeWriter: JsonTreeWriter()
+com.google.gson.internal.bind.JsonTreeWriter$1: JsonTreeWriter$1()
+com.google.gson.internal.bind.ObjectTypeAdapter$1: ObjectTypeAdapter$1()
+com.google.gson.internal.bind.SqlDateTypeAdapter: SqlDateTypeAdapter()
+com.google.gson.internal.bind.SqlDateTypeAdapter$1: SqlDateTypeAdapter$1()
+com.google.gson.internal.bind.TimeTypeAdapter: TimeTypeAdapter()
+com.google.gson.internal.bind.TimeTypeAdapter$1: TimeTypeAdapter$1()
+com.google.gson.internal.bind.TypeAdapters$1: TypeAdapters$1()
+com.google.gson.internal.bind.TypeAdapters$10: TypeAdapters$10()
+com.google.gson.internal.bind.TypeAdapters$11: TypeAdapters$11()
+com.google.gson.internal.bind.TypeAdapters$12: TypeAdapters$12()
+com.google.gson.internal.bind.TypeAdapters$13: TypeAdapters$13()
+com.google.gson.internal.bind.TypeAdapters$14: TypeAdapters$14()
+com.google.gson.internal.bind.TypeAdapters$15: TypeAdapters$15()
+com.google.gson.internal.bind.TypeAdapters$16: TypeAdapters$16()
+com.google.gson.internal.bind.TypeAdapters$17: TypeAdapters$17()
+com.google.gson.internal.bind.TypeAdapters$18: TypeAdapters$18()
+com.google.gson.internal.bind.TypeAdapters$19: TypeAdapters$19()
+com.google.gson.internal.bind.TypeAdapters$2: TypeAdapters$2()
+com.google.gson.internal.bind.TypeAdapters$20: TypeAdapters$20()
+com.google.gson.internal.bind.TypeAdapters$21: TypeAdapters$21()
+com.google.gson.internal.bind.TypeAdapters$22: TypeAdapters$22()
+com.google.gson.internal.bind.TypeAdapters$23: TypeAdapters$23()
+com.google.gson.internal.bind.TypeAdapters$24: TypeAdapters$24()
+com.google.gson.internal.bind.TypeAdapters$25: TypeAdapters$25()
+com.google.gson.internal.bind.TypeAdapters$26: TypeAdapters$26()
+com.google.gson.internal.bind.TypeAdapters$3: TypeAdapters$3()
+com.google.gson.internal.bind.TypeAdapters$4: TypeAdapters$4()
+com.google.gson.internal.bind.TypeAdapters$5: TypeAdapters$5()
+com.google.gson.internal.bind.TypeAdapters$6: TypeAdapters$6()
+com.google.gson.internal.bind.TypeAdapters$7: TypeAdapters$7()
+com.google.gson.internal.bind.TypeAdapters$8: TypeAdapters$8()
+com.google.gson.internal.bind.TypeAdapters$9: TypeAdapters$9()
+com.google.gson.reflect.TypeToken: TypeToken()
+com.google.gson.stream.JsonReader$1: JsonReader$1()
+com.google.gson.stream.JsonScope: JsonScope()
+com.google.gson.stream.JsonToken: com.google.gson.stream.JsonToken[] values()
+com.google.gson.stream.JsonToken: com.google.gson.stream.JsonToken valueOf(java.lang.String)

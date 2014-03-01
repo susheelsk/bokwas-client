@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Request.GraphUserListCallback;
@@ -39,13 +40,17 @@ public class FacebookHandler {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		 Session.getActiveSession().onActivityResult(activity, requestCode, resultCode, data);
 	}
+	
+	public void performFacebookLogin() {
+		
+	}
 
 	public void loginToFacebook() {
 		Session.openActiveSession(activity, true, new Session.StatusCallback() {
 			public void call(Session session, SessionState state,
 					Exception exception) {
 				if (session.isOpened()) {
-					UserDetails.setFbAccessToken(activity, session.getAccessToken());
+					Log.d(TAG,"AccessToken :"+session.getAccessToken());
 					Request.executeMeRequestAsync(session,
 							new Request.GraphUserCallback() {
 								@Override
@@ -56,10 +61,6 @@ public class FacebookHandler {
 										Log.d(TAG,"User Id :"+user.getId());
 										Log.d(TAG,"User Gender :"+user.asMap().get("gender").toString());
 										Log.d(TAG,"User email :"+user.asMap().get("email").toString());
-										
-										UserDetails.setUserEmail(activity, user.asMap().get("email").toString());
-										UserDetails.setUserGender(activity, user.asMap().get("gender").toString());
-										UserDetails.setUserId(activity, user.getId());
 									}
 								}
 							});

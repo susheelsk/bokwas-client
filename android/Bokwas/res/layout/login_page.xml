@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_texture_darkblue" >
+
+    <com.facebook.widget.LoginButton
+        xmlns:fb="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/facebookButton"
+        android:layout_width="272dp"
+        android:layout_height="82dp"
+        android:layout_centerInParent="true"
+        fb:login_text=""
+        fb:logout_text="" />
 
     <TextView
-        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/facebookButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="Log in to continue"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/login_desc_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/facebookButton"
+        android:layout_alignRight="@+id/facebookButton"
+        android:layout_below="@+id/facebookButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="Bokwas will never post on facebook"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/whyFacebookLoginButton"
+        android:layout_width="146dp"
+        android:layout_height="44dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="222dp"
-        android:text="TextView" />
+        android:layout_marginBottom="24dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/generic_button"
+        android:gravity="center"
+        android:scaleType="centerCrop"
+        android:text="Why?"
+        android:textColor="#777777"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

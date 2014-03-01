@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:layout_gravity="center"
+    android:layout_marginLeft="24dp"
+    android:layout_marginRight="24dp"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical" >
+    
+    <ImageView android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_margin="2dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rectangle_grey_topcorner"/>
+    
+    <TextView android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/circle_grey"
+        android:gravity="center_horizontal"
+        android:layout_margin="2dp"
+        android:text="Why connect to facebook?"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    
+    <TextView android:id="@+id/dialog_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_above="@+id/dialog_button_ok"
+        android:layout_below="@+id/dialog_title"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:text="This is a sample dialog box."
+        android:textColor="#ffffff"
+        android:textSize="12sp"
+        android:textStyle="normal"/>
+    
+    <Button
+       android:id="@+id/dialog_button_ok" 
+       android:layout_width="146dp"
+       android:layout_height="28dp"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="8dp"
+       android:adjustViewBounds="true"
+	   android:scaleType="centerCrop"
+       android:layout_centerHorizontal="true"
+       android:text="OK"
+       android:textSize="14sp"
+       android:gravity="center"
+       android:textColor="#777777"
+       android:textStyle="bold"
+       android:background="@drawable/generic_button" />
+    
+
+</RelativeLayout>

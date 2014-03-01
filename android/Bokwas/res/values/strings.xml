@@ -4,6 +4,6 @@
     <string name="app_name">Bokwas</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="app_id">282335065256850</string>
+    <string name="app_id">282335065256850</string><!-- Facebook app id -->
 
 </resources>
