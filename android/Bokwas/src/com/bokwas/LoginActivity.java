@@ -11,7 +11,6 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.bokwas.dialogboxes.GenericDialogOk;
-import com.bokwas.util.FacebookHandler;
 import com.facebook.Request;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Response;
@@ -23,7 +22,6 @@ import com.facebook.widget.LoginButton;
 
 public class LoginActivity extends Activity implements OnClickListener {
 
-	private FacebookHandler fbHandler;
 	private String TAG = "LoginActivity";
 	private UiLifecycleHelper uiHelper;
 	private LoginButton authButton;
@@ -62,8 +60,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 			Toast.makeText(this, "Logged in...", Toast.LENGTH_SHORT).show();
 			authButton.setText("");
 			getUserData();
+			moveToNextScreen();
 		}
 
+	}
+
+	private void moveToNextScreen() {
+		Intent intent = new Intent(this, ProfileChooserActivity.class);
+		startActivity(intent);
+		overridePendingTransition(R.anim.activity_slide_in_left,
+				R.anim.activity_slide_out_left);
+		finish();
 	}
 
 	public void getUserData() {

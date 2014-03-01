@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_texture_darkblue"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/login_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="72dp"
+        android:layout_centerHorizontal="true"
+        android:text="Before we get started"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/playerDoc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/login_text"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/nameText"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangle_white"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Pick an epic display name"
+            android:inputType="textPersonName|textCapWords"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="#777777"
+            android:textColorHint="#777777"
+            android:textSize="14sp"
+            android:textStyle="bold|italic" >
+        </EditText>
+        
+        
+
+        <Gallery
+            android:id="@+id/avatar_chooser_view"
+            android:layout_width="match_parent"
+            android:spacing="4dp"
+            android:layout_height="102dp"
+            android:layout_marginTop="30dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="Swipe to select an awesome avatar"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="146dp"
+        android:layout_height="44dp"
+        android:layout_below="@+id/playerDoc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/generic_button"
+        android:onClick="ButtonOnClick"
+        android:text="Next"
+        android:textColor="#777777"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
