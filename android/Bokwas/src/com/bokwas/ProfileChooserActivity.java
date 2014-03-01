@@ -90,9 +90,9 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			public void onFocusChange(View v, boolean hasFocus) {
 				// TODO Auto-generated method stub
 				if (hasFocus)
-					nameText.setHint("");
+					nameText.setHint("Pick an epic display name");
 				else if (nameText.getText().length() == 0) {
-					nameText.setHint("Enter yout name");
+					nameText.setHint("Pick an epic display name");
 				}
 			}
 		});
@@ -127,6 +127,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			}
 
 		});
+		nameText.setSelected(false);
 	}
 
 	protected void hideNextButton() {
