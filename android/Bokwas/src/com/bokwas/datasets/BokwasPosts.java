@@ -3,6 +3,10 @@ package com.bokwas.datasets;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
+import com.bokwas.util.LocalStorage;
+
 public class BokwasPosts {
 	
 	private static BokwasPosts instance;
@@ -63,10 +67,14 @@ public class BokwasPosts {
 	private BokwasPosts() {
 
 	}
+	
+	public void save(Context context) {
+		LocalStorage.storeObj(context, instance);
+	}
 
 	public static synchronized BokwasPosts getFbPosts() {
 		if (instance == null) {
-			return new BokwasPosts();
+			return instance = new BokwasPosts();
 		}
 		return instance;
 	}

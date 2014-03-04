@@ -15,12 +15,15 @@ import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 
+import com.bokwas.datasets.UserDataStore;
+import com.bokwas.util.LocalStorage;
 import com.bokwas.util.UserDetails;
 
 public class SplashScreen extends Activity {
 
 	private int SPLASH_TIME_OUT = 3000;
 	private Context context;
+	private String TAG = "SplashScreen";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,19 @@ public class SplashScreen extends Activity {
 		setContentView(R.layout.spash_screen);
 		context = this;
 		logKeyHash();
+		initAppData();
 		moveToNextPage();
 	}
 	
+	private void initAppData() {
+		if(LocalStorage.getObj(this, UserDataStore.class)!=null) {
+			UserDataStore.setInstance(LocalStorage.getObj(this, UserDataStore.class));
+			Log.d(TAG , "UserId: "+UserDataStore.getStore().getUserId());
+			Log.d(TAG , "BokwasName: "+UserDataStore.getStore().getBokwasName());
+			Log.d(TAG , "accessToken: "+UserDataStore.getStore().getUserAccessToken());
+		}
+	}
+
 	private void logKeyHash() {
 		try {
 	        PackageInfo info = getPackageManager().getPackageInfo(
@@ -53,9 +66,9 @@ public class SplashScreen extends Activity {
 			@Override
 			public void run() {
 
-				if (UserDetails.getUserId(context) == null) {
+				if (UserDataStore.getStore().getUserId()!=null) {
 					Intent i = new Intent(SplashScreen.this,
-							LoginActivity.class);
+							ProfileChooserActivity.class);
 					startActivity(i);
 				} else {
 					Intent i = new Intent(SplashScreen.this,

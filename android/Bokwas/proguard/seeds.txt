@@ -2025,6 +2025,7 @@ com.bokwas.R$styleable: R$styleable()
 com.bokwas.SplashScreen
 com.bokwas.SplashScreen: SplashScreen()
 com.bokwas.datasets.Comment: Comment()
+com.bokwas.datasets.UserDataStore: UserDataStore()
 com.bokwas.util.LocalStorage: LocalStorage()
 com.bokwas.util.UserDetails: UserDetails()
 com.facebook.AccessTokenSource: com.facebook.AccessTokenSource[] values()

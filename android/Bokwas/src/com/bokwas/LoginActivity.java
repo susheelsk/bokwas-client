@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
 import com.facebook.Request;
 import com.facebook.Request.GraphUserCallback;
@@ -57,6 +58,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 			Exception exception) {
 		if (session.isOpened()) {
 			Log.d(TAG,"AccessToken :"+session.getAccessToken());
+			UserDataStore.getStore().setUserAccessToken(session.getAccessToken());
+			UserDataStore.getStore().save(this);
 			Toast.makeText(this, "Logged in...", Toast.LENGTH_SHORT).show();
 			authButton.setText("");
 			getUserData();
@@ -85,6 +88,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 						Log.d(TAG, "Gender :"+ user.getProperty("gender").toString());
 						Log.d(TAG, "email :"+ user.getProperty("email").toString());
 						Log.d(TAG, "Facebook Id :"+ user.getId());
+						UserDataStore.getStore().setUserId(user.getId());
+						UserDataStore.getStore().save(LoginActivity.this);
 					}
 				});
 	}

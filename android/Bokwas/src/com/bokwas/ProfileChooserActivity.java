@@ -220,6 +220,8 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 	public void onClick(View view) {
 		if (view.getId() == R.id.nextButton) {
 			UserDataStore.getStore().setBokwasName(nicknameText);
+			Log.d("LocalStorage","bokwasName: "+UserDataStore.getStore().getBokwasName());
+			UserDataStore.getStore().save(this);
 			Toast.makeText(this, "Thats it folks, for now", Toast.LENGTH_SHORT)
 					.show();
 		}
