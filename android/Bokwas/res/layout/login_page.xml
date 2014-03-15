@@ -4,14 +4,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_texture_darkblue" >
 
-    <com.facebook.widget.LoginButton
-        xmlns:fb="http://schemas.android.com/apk/res-auto"
+    <ImageView
         android:id="@+id/facebookButton"
         android:layout_width="272dp"
         android:layout_height="82dp"
-        android:layout_centerInParent="true"
-        fb:login_text=""
-        fb:logout_text="" />
+        android:background="@drawable/fb_login_main_button"
+        android:layout_centerInParent="true" />
 
     <TextView
         android:layout_width="wrap_content"

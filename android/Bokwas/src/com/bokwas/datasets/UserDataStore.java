@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bokwas.util.LocalStorage;
-import com.google.gson.annotations.Expose;
 
 /**
  * 
