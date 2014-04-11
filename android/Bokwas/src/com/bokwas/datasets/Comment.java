@@ -1,43 +1,42 @@
-package com.bokwas.datasets;
-
-public class Comment {
-
-	private String commentUpdaterName;
-	private String commentUpdaterAvatarId;
-	private String timestamp;
-	private String commentText;
-	private int numUpvotes;
-	
-	public int getNumUpvotes() {
-		return numUpvotes;
-	}
-	public void setNumUpvotes(int numUpvotes) {
-		this.numUpvotes = numUpvotes;
-	}
-	
-	public String getCommentUpdaterName() {
-		return commentUpdaterName;
-	}
-	public void setCommentUpdaterName(String commentUpdaterName) {
-		this.commentUpdaterName = commentUpdaterName;
-	}
-	public String getCommentUpdaterAvatarId() {
-		return commentUpdaterAvatarId;
-	}
-	public void setCommentUpdaterAvatarId(String commentUpdaterAvatarId) {
-		this.commentUpdaterAvatarId = commentUpdaterAvatarId;
-	}
-	public String getTimestamp() {
-		return timestamp;
-	}
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
-	}
-	public String getCommentText() {
-		return commentText;
-	}
-	public void setCommentText(String commentText) {
-		this.commentText = commentText;
-	}
-	
-}
+//package com.bokwas.datasets;
+//
+//public class Comment {
+//
+//	private String commentUpdaterId;
+//	private String timestamp;
+//	private String commentText;
+//	private String[] likes;
+//
+//	public String getCommentUpdaterId() {
+//		return commentUpdaterId;
+//	}
+//
+//	public void setCommentUpdaterId(String commentUpdaterId) {
+//		this.commentUpdaterId = commentUpdaterId;
+//	}
+//
+//	public String[] getLikes() {
+//		return likes;
+//	}
+//
+//	public void setLikes(String[] likes) {
+//		this.likes = likes;
+//	}
+//
+//	public String getTimestamp() {
+//		return timestamp;
+//	}
+//
+//	public void setTimestamp(String timestamp) {
+//		this.timestamp = timestamp;
+//	}
+//
+//	public String getCommentText() {
+//		return commentText;
+//	}
+//
+//	public void setCommentText(String commentText) {
+//		this.commentText = commentText;
+//	}
+//
+//}

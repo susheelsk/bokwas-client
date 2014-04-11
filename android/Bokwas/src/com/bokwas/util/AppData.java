@@ -4,6 +4,8 @@ public class AppData {
 
 	private static AppData instance = null;
 	private boolean isDevMode = true;
+	
+	public static String baseURL = "http://10.0.0.8:8080/BokwasServer"; 
 
 	public boolean isDevMode() {
 		return isDevMode;

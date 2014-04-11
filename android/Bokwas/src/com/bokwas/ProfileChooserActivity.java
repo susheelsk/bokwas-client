@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -23,6 +25,8 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetPosts;
+import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 
 public class ProfileChooserActivity extends Activity implements OnClickListener {
@@ -55,6 +59,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 		setupNicknameTextbox();
 
 		setOnClickListeners();
+
 	}
 
 	private void setOnClickListeners() {
@@ -69,7 +74,8 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 					Spanned dest, int dstart, int dend) {
 				// TODO Auto-generated method stub
 				for (int i = start; i < end; i++) {
-					if (!Character.isLetterOrDigit(source.charAt(i))&&source.charAt(i)!=' ') {
+					if (!Character.isLetterOrDigit(source.charAt(i))
+							&& source.charAt(i) != ' ') {
 						Toast.makeText(ProfileChooserActivity.this,
 								"Please do-not enter special charaters.",
 								Toast.LENGTH_SHORT).show();
@@ -197,10 +203,10 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			return position;
 		}
 
-		/*public void refreshList() {
-			Log.d("AvatarChooser", "Refreshing List");
-			notifyDataSetChanged();
-		}*/
+		/*
+		 * public void refreshList() { Log.d("AvatarChooser",
+		 * "Refreshing List"); notifyDataSetChanged(); }
+		 */
 
 		// Override this method according to your need
 		public View getView(int index, View view, ViewGroup viewGroup) {
@@ -220,11 +226,39 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 	public void onClick(View view) {
 		if (view.getId() == R.id.nextButton) {
 			UserDataStore.getStore().setBokwasName(nicknameText);
-			Log.d("LocalStorage","bokwasName: "+UserDataStore.getStore().getBokwasName());
+			Log.d("LocalStorage", "bokwasName: "
+					+ UserDataStore.getStore().getBokwasName());
 			UserDataStore.getStore().save(this);
-			Toast.makeText(this, "Thats it folks, for now", Toast.LENGTH_SHORT)
-					.show();
+			final ProgressDialog pdia = new ProgressDialog(this);
+			pdia.setMessage("Syncing..");
+			pdia.setCancelable(false);
+			pdia.show();
+			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(),
+					UserDataStore.getStore().getBokwasName(),
+					String.valueOf(UserDataStore.getStore().getAvatarId()),
+					true, new APIListener() {
+
+						@Override
+						public void onAPIStatus(boolean status) {
+							if (status) {
+								pdia.dismiss();
+								moveToNextScreen();
+							} else {
+								pdia.dismiss();
+								Toast.makeText(ProfileChooserActivity.this,
+										"Something went wrong. Try again",
+										Toast.LENGTH_SHORT).show();
+							}
+						}
+					}).execute("");
 		}
 	}
 
+	protected void moveToNextScreen() {
+		Intent intent = new Intent(this, HomescreenActivity.class);
+		startActivity(intent);
+		finish();
+		overridePendingTransition(R.anim.activity_slide_in_left,
+				R.anim.activity_slide_out_left);
+	}
 }

@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/rectangle_transparent"
-    android:orientation="vertical" >
-    
-    <ImageView
-        android:id="@+id/post_profile_pic" 
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:padding="2.5dp"
-        android:background="@drawable/rectangle_transparent"/>
-    
-    <TextView
-        android:id="@+id/post_name"
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/header_layout"
+        layout="@layout/header_main" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/post_profile_pic"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toRightOf="@+id/post_profile_pic"
-        android:lines="1"
-        android:maxLines="1"
-        android:text="Evil Philanthropist"
-        android:textColor="#777777"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-    
-    <TextView
+        android:layout_marginTop="48dp"
+        android:background="@drawable/rectangle_transparent" >
+
+        <ImageView
+            android:id="@+id/post_profile_pic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangle_transparent"
+            android:padding="2.5dp" />
+
+        <TextView
+            android:id="@+id/post_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/post_profile_pic"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_toRightOf="@+id/post_profile_pic"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Evil Philanthropist"
+            android:textColor="#777777"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
         android:id="@+id/post_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,45 +53,48 @@
         android:textColor="#777777"
         android:textSize="16sp"
         android:textStyle="normal" />
-    
-    <View
-        android:id="@+id/post_line_separator" 
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@+id/post_content"
-        android:layout_marginTop="12dp"
-        android:background="#bbbbbb"/>
-    
-    <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/rectangle_lightgrey_bottomcorner"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_below="@+id/post_line_separator">
-    
-    <TextView
-        android:id="@+id/post_time" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="12dp"
-        android:gravity="center"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="#777777"
-        android:text="March 7, 4:02pm"/>
-    
-    <View
-        android:id="@+id/comment_line_seperator" 
-        android:layout_height="wrap_content"
-        android:layout_width="2dp"
-        android:background="#bbbbbb"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_centerHorizontal="true"/>
-    
-    <RelativeLayout android:layout_width="wrap_content"
+
+        <View
+            android:id="@+id/post_line_separator"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/post_content"
+            android:layout_marginTop="12dp"
+            android:background="#bbbbbb" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_below="@+id/post_line_separator"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:background="@drawable/rectangle_lightgrey_bottomcorner" >
+
+            <TextView
+                android:id="@+id/post_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:gravity="center"
+                android:text="March 7, 4:02pm"
+                android:textColor="#777777"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <View
+                android:id="@+id/comment_line_seperator"
+                android:layout_width="2dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="12dp"
+                android:background="#bbbbbb"
+                android:visibility="visible" />
+
+            <RelativeLayout android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toRightOf="@+id/comment_line_seperator"
         android:layout_alignParentRight="true">
@@ -157,7 +168,7 @@
         android:layout_marginLeft="4dp"/>
     </RelativeLayout>
     </RelativeLayout>
-    
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

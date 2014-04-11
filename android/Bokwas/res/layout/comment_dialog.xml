@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="320dp"
+    android:layout_gravity="center"
+    android:layout_marginLeft="24dp"
+    android:layout_marginRight="24dp"
+    android:background="@drawable/rectangle_white"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rectangle_grey_topcorner"
+        android:gravity="center_horizontal"
+        android:text="Comments"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/comment_edittext"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="4dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="16dp" >
+    </ListView>
+    
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/comment_edittext"
+        android:layout_marginBottom="4dp"
+        android:background="#777777"/>
+
+    <EditText
+        android:id="@+id/comment_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toLeftOf="@+id/commentButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:background="@drawable/rectangle_white"
+        android:adjustViewBounds="true"
+        android:hint="Comment on this post"
+        android:textColor="#777777"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+    
+    <Button
+        android:id="@+id/commentButton"
+        android:layout_width="36dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/comment_edittext"
+        android:layout_alignBottom="@+id/comment_edittext"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/rectangle_transparent"
+        android:text=">"
+        android:textColor="#777777"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

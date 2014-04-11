@@ -1,5 +1,7 @@
 package com.bokwas;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,11 +11,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.entities.Profile;
+import com.sromku.simple.fb.entities.Profile.Properties;
+import com.sromku.simple.fb.listeners.OnFriendsListener;
 import com.sromku.simple.fb.listeners.OnLoginListener;
 import com.sromku.simple.fb.listeners.OnProfileListener;
 
@@ -21,6 +26,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	private String TAG = "LoginActivity";
 	private SimpleFacebook mSimpleFacebook;
+	private ProgressDialog pdia;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,28 +43,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 		findViewById(R.id.whyFacebookLoginButton).setOnClickListener(this);
 	}
 
-	// private Session.StatusCallback callback = new Session.StatusCallback() {
-	// @Override
-	// public void call(Session session, SessionState state, Exception
-	// exception) {
-	// onSessionStateChange(session, state, exception);
-	// }
-	// };
-	//
-	// private void onSessionStateChange(Session session, SessionState state,
-	// Exception exception) {
-	// if (session.isOpened()) {
-	// Log.d(TAG,"AccessToken :"+session.getAccessToken());
-	// UserDataStore.getStore().setUserAccessToken(session.getAccessToken());
-	// UserDataStore.getStore().save(this);
-	// Toast.makeText(this, "Logged in...", Toast.LENGTH_SHORT).show();
-	// authButton.setText("");
-	// getUserData();
-	// moveToNextScreen();
-	// }
-	//
-	// }
-
 	private void moveToNextScreen() {
 		Intent intent = new Intent(this, ProfileChooserActivity.class);
 		startActivity(intent);
@@ -67,34 +51,36 @@ public class LoginActivity extends Activity implements OnClickListener {
 		finish();
 	}
 
-	// public void getUserData() {
-	// Request.executeMeRequestAsync(Session.getActiveSession(),
-	// new GraphUserCallback() {
-	//
-	// @Override
-	// public void onCompleted(GraphUser user, Response response) {
-	//
-	// Log.d(TAG, "FirstName :"+ user.getFirstName());
-	// Log.d(TAG, "LastName :"+ user.getLastName());
-	// Log.d(TAG, "Gender :"+ user.getProperty("gender").toString());
-	// Log.d(TAG, "email :"+ user.getProperty("email").toString());
-	// Log.d(TAG, "Facebook Id :"+ user.getId());
-	// UserDataStore.getStore().setUserId(user.getId());
-	// UserDataStore.getStore().save(LoginActivity.this);
-	// }
-	// });
-	// }
+	private void getFriendsAndStore() {
+		pdia = new ProgressDialog(this);
+		pdia.setCancelable(false);
+		pdia.setMessage("Syncing..");
+		pdia.show();
+		Properties properties = new Properties.Builder().add(Properties.ID).add(Properties.NAME).add(Properties.PICTURE).build();
+		mSimpleFacebook.getFriends(properties, new OnFriendsListener() {
+			@Override
+		    public void onComplete(List<Profile> friends) {
+		        Log.i(TAG, "Number of friends = " + friends.size());
+		        for(Profile friend : friends) {
+		        	UserDataStore.getStore().getFriends().add(new Friends(friend.getName(), friend.getId(), friend.getPicture(), null, null));
+		        }
+		        UserDataStore.getStore().save(LoginActivity.this);
+		        pdia.dismiss();
+		        moveToNextScreen();
+		    }
+		});
+	}
 
 	public void getUserData() {
 		final ProgressDialog pdia = new ProgressDialog(this);
 		pdia.setMessage("Fetching details...");
 		pdia.setCancelable(false);
 		pdia.setCanceledOnTouchOutside(false);
-		
+
 		UserDataStore.getStore().setUserAccessToken(
 				mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().save(this);
-		
+
 		mSimpleFacebook.getProfile(new OnProfileListener() {
 
 			@Override
@@ -104,25 +90,28 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Log.d(TAG, "Gender :" + profile.getGender());
 				Log.d(TAG, "email :" + profile.getEmail());
 				Log.d(TAG, "Facebook Id :" + profile.getId());
+				getFriendsAndStore();
 				UserDataStore.getStore().setUserId(profile.getId());
+				UserDataStore.getStore().setFbName(profile.getName());
+				UserDataStore.getStore().setFbPicLink(profile.getPicture());
 				UserDataStore.getStore().save(LoginActivity.this);
-				moveToNextScreen();
+//				moveToNextScreen();
 			}
-			
+
 			@Override
 			public void onFail(String reason) {
 				pdia.dismiss();
 				Toast.makeText(LoginActivity.this,
-						"Something went wrong. Try again",
-						Toast.LENGTH_SHORT).show();
+						"Something went wrong. Try again", Toast.LENGTH_SHORT)
+						.show();
 			}
 
 			@Override
 			public void onException(Throwable throwable) {
 				pdia.dismiss();
 				Toast.makeText(LoginActivity.this,
-						"Something went wrong. Try again",
-						Toast.LENGTH_SHORT).show();
+						"Something went wrong. Try again", Toast.LENGTH_SHORT)
+						.show();
 			}
 
 		});
@@ -140,25 +129,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 		mSimpleFacebook.onActivityResult(this, requestCode, resultCode, data);
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-
-	//
-	// @Override
-	// public void onPause() {
-	// super.onPause();
-	// uiHelper.onPause();
-	// }
-	//
-	// @Override
-	// public void onDestroy() {
-	// super.onDestroy();
-	// uiHelper.onDestroy();
-	// }
-	//
-	// @Override
-	// public void onSaveInstanceState(Bundle outState) {
-	// super.onSaveInstanceState(outState);
-	// uiHelper.onSaveInstanceState(outState);
-	// }
 
 	@Override
 	public void onClick(View view) {

@@ -29,7 +29,6 @@ public class GenericDialogOk extends Dialog implements android.view.View.OnClick
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.dialog_generic_singlebutton);
 		getWindow().setBackgroundDrawable(new ColorDrawable(0));

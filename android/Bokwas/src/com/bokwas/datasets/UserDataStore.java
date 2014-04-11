@@ -1,8 +1,15 @@
 package com.bokwas.datasets;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import android.content.Context;
 import android.util.Log;
 
+import com.bokwas.response.Post;
 import com.bokwas.util.LocalStorage;
 
 /**
@@ -25,7 +32,89 @@ public class UserDataStore {
 	private String gender;
 	private String email;
 	private String bokwasName;
+	private String fbName;
+	private String fbPicLink;
 	private int avatarId;
+	private List<Post> posts = new ArrayList<Post>();
+	private List<Friends> friends = new ArrayList<Friends>();
+
+	public Friends getFriend(String friendFbId) {
+		for (Friends friend : friends) {
+			if (friend.getId().equals(friendFbId)) {
+				return friend;
+			}
+		}
+		return null;
+	}
+
+	public Post getPost(String postId) {
+		for (Post post : posts) {
+			if (post.getPostId().equals(postId)) {
+				return post;
+			}
+		}
+		return null;
+	}
+
+	public String getFbName() {
+		return fbName;
+	}
+
+	public void setFbName(String fbName) {
+		this.fbName = fbName;
+	}
+
+	public String getFbPicLink() {
+		return fbPicLink;
+	}
+
+	public void setFbPicLink(String fbPicLink) {
+		this.fbPicLink = fbPicLink;
+	}
+
+	public void addPost(Post newPost) {
+		for (Post post : posts) {
+			if (post.getPostId().equals(newPost.getPostId())) {
+				return;
+			}
+		}
+		posts.add(newPost);
+	}
+
+	public void updatePost(Post newPost) {
+		int count = 0;
+		for (int i = 0; i < posts.size(); i++) {
+			if (posts.get(i).getPostId().equals(newPost.getPostId())) {
+				count++;
+			}
+		}
+		posts.set(count, newPost);
+	}
+
+	public void deletePost(Post post) {
+		try {
+			posts.remove(post);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<Post> getPosts() {
+		Collections.sort(posts, new PostComparator());
+		return posts;
+	}
+
+	public void setPosts(List<Post> post) {
+		this.posts = post;
+	}
+
+	public List<Friends> getFriends() {
+		return friends;
+	}
+
+	public void setFriends(List<Friends> friends) {
+		this.friends = friends;
+	}
 
 	public String getUserId() {
 		return userId;
@@ -80,7 +169,7 @@ public class UserDataStore {
 	}
 
 	public void save(Context context) {
-		if (getStore()!=null&&getStore().bokwasName!=null)
+		if (getStore() != null && getStore().bokwasName != null)
 			Log.d("LocalStorage", "Name: " + getStore().getBokwasName());
 		LocalStorage.storeObj(context, instance);
 	}
@@ -94,6 +183,14 @@ public class UserDataStore {
 			return instance = new UserDataStore();
 		}
 		return instance;
+	}
+
+	private class PostComparator implements Comparator<Post> {
+		public int compare(Post a, Post b) {
+			Date dateA = new Date(Long.valueOf(a.getUpdatedTime()));
+			Date dateB = new Date(Long.valueOf(b.getUpdatedTime()));
+			return dateB.compareTo(dateA);
+		}
 	}
 
 }

@@ -5,28 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.InvalidParameterSpecException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
-import android.util.Base64;
 import android.util.Log;
 
 import com.bokwas.datasets.UserDataStore;
@@ -156,69 +137,69 @@ public class LocalStorage {
 		return null;
 	}
 
-	private static String getAppKeyHash(Context context) {
-		try {
-			PackageInfo info = context.getPackageManager().getPackageInfo(
-					context.getPackageName(), PackageManager.GET_SIGNATURES);
-			for (Signature signature : info.signatures) {
-				MessageDigest md;
-
-				md = MessageDigest.getInstance("SHA");
-				md.update(signature.toByteArray());
-				String keyHash = new String(Base64.encode(md.digest(), 0));
-				Log.d("Hash key", keyHash);
-				return keyHash;
-			}
-		} catch (NameNotFoundException e1) {
-			Log.e("name not found", e1.toString());
-		} catch (NoSuchAlgorithmException e) {
-			Log.e("no such an algorithm", e.toString());
-		} catch (Exception e) {
-			Log.e("exception", e.toString());
-		}
-		return null;
-	}
-
-	private static SecretKey generateKey(Context context)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
-		String password;
-		if (AppData.getAppData().isDevMode() == false) {
-			password = getAppKeyHash(context);
-		} else {
-			password = "worldNeedsBokwas";
-		}
-		SecretKeySpec secret = new SecretKeySpec(password.getBytes(), "AES");
-		return secret;
-	}
-
-	private static byte[] encryptMsg(String message, SecretKey secret)
-			throws NoSuchAlgorithmException, NoSuchPaddingException,
-			InvalidKeyException, InvalidParameterSpecException,
-			IllegalBlockSizeException, BadPaddingException,
-			UnsupportedEncodingException {
-		/* Encrypt the message. */
-		Cipher cipher = null;
-		cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.ENCRYPT_MODE, secret);
-		byte[] cipherText = cipher.doFinal(message.getBytes("UTF-8"));
-		return cipherText;
-	}
-
-	private static String decryptMsg(byte[] cipherText, SecretKey secret)
-			throws NoSuchPaddingException, NoSuchAlgorithmException,
-			InvalidParameterSpecException, InvalidAlgorithmParameterException,
-			InvalidKeyException, BadPaddingException,
-			IllegalBlockSizeException, UnsupportedEncodingException {
-
-		/*
-		 * Decrypt the message, given derived encContentValues and
-		 * initialization vector.
-		 */
-		Cipher cipher = null;
-		cipher = Cipher.getInstance("AES");
-		cipher.init(Cipher.DECRYPT_MODE, secret);
-		String decryptString = new String(cipher.doFinal(cipherText), "UTF-8");
-		return decryptString;
-	}
+//	private static String getAppKeyHash(Context context) {
+//		try {
+//			PackageInfo info = context.getPackageManager().getPackageInfo(
+//					context.getPackageName(), PackageManager.GET_SIGNATURES);
+//			for (Signature signature : info.signatures) {
+//				MessageDigest md;
+//
+//				md = MessageDigest.getInstance("SHA");
+//				md.update(signature.toByteArray());
+//				String keyHash = new String(Base64.encode(md.digest(), 0));
+//				Log.d("Hash key", keyHash);
+//				return keyHash;
+//			}
+//		} catch (NameNotFoundException e1) {
+//			Log.e("name not found", e1.toString());
+//		} catch (NoSuchAlgorithmException e) {
+//			Log.e("no such an algorithm", e.toString());
+//		} catch (Exception e) {
+//			Log.e("exception", e.toString());
+//		}
+//		return null;
+//	}
+//
+//	private static SecretKey generateKey(Context context)
+//			throws NoSuchAlgorithmException, InvalidKeySpecException {
+//		String password;
+//		if (AppData.getAppData().isDevMode() == false) {
+//			password = getAppKeyHash(context);
+//		} else {
+//			password = "worldNeedsBokwas";
+//		}
+//		SecretKeySpec secret = new SecretKeySpec(password.getBytes(), "AES");
+//		return secret;
+//	}
+//
+//	private static byte[] encryptMsg(String message, SecretKey secret)
+//			throws NoSuchAlgorithmException, NoSuchPaddingException,
+//			InvalidKeyException, InvalidParameterSpecException,
+//			IllegalBlockSizeException, BadPaddingException,
+//			UnsupportedEncodingException {
+//		/* Encrypt the message. */
+//		Cipher cipher = null;
+//		cipher = Cipher.getInstance("AES");
+//		cipher.init(Cipher.ENCRYPT_MODE, secret);
+//		byte[] cipherText = cipher.doFinal(message.getBytes("UTF-8"));
+//		return cipherText;
+//	}
+//
+//	private static String decryptMsg(byte[] cipherText, SecretKey secret)
+//			throws NoSuchPaddingException, NoSuchAlgorithmException,
+//			InvalidParameterSpecException, InvalidAlgorithmParameterException,
+//			InvalidKeyException, BadPaddingException,
+//			IllegalBlockSizeException, UnsupportedEncodingException {
+//
+//		/*
+//		 * Decrypt the message, given derived encContentValues and
+//		 * initialization vector.
+//		 */
+//		Cipher cipher = null;
+//		cipher = Cipher.getInstance("AES");
+//		cipher.init(Cipher.DECRYPT_MODE, secret);
+//		String decryptString = new String(cipher.doFinal(cipherText), "UTF-8");
+//		return decryptString;
+//	}
 
 }
