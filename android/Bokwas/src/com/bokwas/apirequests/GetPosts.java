@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.response.BokwasUser;
 import com.bokwas.response.GetPostsResponse;
 import com.bokwas.response.Post;
 import com.bokwas.util.AppData;
@@ -65,6 +66,13 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 			if (response != null) {
 				GetPostsResponse getPostsResponse = new Gson().fromJson(
 						response, GetPostsResponse.class);
+				List<BokwasUser> bokwasUsers = getPostsResponse.getUsers();
+				if(bokwasUsers!=null && bokwasUsers.size() > 0) {
+					for(BokwasUser bokwasUser : bokwasUsers) {
+						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasName(bokwasUser.userBokwasName);
+						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasAvatarId(bokwasUser.userBokwasAvatarId);
+					}
+				}
 				List<Post> posts = getPostsResponse.getPosts();
 				for (Post post : posts) {
 					UserDataStore.getStore().addPost(post);
