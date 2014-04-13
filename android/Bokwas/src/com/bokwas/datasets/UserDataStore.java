@@ -75,6 +75,7 @@ public class UserDataStore {
 	public void addPost(Post newPost) {
 		for (Post post : posts) {
 			if (post.getPostId().equals(newPost.getPostId())) {
+				updatePost(newPost);
 				return;
 			}
 		}
@@ -82,13 +83,14 @@ public class UserDataStore {
 	}
 
 	public void updatePost(Post newPost) {
-		int count = 0;
 		for (int i = 0; i < posts.size(); i++) {
 			if (posts.get(i).getPostId().equals(newPost.getPostId())) {
-				count++;
+				posts.get(i).setBokwasPost(newPost.isBokwasPost());
+				posts.get(i).setComments(newPost.getComments());
+				posts.get(i).setLikes(newPost.getLikes());
+				posts.get(i).setUpdatedTime(newPost.getUpdatedTime());
 			}
 		}
-		posts.set(count, newPost);
 	}
 
 	public void deletePost(Post post) {

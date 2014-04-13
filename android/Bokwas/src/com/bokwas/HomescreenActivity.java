@@ -46,7 +46,7 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 						if (status) {
 							adapter.setPosts(UserDataStore.getStore()
 									.getPosts());
-							// adapter.notifyDataSetChanged();
+							 adapter.notifyDataSetChanged();
 							listView.onRefreshComplete();
 						}
 					}

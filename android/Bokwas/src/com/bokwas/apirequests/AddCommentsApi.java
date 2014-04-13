@@ -45,7 +45,6 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 		apiUrl = AppData.baseURL + "/addcomment";
 		apiParams.add(new BasicNameValuePair("access_token", accessToken));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
-		apiParams.add(new BasicNameValuePair("post_text", commentText));
 		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("comment_text",commentText));
 		apiParams.add(new BasicNameValuePair("post_person_id", postPersonId));
