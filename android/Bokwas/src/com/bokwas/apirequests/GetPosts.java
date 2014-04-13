@@ -7,6 +7,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.BokwasUser;
@@ -74,6 +75,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 					}
 				}
 				List<Post> posts = getPostsResponse.getPosts();
+				Log.d("GetPosts","Posts size : "+posts.size());
 				for (Post post : posts) {
 					UserDataStore.getStore().addPost(post);
 				}

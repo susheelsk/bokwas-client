@@ -49,7 +49,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 					response, AddPostResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				List<Comment> comments = new ArrayList<Comment>();
-				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, "", personId, true, comments);
+				Post post = new Post(apiResponse.postId, System.currentTimeMillis()/1000,System.currentTimeMillis()/1000, postText, "", personId, true, comments);
 				UserDataStore.getStore().addPost(post);
 				UserDataStore.getStore().save(activity);
 				return true;

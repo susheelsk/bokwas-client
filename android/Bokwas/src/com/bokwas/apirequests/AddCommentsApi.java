@@ -54,7 +54,7 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 					response, AddCommentResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				UserDataStore.getStore().getPost(postId).setUpdatedTime(System.currentTimeMillis());
-				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis(), commentText, "", personId);
+				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis()/1000, commentText, "", personId);
 				UserDataStore.getStore().getPost(postId).addComment(comment);
 				UserDataStore.getStore().save(activity);
 				return true;

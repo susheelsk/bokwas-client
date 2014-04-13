@@ -103,6 +103,9 @@ public class UserDataStore {
 
 	public List<Post> getPosts() {
 		Collections.sort(posts, new PostComparator());
+		for(Post post : posts) {
+			Log.d("HomescreenGetPosts","Post : "+post.getUpdatedTime());
+		}
 		return posts;
 	}
 
@@ -189,8 +192,8 @@ public class UserDataStore {
 
 	private class PostComparator implements Comparator<Post> {
 		public int compare(Post a, Post b) {
-			Date dateA = new Date(Long.valueOf(a.getUpdatedTime()));
-			Date dateB = new Date(Long.valueOf(b.getUpdatedTime()));
+			Date dateA = new Date(a.getUpdatedTime());
+			Date dateB = new Date(b.getUpdatedTime());
 			return dateB.compareTo(dateA);
 		}
 	}
