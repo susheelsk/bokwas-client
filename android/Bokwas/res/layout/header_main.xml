@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="top"
-        android:background="#0070B9"
+        android:background="#F99238"
         android:orientation="vertical" >
 
         <TextView
@@ -44,15 +44,17 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginRight="4dp"
-                android:src="@drawable/plus_icon"
-                android:padding="12dp"
+                android:src="@drawable/new_posticon_inactive"
+                android:padding="8dp"
                 android:background="@drawable/header_button" />
             
-            <Button
+            <ImageView
                 android:id="@+id/overflowButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/header_button" />
+                android:padding="8dp"
+                android:background="@drawable/header_button"
+                android:src="@drawable/overflow_icon" />
         </LinearLayout>
     </RelativeLayout>
     

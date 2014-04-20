@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 
 public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 	
-	private String accessToken;
+	private String accessKey;
 	private String postId;
 	private String postPersonId;
 	private String commentText;
@@ -26,10 +26,10 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 	private Activity activity;
 	private APIListener listener;
 
-	public AddCommentsApi(String accessToken, String postId,
+	public AddCommentsApi(String accessKey, String postId,
 			String postPersonId, String commentText, String personId,Activity activity,APIListener listener) {
 		super();
-		this.accessToken = accessToken;
+		this.accessKey = accessKey;
 		this.postId = postId;
 		this.postPersonId = postPersonId;
 		this.commentText = commentText;
@@ -43,7 +43,7 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 		String apiUrl = null;
 		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
 		apiUrl = AppData.baseURL + "/addcomment";
-		apiParams.add(new BasicNameValuePair("access_token", accessToken));
+		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("comment_text",commentText));
@@ -54,7 +54,7 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 					response, AddCommentResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				UserDataStore.getStore().getPost(postId).setUpdatedTime(System.currentTimeMillis());
-				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis()/1000, commentText, "", personId);
+				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis(), commentText, "", personId);
 				UserDataStore.getStore().getPost(postId).addComment(comment);
 				UserDataStore.getStore().save(activity);
 				return true;

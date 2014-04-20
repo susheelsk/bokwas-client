@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
+import com.bokwas.util.GCMUtils;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.entities.Profile;
@@ -137,6 +138,11 @@ public class LoginActivity extends Activity implements OnClickListener {
 			pdia.setMessage("Logging in...");
 			pdia.setCancelable(false);
 			pdia.setCanceledOnTouchOutside(false);
+			if (GCMUtils.checkPlayServices(this)) {
+	            GCMUtils.getRegistrationId(this);
+	        } else {
+	            Log.d(TAG, "No valid Google Play Services APK found.");
+	        }
 			mSimpleFacebook.login(new OnLoginListener() {
 
 				@Override

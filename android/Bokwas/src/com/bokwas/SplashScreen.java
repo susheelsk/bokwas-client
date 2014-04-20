@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.util.GCMUtils;
 import com.bokwas.util.LocalStorage;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -32,6 +33,7 @@ public class SplashScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.spash_screen);
 		mSimpleFacebook = SimpleFacebook.getInstance(this);
+		GCMUtils.getRegistrationId(this);
 		logKeyHash();
 		initAppData();
 		init();
@@ -68,15 +70,17 @@ public class SplashScreen extends Activity {
 					UserDataStore.getStore().setUserAccessToken(
 							mSimpleFacebook.getSession().getAccessToken());
 					UserDataStore.getStore().save(SplashScreen.this);
-					Log.d("SplashScreen","AccessToken : "+mSimpleFacebook.getSession().getAccessToken());
-//					new GetPosts(SplashScreen.this, mSimpleFacebook.getSession()
-//							.getAccessToken(), UserDataStore.getStore()
-//							.getUserId(), null).execute("");
+					Log.d("SplashScreen", "AccessToken : "
+							+ mSimpleFacebook.getSession().getAccessToken());
+					// new GetPosts(SplashScreen.this,
+					// mSimpleFacebook.getSession()
+					// .getAccessToken(), UserDataStore.getStore()
+					// .getUserId(), null).execute("");
 					initAppData();
 					moveToNextPage();
 				}
 			});
-		}else {
+		} else {
 			SPLASH_TIME_OUT = 3000;
 			moveToNextPage();
 		}
@@ -104,6 +108,10 @@ public class SplashScreen extends Activity {
 					+ UserDataStore.getStore().getBokwasName());
 			Log.d(TAG, "accessToken: "
 					+ UserDataStore.getStore().getUserAccessToken());
+
+			if (UserDataStore.getStore().isGcmUpdated() == false) {
+				GCMUtils.getRegistrationId(this);
+			}
 		}
 	}
 

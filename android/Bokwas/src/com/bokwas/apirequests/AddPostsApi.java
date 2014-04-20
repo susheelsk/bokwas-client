@@ -19,17 +19,17 @@ import com.google.gson.Gson;
 
 public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 
-	private String accessToken;
+	private String accessKey;
 	private String personId;
 	private String postText;
 	private Activity activity;
 	private APIListener listener;
 
-	public AddPostsApi(Activity activity, String accessToken, String personId,
+	public AddPostsApi(Activity activity, String accessKey, String personId,
 			String postText,APIListener listener) {
 		super();
 		this.activity = activity;
-		this.accessToken = accessToken;
+		this.accessKey = accessKey;
 		this.personId = personId;
 		this.postText = postText;
 		this.listener = listener;
@@ -40,7 +40,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 		String apiUrl = null;
 		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
 		apiUrl = AppData.baseURL + "/addpost";
-		apiParams.add(new BasicNameValuePair("access_token", accessToken));
+		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("post_text", postText));
 		try {
@@ -49,7 +49,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 					response, AddPostResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				List<Comment> comments = new ArrayList<Comment>();
-				Post post = new Post(apiResponse.postId, System.currentTimeMillis()/1000,System.currentTimeMillis()/1000, postText, "", personId, true, comments);
+				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, "", personId, true, comments);
 				UserDataStore.getStore().addPost(post);
 				UserDataStore.getStore().save(activity);
 				return true;

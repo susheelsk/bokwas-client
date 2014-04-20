@@ -35,8 +35,27 @@ public class UserDataStore {
 	private String fbName;
 	private String fbPicLink;
 	private int avatarId;
+	private String accessKey;
 	private List<Post> posts = new ArrayList<Post>();
 	private List<Friends> friends = new ArrayList<Friends>();
+	private String gcmRegId;
+	private boolean gcmUpdated = false;
+
+	public boolean isGcmUpdated() {
+		return gcmUpdated;
+	}
+
+	public void setGcmUpdated(boolean gcmUpdated) {
+		this.gcmUpdated = gcmUpdated;
+	}
+
+	public String getGcmRegId() {
+		return gcmRegId;
+	}
+
+	public void setGcmRegId(String gcmRegId) {
+		this.gcmRegId = gcmRegId;
+	}
 
 	public Friends getFriend(String friendFbId) {
 		for (Friends friend : friends) {
@@ -54,6 +73,14 @@ public class UserDataStore {
 			}
 		}
 		return null;
+	}
+	
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
 	}
 
 	public String getFbName() {
@@ -103,9 +130,6 @@ public class UserDataStore {
 
 	public List<Post> getPosts() {
 		Collections.sort(posts, new PostComparator());
-		for(Post post : posts) {
-			Log.d("HomescreenGetPosts","Post : "+post.getUpdatedTime());
-		}
 		return posts;
 	}
 

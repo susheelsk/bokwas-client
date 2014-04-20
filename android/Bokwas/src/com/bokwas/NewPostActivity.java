@@ -59,13 +59,13 @@ public class NewPostActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		if (editText.getText().toString().trim() != null) {
+		if (editText.getText().toString().trim() != null
+				&& !editText.getText().toString().trim().equals("")) {
 			final ProgressDialog pdia = new ProgressDialog(NewPostActivity.this);
 			pdia.setMessage("Adding new post...");
 			pdia.setCancelable(false);
 			pdia.show();
-			new AddPostsApi(this,
-					UserDataStore.getStore().getUserAccessToken(),
+			new AddPostsApi(this, UserDataStore.getStore().getAccessKey(),
 					UserDataStore.getStore().getUserId(), editText.getText()
 							.toString(), new APIListener() {
 

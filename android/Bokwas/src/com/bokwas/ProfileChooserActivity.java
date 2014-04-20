@@ -235,7 +235,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			pdia.show();
 			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(),
 					UserDataStore.getStore().getBokwasName(),
-					String.valueOf(UserDataStore.getStore().getAvatarId()),
+					String.valueOf(UserDataStore.getStore().getAvatarId()),UserDataStore.getStore().getGcmRegId(),
 					true, new APIListener() {
 
 						@Override

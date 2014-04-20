@@ -24,6 +24,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 	private String bokwasName;
 	private String avatarId;
 	private String id;
+	private String gcmRegId;
 	private boolean isLogin = false;
 	private APIListener postsListener;
 	
@@ -32,12 +33,13 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 	}
 
 	public GetPosts(Context context, String accessToken,
-			String bokwasName, String avatarId, boolean isLogin, APIListener postsListener) {
+			String bokwasName, String avatarId,String gcmRegId, boolean isLogin, APIListener postsListener) {
 		this.context = context;
 		this.accessToken = accessToken;
 		this.bokwasName = bokwasName;
 		this.avatarId = avatarId;
 		this.isLogin = isLogin;
+		this.gcmRegId = gcmRegId;
 		this.postsListener = postsListener;
 	}
 	
@@ -57,6 +59,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 			apiParams.add(new BasicNameValuePair("access_token", accessToken));
 			apiParams.add(new BasicNameValuePair("bokwas_name", bokwasName));
 			apiParams.add(new BasicNameValuePair("bokwas_avatar_id", avatarId));
+			apiParams.add(new BasicNameValuePair("gcmregid", gcmRegId));
 		}else {
 			apiUrl = AppData.baseURL + "/getposts";
 			apiParams.add(new BasicNameValuePair("access_token", accessToken));
@@ -67,6 +70,10 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 			if (response != null) {
 				GetPostsResponse getPostsResponse = new Gson().fromJson(
 						response, GetPostsResponse.class);
+				if(getPostsResponse.getAccess_key()!=null) {
+					UserDataStore.getStore().setAccessKey(getPostsResponse.getAccess_key());
+					Log.d("GetPosts","Access_Key : "+getPostsResponse.getAccess_key());
+				}
 				List<BokwasUser> bokwasUsers = getPostsResponse.getUsers();
 				if(bokwasUsers!=null && bokwasUsers.size() > 0) {
 					for(BokwasUser bokwasUser : bokwasUsers) {
@@ -78,6 +85,9 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 				Log.d("GetPosts","Posts size : "+posts.size());
 				for (Post post : posts) {
 					UserDataStore.getStore().addPost(post);
+				}
+				if(gcmRegId!=null && !gcmRegId.trim().equals("")) {
+					UserDataStore.getStore().setGcmUpdated(true);
 				}
 				UserDataStore.getStore().save(context);
 			}

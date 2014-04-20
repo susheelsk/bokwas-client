@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 
 public class AddLikesApi extends AsyncTask<String, Void, Boolean>{
 	
-	private String accessToken;
+	private String accessKey;
 	private String postId;
 	private String personId;
 	private String postedBy;
@@ -25,8 +25,8 @@ public class AddLikesApi extends AsyncTask<String, Void, Boolean>{
 	private Activity activity;
 	private APIListener listener;
 	
-	public AddLikesApi(Activity activity, String accessToken, String postId, String personId, String postedBy, String commentId,APIListener listener) {
-		this.accessToken = accessToken;
+	public AddLikesApi(Activity activity, String accessKey, String postId, String personId, String postedBy, String commentId,APIListener listener) {
+		this.accessKey = accessKey;
 		this.postId = postId;
 		this.personId = personId;
 		this.postedBy = postedBy;
@@ -40,7 +40,7 @@ public class AddLikesApi extends AsyncTask<String, Void, Boolean>{
 		String apiUrl = null;
 		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
 		apiUrl = AppData.baseURL + "/addlikes";
-		apiParams.add(new BasicNameValuePair("access_token", accessToken));
+		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("post_person_id", postedBy));

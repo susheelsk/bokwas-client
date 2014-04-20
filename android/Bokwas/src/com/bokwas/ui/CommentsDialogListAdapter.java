@@ -30,7 +30,8 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 	private List<Comment> comments;
 	private Post post;
 
-	public CommentsDialogListAdapter(Activity activity, List<Comment> comments,Post post) {
+	public CommentsDialogListAdapter(Activity activity, List<Comment> comments,
+			Post post) {
 		super(activity, R.layout.comment_dialog, comments);
 		this.activity = activity;
 		this.comments = comments;
@@ -68,7 +69,7 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 		View rowView = convertView;
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.post_list_item, null);
+			rowView = inflater.inflate(R.layout.post_list_item_new, null);
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) rowView.findViewById(R.id.post_name);
 			viewHolder.postText = (TextView) rowView
@@ -109,17 +110,19 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 		} else {
 			holder.likeSize.setText(String.valueOf(0));
 		}
-		
-		if(comment.getLikes().contains(UserDataStore.getStore().getUserId())) {
+
+		if (comment.getLikes().contains(UserDataStore.getStore().getUserId())) {
 			holder.likeLayout.setClickable(false);
 			holder.likeLayout.setEnabled(false);
-			holder.likeLayout.findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
+			holder.likeLayout.findViewById(R.id.like_image)
+					.setBackgroundResource(R.drawable.facebook_icon_enable);
 		}
 
 		if (comment.getCommentedBy().equals(
 				UserDataStore.getStore().getUserId())) {
 			holder.name.setText(UserDataStore.getStore().getBokwasName());
-			String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
+			String avatarId = String.valueOf(UserDataStore.getStore()
+					.getAvatarId());
 			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 					GeneralUtil.getAvatarResourceId(avatarId), activity));
 		} else {
@@ -130,9 +133,9 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 					GeneralUtil.getAvatarResourceId(avatarId), activity));
 		}
-		
+
 		holder.likeLayout.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				final ProgressDialog pdia = new ProgressDialog(activity);
@@ -140,27 +143,26 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 				pdia.setCancelable(false);
 				pdia.show();
 				new AddLikesApi(activity, UserDataStore.getStore()
-						.getUserAccessToken(), post.getPostId(), UserDataStore
-						.getStore().getUserId(), post.getPostedBy(), comment.getCommentId(),
-						new APIListener() {
+						.getAccessKey(), post.getPostId(), UserDataStore
+						.getStore().getUserId(), post.getPostedBy(), comment
+						.getCommentId(), new APIListener() {
 
-							@Override
-							public void onAPIStatus(boolean status) {
-								if (pdia.isShowing()) {
-									pdia.dismiss();
-								}
-								if (status) {
-									Toast.makeText(activity, "Post liked!",
-											Toast.LENGTH_SHORT).show();
-									notifyDataSetChanged();
-								} else {
-									Toast.makeText(
-											activity,
-											"Post couldn't be liked. Try again",
-											Toast.LENGTH_SHORT).show();
-								}
-							}
-						}).execute("");
+					@Override
+					public void onAPIStatus(boolean status) {
+						if (pdia.isShowing()) {
+							pdia.dismiss();
+						}
+						if (status) {
+							Toast.makeText(activity, "Post liked!",
+									Toast.LENGTH_SHORT).show();
+							notifyDataSetChanged();
+						} else {
+							Toast.makeText(activity,
+									"Post couldn't be liked. Try again",
+									Toast.LENGTH_SHORT).show();
+						}
+					}
+				}).execute("");
 			}
 		});
 

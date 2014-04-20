@@ -63,8 +63,7 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		editText = (EditText) findViewById(R.id.comment_edittext);
 		findViewById(R.id.commentButton).setOnClickListener(this);
 
-		adapter = new CommentsDialogListAdapter(
-				activity, comments,post);
+		adapter = new CommentsDialogListAdapter(activity, comments, post);
 		listView = (ListView) findViewById(R.id.comment_list);
 		listView.setAdapter(adapter);
 	}
@@ -72,19 +71,19 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.commentButton) {
-			if (editText.getText().toString().trim() != null) {
+			if (editText.getText().toString().trim() != null
+					&& !editText.getText().toString().trim().equals("")) {
 				pdia.setMessage("Adding comment");
 				pdia.setCancelable(false);
 				pdia.show();
-				new AddCommentsApi(UserDataStore.getStore()
-						.getUserAccessToken(), post.getPostId(),
-						post.getPostedBy(), editText.getText().toString(),
-						UserDataStore.getStore().getUserId(), activity,
-						new APIListener() {
+				new AddCommentsApi(UserDataStore.getStore().getAccessKey(),
+						post.getPostId(), post.getPostedBy(), editText
+								.getText().toString(), UserDataStore.getStore()
+								.getUserId(), activity, new APIListener() {
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if(pdia.isShowing()) {
+								if (pdia.isShowing()) {
 									pdia.dismiss();
 								}
 								if (status) {

@@ -4,6 +4,8 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -101,6 +103,13 @@ public class PostActivity extends Activity{
 			public void onClick(View v) {
 				CommentsDialog commentsDialog = new CommentsDialog(PostActivity.this,
 						post.getComments(), post);
+				commentsDialog.setOnDismissListener(new OnDismissListener() {
+					
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						setupUI();
+					}
+				});
 				commentsDialog.show();
 			}
 		});
@@ -115,7 +124,7 @@ public class PostActivity extends Activity{
 				pdia.setCancelable(false);
 				pdia.show();
 				new AddLikesApi(PostActivity.this, UserDataStore.getStore()
-						.getUserAccessToken(), post.getPostId(), UserDataStore
+						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), null,
 						new APIListener() {
 

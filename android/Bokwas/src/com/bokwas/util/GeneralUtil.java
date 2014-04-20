@@ -96,5 +96,5 @@ public class GeneralUtil {
 				srcBmp.getWidth(), 3*srcBmp.getHeight()/4);
 		return modBmp;
 	}
-
+	
 }

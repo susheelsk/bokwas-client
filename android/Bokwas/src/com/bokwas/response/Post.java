@@ -1,6 +1,9 @@
 package com.bokwas.response;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -89,6 +92,7 @@ public class Post {
 	}
 
 	public List<Comment> getComments() {
+		Collections.sort(comments, new CommentComparator());
 		return comments;
 	}
 
@@ -121,6 +125,14 @@ public class Post {
 		this.postedBy = postedBy;
 		this.isBokwasPost = isBokwasPost;
 		this.comments = comments;
+	}
+	
+	private class CommentComparator implements Comparator<Comment> {
+		public int compare(Comment a, Comment b) {
+			Date dateA = new Date(a.getTimestamp());
+			Date dateB = new Date(b.getTimestamp());
+			return dateA.compareTo(dateB);
+		}
 	}
 
 }

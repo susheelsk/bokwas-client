@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +76,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		View rowView = convertView;
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.post_list_item, null);
+			rowView = inflater.inflate(R.layout.post_list_item_new, null);
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) rowView.findViewById(R.id.post_name);
 			viewHolder.postText = (TextView) rowView
@@ -157,6 +159,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			public void onClick(View v) {
 				CommentsDialog commentsDialog = new CommentsDialog(activity,
 						posts.get(position).getComments(), post);
+				commentsDialog.setOnDismissListener(new OnDismissListener() {
+					
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						notifyDataSetChanged();
+					}
+				});
 				commentsDialog.show();
 			}
 		});
@@ -169,7 +178,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				pdia.setCancelable(false);
 				pdia.show();
 				new AddLikesApi(activity, UserDataStore.getStore()
-						.getUserAccessToken(), post.getPostId(), UserDataStore
+						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), null,
 						new APIListener() {
 
