@@ -89,6 +89,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 				if(gcmRegId!=null && !gcmRegId.trim().equals("")) {
 					UserDataStore.getStore().setGcmUpdated(true);
 				}
+				UserDataStore.getStore().sortPosts();
 				UserDataStore.getStore().save(context);
 			}
 		} catch (Exception e) {

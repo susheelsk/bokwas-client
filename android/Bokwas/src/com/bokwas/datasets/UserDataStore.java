@@ -108,6 +108,10 @@ public class UserDataStore {
 		}
 		posts.add(newPost);
 	}
+	
+	public void sortPosts() {
+		Collections.sort(posts, new PostComparator());
+	}
 
 	public void updatePost(Post newPost) {
 		for (int i = 0; i < posts.size(); i++) {
@@ -129,7 +133,7 @@ public class UserDataStore {
 	}
 
 	public List<Post> getPosts() {
-		Collections.sort(posts, new PostComparator());
+//		Collections.sort(posts, new PostComparator());
 		return posts;
 	}
 

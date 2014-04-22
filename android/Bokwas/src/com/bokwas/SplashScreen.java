@@ -33,7 +33,6 @@ public class SplashScreen extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.spash_screen);
 		mSimpleFacebook = SimpleFacebook.getInstance(this);
-		GCMUtils.getRegistrationId(this);
 		logKeyHash();
 		initAppData();
 		init();
