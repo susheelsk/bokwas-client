@@ -34,6 +34,7 @@
                 </Button.Background>
             </Button>
             <TextBlock Height="86" HorizontalAlignment="Left" Margin="129,172,0,0" Name="textBlock1" Text="Bokwas" VerticalAlignment="Top" FontSize="56" Width="210" />
+            <TextBlock Height="30" HorizontalAlignment="Left" Margin="176,264,0,0" Name="textBlock2" Text="" VerticalAlignment="Top" />
         </Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/Bokwas;component/Assets/texture_lightorange.png" />

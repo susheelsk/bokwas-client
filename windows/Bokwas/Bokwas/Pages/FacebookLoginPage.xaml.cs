@@ -13,6 +13,8 @@ using Microsoft.Phone.Controls;
 using Facebook.Client;
 using System.Threading.Tasks;
 using Facebook;
+using Bokwas.ViewModel;
+using System.Diagnostics;
 
 namespace Bokwas.Pages
 {
@@ -27,7 +29,7 @@ namespace Bokwas.Pages
         /// For extensive list of available extended permissions refer to 
         /// https://developers.facebook.com/docs/reference/api/permissions/
         /// </remarks>
-        private const string ExtendedPermissions = "user_about_me,read_stream,publish_stream";
+        private const string ExtendedPermissions = "basic_info,user_about_me,read_stream,email";
 
         private readonly FacebookClient _fb = new FacebookClient();
 
@@ -38,8 +40,9 @@ namespace Bokwas.Pages
 
         private void webBrowser1_Loaded(object sender, RoutedEventArgs e)
         {
-            var loginUrl = GetFacebookLoginUrl(AppId, ExtendedPermissions);
-            webBrowser1.Navigate(loginUrl);
+            
+                var loginUrl = GetFacebookLoginUrl(AppId, ExtendedPermissions);
+                webBrowser1.Navigate(loginUrl);
         }
 
         private Uri GetFacebookLoginUrl(string appId, string extendedPermissions)
@@ -71,7 +74,12 @@ namespace Bokwas.Pages
             if (oauthResult.IsSuccess)
             {
                 var accessToken = oauthResult.AccessToken;
-                LoginSucceded(accessToken);
+                var expires = oauthResult.Expires;
+                var state = oauthResult.State;
+                Debug.WriteLine("Access Token:" + accessToken);
+                Debug.WriteLine("Expires:" + expires);
+                Debug.WriteLine("State:" + state);
+                LoginSucceded(accessToken, expires);
             }
             else
             {
@@ -80,7 +88,7 @@ namespace Bokwas.Pages
             }
         }
 
-        private void LoginSucceded(string accessToken)
+        private void LoginSucceded(string accessToken, DateTime expires)
         {
             var fb = new FacebookClient(accessToken);
 
@@ -96,6 +104,11 @@ namespace Bokwas.Pages
                 var id = (string)result["id"];
 
                 var url = string.Format("/Pages/FacebookInfoPage.xaml?access_token={0}&id={1}", accessToken, id);
+                FacebookSession session = new FacebookSession();
+                session.AccessToken = accessToken;
+                session.Expires = expires;
+                session.FacebookId = id;
+                SessionStorage.Save(session);
 
                 Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri(url, UriKind.Relative)));
             };
