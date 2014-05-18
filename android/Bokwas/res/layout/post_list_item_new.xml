@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/notification_template"
-    android:padding="2dp"
+    android:background="@drawable/rectangle_white_stroke"
     android:orientation="vertical" >
     
     <TextView
@@ -193,7 +192,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
-        android:padding="2dp"
-        android:background="@drawable/notification_template"/>
+        android:background="@drawable/rectangle_white_stroke"/>
 
 </RelativeLayout>

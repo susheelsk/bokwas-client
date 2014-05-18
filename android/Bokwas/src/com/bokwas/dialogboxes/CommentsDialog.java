@@ -24,6 +24,8 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Post;
 import com.bokwas.ui.CommentsDialogListAdapter;
+import com.github.johnpersano.supertoasts.SuperActivityToast;
+import com.github.johnpersano.supertoasts.SuperToast;
 
 public class CommentsDialog extends Dialog implements OnClickListener {
 
@@ -34,6 +36,7 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 	private ProgressDialog pdia;
 	private ListView listView;
 	private CommentsDialogListAdapter adapter;
+	private SuperActivityToast superActivityToast;
 
 	public CommentsDialog(Activity activity, List<Comment> comments, Post post) {
 		super(activity);
@@ -60,6 +63,9 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		getWindow().setLayout(width, height);
 
 		pdia = new ProgressDialog(activity);
+		superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
+		superActivityToast.setIndeterminate(true);
+		superActivityToast.setProgressIndeterminate(true);
 		editText = (EditText) findViewById(R.id.comment_edittext);
 		findViewById(R.id.commentButton).setOnClickListener(this);
 
@@ -73,9 +79,11 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		if (view.getId() == R.id.commentButton) {
 			if (editText.getText().toString().trim() != null
 					&& !editText.getText().toString().trim().equals("")) {
-				pdia.setMessage("Adding comment");
-				pdia.setCancelable(false);
-				pdia.show();
+				superActivityToast.setText("Adding comment");
+				superActivityToast.show();
+//				pdia.setMessage("Adding comment");
+//				pdia.setCancelable(false);
+//				pdia.show();
 				new AddCommentsApi(UserDataStore.getStore().getAccessKey(),
 						post.getPostId(), post.getPostedBy(), editText
 								.getText().toString(), UserDataStore.getStore()
@@ -83,9 +91,12 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if (pdia.isShowing()) {
-									pdia.dismiss();
+								if(superActivityToast.isShowing()) {
+									superActivityToast.dismiss();
 								}
+//								if (pdia.isShowing()) {
+//									pdia.dismiss();
+//								}
 								if (status) {
 									Toast.makeText(activity, "Comment added!",
 											Toast.LENGTH_SHORT).show();

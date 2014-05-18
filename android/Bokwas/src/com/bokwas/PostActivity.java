@@ -1,9 +1,9 @@
 package com.bokwas;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
@@ -15,12 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bokwas.apirequests.AddLikesApi;
+import com.bokwas.apirequests.FbProfilePicBatchApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.CommentsDialog;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.github.johnpersano.supertoasts.SuperActivityToast;
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class PostActivity extends Activity{
@@ -39,6 +42,17 @@ public class PostActivity extends Activity{
 		setOnClickListeners();
 
 		setupUI();
+		ArrayList<Post> postList = new ArrayList<Post>();
+		postList.add(post);
+		new FbProfilePicBatchApi(
+				postList,
+				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
+
+					@Override
+					public void onDownloadComplete() {
+						setupUI();
+					}
+				}).execute("");
 
 	}
 
@@ -72,10 +86,8 @@ public class PostActivity extends Activity{
 				picture.setImageBitmap(GeneralUtil.getImageBitmap(
 						GeneralUtil.getAvatarResourceId(avatarId), this));
 			} else {
-				name.setText(UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getBokwasName());
-				String avatarId = UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getBokwasAvatarId();
+				name.setText(post.getName());
+				String avatarId = post.getAvatarId();
 				picture.setImageBitmap(GeneralUtil.getImageBitmap(
 						GeneralUtil.getAvatarResourceId(avatarId), this));
 			}
@@ -87,11 +99,15 @@ public class PostActivity extends Activity{
 						.getStore().getFbPicLink(), null, 60000 * 100);
 			} else {
 
-				name.setText(UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getFbName());
-				UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
-						.getStore().getFriend(post.getPostedBy())
-						.getFbPicLink(), null, 60000 * 100);
+				name.setText(post.getName());
+				if(UserDataStore.getStore().getFriend(post.getPostedBy())!=null) {
+					UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
+							.getStore().getFriend(post.getPostedBy())
+							.getFbPicLink(), null, 60000 * 100);
+				}
+//				UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
+//						.getStore().getFriend(post.getPostedBy())
+//						.getFbPicLink(), null, 60000 * 100);
 			}
 		}
 	}
@@ -119,10 +135,15 @@ public class PostActivity extends Activity{
 			@Override
 			public void onClick(View v) {
 
-				final ProgressDialog pdia = new ProgressDialog(PostActivity.this);
-				pdia.setMessage("Liking the post");
-				pdia.setCancelable(false);
-				pdia.show();
+				final SuperActivityToast superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
+				superActivityToast.setIndeterminate(true);
+				superActivityToast.setProgressIndeterminate(true);
+				superActivityToast.setText("Liking the post");
+				superActivityToast.show();
+//				final ProgressDialog pdia = new ProgressDialog(PostActivity.this);
+//				pdia.setMessage("Liking the post");
+//				pdia.setCancelable(false);
+//				pdia.show();
 				new AddLikesApi(PostActivity.this, UserDataStore.getStore()
 						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), null,
@@ -130,8 +151,8 @@ public class PostActivity extends Activity{
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if (pdia.isShowing()) {
-									pdia.dismiss();
+								if (superActivityToast.isShowing()) {
+									superActivityToast.dismiss();
 								}
 								if (status) {
 									Toast.makeText(PostActivity.this, "Post liked!",

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 
+import com.bokwas.apirequests.FbProfilePicBatchApi;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
@@ -30,10 +31,20 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 	}
 
 	private void setupUI() {
+
 		final HomescreenPostsListAdapter adapter = new HomescreenPostsListAdapter(
 				this, UserDataStore.getStore().getPosts());
 		final PullToRefreshListView listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
+		new FbProfilePicBatchApi(
+				UserDataStore.getStore().getPosts(),
+				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
+
+					@Override
+					public void onDownloadComplete() {
+						adapter.notifyDataSetChanged();
+					}
+				}).execute("");
 		listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -43,18 +54,18 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 
 					@Override
 					public void onAPIStatus(boolean status) {
+						listView.onRefreshComplete();
 						if (status) {
 							adapter.setPosts(UserDataStore.getStore()
 									.getPosts());
-							 adapter.notifyDataSetChanged();
-							listView.onRefreshComplete();
+							adapter.notifyDataSetChanged();
 						}
 					}
 				}).execute("");
 			}
 		});
 		if (getIntent().getBooleanExtra("fromSplashscreen", false)) {
-			listView.setRefreshing(true);
+			listView.setRefreshing(true);// pdia.show
 		}
 	}
 

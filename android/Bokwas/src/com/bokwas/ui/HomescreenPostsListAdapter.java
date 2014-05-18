@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -130,10 +131,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 						GeneralUtil.getAvatarResourceId(avatarId), activity));
 			} else {
-				holder.name.setText(UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getBokwasName());
-				String avatarId = UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getBokwasAvatarId();
+				holder.name.setText(post.getName());
+				String avatarId = post.getAvatarId();
 				holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 						GeneralUtil.getAvatarResourceId(avatarId), activity));
 			}
@@ -144,12 +143,18 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
 						.getStore().getFbPicLink(), null, 60000 * 100);
 			} else {
-
-				holder.name.setText(UserDataStore.getStore()
-						.getFriend(post.getPostedBy()).getFbName());
-				UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
-						.getStore().getFriend(post.getPostedBy())
-						.getFbPicLink(), null, 60000 * 100);
+				Log.d("HomeScreenPostsListAdapter","postedBy : "+post.getPostedBy());
+				holder.name.setText(post.getName());
+				
+				if(UserDataStore.getStore().getFriend(post.getPostedBy())!=null) {
+					UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
+							.getStore().getFriend(post.getPostedBy())
+							.getFbPicLink(), null, 60000 * 100);
+				}
+				
+//				UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
+//						.getStore().getFriend(post.getPostedBy())
+//						.getFbPicLink(), null, 60000 * 100);
 			}
 		}
 

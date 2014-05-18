@@ -15,8 +15,10 @@ import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
 import com.bokwas.util.GCMUtils;
+import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
+import com.sromku.simple.fb.SimpleFacebookConfiguration;
 import com.sromku.simple.fb.entities.Profile;
 import com.sromku.simple.fb.entities.Profile.Properties;
 import com.sromku.simple.fb.listeners.OnFriendsListener;
@@ -77,7 +79,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		pdia.setMessage("Fetching details...");
 		pdia.setCancelable(false);
 		pdia.setCanceledOnTouchOutside(false);
-
+		Log.d("LoginActivity","AccessToken : "+
+				mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().setUserAccessToken(
 				mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().save(this);
@@ -91,19 +94,19 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Log.d(TAG, "Gender :" + profile.getGender());
 				Log.d(TAG, "email :" + profile.getEmail());
 				Log.d(TAG, "Facebook Id :" + profile.getId());
-				getFriendsAndStore();
+//				getFriendsAndStore();
 				UserDataStore.getStore().setUserId(profile.getId());
 				UserDataStore.getStore().setFbName(profile.getName());
 				UserDataStore.getStore().setFbPicLink(profile.getPicture());
 				UserDataStore.getStore().save(LoginActivity.this);
-//				moveToNextScreen();
+				moveToNextScreen();
 			}
 
 			@Override
 			public void onFail(String reason) {
 				pdia.dismiss();
 				Toast.makeText(LoginActivity.this,
-						"Something went wrong. Try again", Toast.LENGTH_SHORT)
+						"Something went wrongbecause "+reason+". Try again", Toast.LENGTH_SHORT)
 						.show();
 			}
 
@@ -111,7 +114,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			public void onException(Throwable throwable) {
 				pdia.dismiss();
 				Toast.makeText(LoginActivity.this,
-						"Something went wrong. Try again", Toast.LENGTH_SHORT)
+						"Something went wrongbecause "+throwable.getMessage()+". Try again", Toast.LENGTH_SHORT)
 						.show();
 			}
 
@@ -143,21 +146,33 @@ public class LoginActivity extends Activity implements OnClickListener {
 	        } else {
 	            Log.d(TAG, "No valid Google Play Services APK found.");
 	        }
+			Permission[] permissions = new Permission[] {
+				    Permission.USER_PHOTOS,
+				    Permission.EMAIL,
+				    Permission.READ_STREAM,
+				};
+			SimpleFacebookConfiguration configuration = new SimpleFacebookConfiguration.Builder()
+		    .setAppId("282335065256850")
+		    .setNamespace("bokwas_android")
+		    .setPermissions(permissions)
+		    .build();
+			SimpleFacebook.setConfiguration(configuration);
 			mSimpleFacebook.login(new OnLoginListener() {
 
 				@Override
 				public void onFail(String reason) {
 					pdia.dismiss();
 					Toast.makeText(LoginActivity.this,
-							"Something went wrong. Try again",
+							"Something went wrong because "+reason+". Try again",
 							Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onException(Throwable throwable) {
 					pdia.dismiss();
+					
 					Toast.makeText(LoginActivity.this,
-							"Something went wrong. Try again",
+							"Something went wrongbecause "+throwable.getMessage()+". Try again",
 							Toast.LENGTH_SHORT).show();
 				}
 

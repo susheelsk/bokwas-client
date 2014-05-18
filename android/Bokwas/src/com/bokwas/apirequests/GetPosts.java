@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.bokwas.datasets.UserDataStore;
-import com.bokwas.response.BokwasUser;
 import com.bokwas.response.GetPostsResponse;
 import com.bokwas.response.Post;
 import com.bokwas.util.AppData;
@@ -74,13 +73,13 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 					UserDataStore.getStore().setAccessKey(getPostsResponse.getAccess_key());
 					Log.d("GetPosts","Access_Key : "+getPostsResponse.getAccess_key());
 				}
-				List<BokwasUser> bokwasUsers = getPostsResponse.getUsers();
-				if(bokwasUsers!=null && bokwasUsers.size() > 0) {
-					for(BokwasUser bokwasUser : bokwasUsers) {
-						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasName(bokwasUser.userBokwasName);
-						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasAvatarId(bokwasUser.userBokwasAvatarId);
-					}
-				}
+//				List<BokwasUser> bokwasUsers = getPostsResponse.getUsers();
+//				if(bokwasUsers!=null && bokwasUsers.size() > 0) {
+//					for(BokwasUser bokwasUser : bokwasUsers) {
+//						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasName(bokwasUser.userBokwasName);
+//						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasAvatarId(bokwasUser.userBokwasAvatarId);
+//					}
+//				}
 				List<Post> posts = getPostsResponse.getPosts();
 				Log.d("GetPosts","Posts size : "+posts.size());
 				for (Post post : posts) {

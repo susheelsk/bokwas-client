@@ -2840,6 +2840,7 @@ com.bokwas.R$attr: int uiZoomGestures
 com.bokwas.R$attr: int useViewLifecycle
 com.bokwas.R$attr: int zOrderOnTop
 com.bokwas.R$attr: R$attr()
+com.bokwas.R$color: int black
 com.bokwas.R$color: int com_facebook_blue
 com.bokwas.R$color: int com_facebook_loginview_text_color
 com.bokwas.R$color: int com_facebook_picker_search_bar_background
@@ -2859,9 +2860,15 @@ com.bokwas.R$color: int common_signin_btn_light_text_focused
 com.bokwas.R$color: int common_signin_btn_light_text_pressed
 com.bokwas.R$color: int common_signin_btn_text_dark
 com.bokwas.R$color: int common_signin_btn_text_light
+com.bokwas.R$color: int dark_gray
+com.bokwas.R$color: int light_gray
+com.bokwas.R$color: int white
 com.bokwas.R$color: R$color()
 com.bokwas.R$dimen: int activity_horizontal_margin
 com.bokwas.R$dimen: int activity_vertical_margin
+com.bokwas.R$dimen: int buttontoast_hover
+com.bokwas.R$dimen: int buttontoast_x_padding
+com.bokwas.R$dimen: int cardtoast_margin
 com.bokwas.R$dimen: int com_facebook_loginview_compound_drawable_padding
 com.bokwas.R$dimen: int com_facebook_loginview_padding_bottom
 com.bokwas.R$dimen: int com_facebook_loginview_padding_left
@@ -2880,6 +2887,7 @@ com.bokwas.R$dimen: int header_footer_top_bottom_padding
 com.bokwas.R$dimen: int indicator_corner_radius
 com.bokwas.R$dimen: int indicator_internal_padding
 com.bokwas.R$dimen: int indicator_right_padding
+com.bokwas.R$dimen: int toast_hover
 com.bokwas.R$dimen: R$dimen()
 com.bokwas.R$drawable: int avatar_1
 com.bokwas.R$drawable: int avatar_10
@@ -2916,6 +2924,22 @@ com.bokwas.R$drawable: int avatar_6
 com.bokwas.R$drawable: int avatar_7
 com.bokwas.R$drawable: int avatar_8
 com.bokwas.R$drawable: int avatar_9
+com.bokwas.R$drawable: int background_kitkat_black
+com.bokwas.R$drawable: int background_kitkat_blue
+com.bokwas.R$drawable: int background_kitkat_gray
+com.bokwas.R$drawable: int background_kitkat_green
+com.bokwas.R$drawable: int background_kitkat_orange
+com.bokwas.R$drawable: int background_kitkat_purple
+com.bokwas.R$drawable: int background_kitkat_red
+com.bokwas.R$drawable: int background_kitkat_white
+com.bokwas.R$drawable: int background_standard_black
+com.bokwas.R$drawable: int background_standard_blue
+com.bokwas.R$drawable: int background_standard_gray
+com.bokwas.R$drawable: int background_standard_green
+com.bokwas.R$drawable: int background_standard_orange
+com.bokwas.R$drawable: int background_standard_purple
+com.bokwas.R$drawable: int background_standard_red
+com.bokwas.R$drawable: int background_standard_white
 com.bokwas.R$drawable: int bg_texture_darkblue
 com.bokwas.R$drawable: int bg_texture_darkorange
 com.bokwas.R$drawable: int bg_texture_gray
@@ -2999,6 +3023,22 @@ com.bokwas.R$drawable: int ic_plusone_medium_off_client
 com.bokwas.R$drawable: int ic_plusone_small_off_client
 com.bokwas.R$drawable: int ic_plusone_standard_off_client
 com.bokwas.R$drawable: int ic_plusone_tall_off_client
+com.bokwas.R$drawable: int icon_dark_edit
+com.bokwas.R$drawable: int icon_dark_exit
+com.bokwas.R$drawable: int icon_dark_info
+com.bokwas.R$drawable: int icon_dark_redo
+com.bokwas.R$drawable: int icon_dark_refresh
+com.bokwas.R$drawable: int icon_dark_save
+com.bokwas.R$drawable: int icon_dark_share
+com.bokwas.R$drawable: int icon_dark_undo
+com.bokwas.R$drawable: int icon_light_edit
+com.bokwas.R$drawable: int icon_light_exit
+com.bokwas.R$drawable: int icon_light_info
+com.bokwas.R$drawable: int icon_light_redo
+com.bokwas.R$drawable: int icon_light_refresh
+com.bokwas.R$drawable: int icon_light_save
+com.bokwas.R$drawable: int icon_light_share
+com.bokwas.R$drawable: int icon_light_undo
 com.bokwas.R$drawable: int indicator_arrow
 com.bokwas.R$drawable: int indicator_bg_bottom
 com.bokwas.R$drawable: int indicator_bg_top
@@ -3013,7 +3053,16 @@ com.bokwas.R$drawable: int rectangle_lightgrey_bottomcorner
 com.bokwas.R$drawable: int rectangle_transparent
 com.bokwas.R$drawable: int rectangle_white
 com.bokwas.R$drawable: int rectangle_white_stroke
+com.bokwas.R$drawable: int selector_kitkat_square_undobutton
+com.bokwas.R$drawable: int selector_kitkat_undobutton
 com.bokwas.R$drawable: int selector_rectangle_grey
+com.bokwas.R$drawable: int selector_undobutton
+com.bokwas.R$drawable: int shape_kitkat_square_undobarfocused
+com.bokwas.R$drawable: int shape_kitkat_square_undobarselected
+com.bokwas.R$drawable: int shape_kitkat_undobarfocused
+com.bokwas.R$drawable: int shape_kitkat_undobarselected
+com.bokwas.R$drawable: int shape_undobarfocused
+com.bokwas.R$drawable: int shape_undobarselected
 com.bokwas.R$drawable: int texture_darkblue
 com.bokwas.R$drawable: int texture_darkorange
 com.bokwas.R$drawable: int texture_gray
@@ -3023,6 +3072,8 @@ com.bokwas.R$drawable: R$drawable()
 com.bokwas.R$id: int action_settings
 com.bokwas.R$id: int avatar_chooser_view
 com.bokwas.R$id: int both
+com.bokwas.R$id: int button
+com.bokwas.R$id: int card_container
 com.bokwas.R$id: int com_facebook_login_activity_progress_bar
 com.bokwas.R$id: int com_facebook_picker_activity_circle
 com.bokwas.R$id: int com_facebook_picker_checkbox
@@ -3051,6 +3102,7 @@ com.bokwas.R$id: int dialog_button_ok
 com.bokwas.R$id: int dialog_description
 com.bokwas.R$id: int dialog_title
 com.bokwas.R$id: int disabled
+com.bokwas.R$id: int divider
 com.bokwas.R$id: int facebookButton
 com.bokwas.R$id: int feedButton
 com.bokwas.R$id: int feed_list
@@ -3065,6 +3117,7 @@ com.bokwas.R$id: int like_line_seperator
 com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int login_text
 com.bokwas.R$id: int manualOnly
+com.bokwas.R$id: int message_textview
 com.bokwas.R$id: int nameText
 com.bokwas.R$id: int newPostButton
 com.bokwas.R$id: int nextButton
@@ -3085,6 +3138,7 @@ com.bokwas.R$id: int post_line_separator
 com.bokwas.R$id: int post_name
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_time
+com.bokwas.R$id: int progress_bar
 com.bokwas.R$id: int pullDownFromTop
 com.bokwas.R$id: int pullFromEnd
 com.bokwas.R$id: int pullFromStart
@@ -3093,6 +3147,7 @@ com.bokwas.R$id: int pull_to_refresh_image
 com.bokwas.R$id: int pull_to_refresh_progress
 com.bokwas.R$id: int pull_to_refresh_sub_text
 com.bokwas.R$id: int pull_to_refresh_text
+com.bokwas.R$id: int root_layout
 com.bokwas.R$id: int rotate
 com.bokwas.R$id: int satellite
 com.bokwas.R$id: int scrollview
@@ -3121,6 +3176,7 @@ com.bokwas.R$layout: int com_facebook_search_bar_layout
 com.bokwas.R$layout: int com_facebook_usersettingsfragment
 com.bokwas.R$layout: int comment_dialog
 com.bokwas.R$layout: int dialog_generic_singlebutton
+com.bokwas.R$layout: int dummy_layout
 com.bokwas.R$layout: int header_main
 com.bokwas.R$layout: int home_screen
 com.bokwas.R$layout: int login_page
@@ -3132,6 +3188,14 @@ com.bokwas.R$layout: int post_screen
 com.bokwas.R$layout: int pull_to_refresh_header_horizontal
 com.bokwas.R$layout: int pull_to_refresh_header_vertical
 com.bokwas.R$layout: int spash_screen
+com.bokwas.R$layout: int superactivitytoast_button
+com.bokwas.R$layout: int superactivitytoast_progresscircle
+com.bokwas.R$layout: int superactivitytoast_progresshorizontal
+com.bokwas.R$layout: int supercardtoast
+com.bokwas.R$layout: int supercardtoast_button
+com.bokwas.R$layout: int supercardtoast_progresscircle
+com.bokwas.R$layout: int supercardtoast_progresshorizontal
+com.bokwas.R$layout: int supertoast
 com.bokwas.R$layout: R$layout()
 com.bokwas.R$menu: int splash_screen
 com.bokwas.R$menu: R$menu()
@@ -3200,6 +3264,18 @@ com.bokwas.R$string: int pull_to_refresh_release_label
 com.bokwas.R$string: R$string()
 com.bokwas.R$style: int AppBaseTheme
 com.bokwas.R$style: int AppTheme
+com.bokwas.R$style: int DefaultRootLayout
+com.bokwas.R$style: int DefaultText
+com.bokwas.R$style: int SuperActivityToast_Button_Button
+com.bokwas.R$style: int SuperActivityToast_Button_Divider
+com.bokwas.R$style: int SuperActivityToast_Button_RootLayout
+com.bokwas.R$style: int SuperActivityToast_Button_TextView
+com.bokwas.R$style: int SuperActivityToast_ProgressHorizontal_ProgressBar
+com.bokwas.R$style: int SuperActivityToast_ProgressHorizontal_RootLayout
+com.bokwas.R$style: int SuperActivityToast_ProgressHorizontal_TextView
+com.bokwas.R$style: int SuperActivityToast_Progress_ProgressBar
+com.bokwas.R$style: int SuperActivityToast_Progress_TextView
+com.bokwas.R$style: int SuperCardToast_Button_RootLayout
 com.bokwas.R$style: int com_facebook_loginview_default_style
 com.bokwas.R$style: int com_facebook_loginview_silver_style
 com.bokwas.R$style: R$style()
@@ -3566,6 +3642,107 @@ com.facebook.widget.ProfilePictureView: void setOnErrorListener(com.facebook.wid
 com.facebook.widget.ProfilePictureView: void setDefaultProfilePicture(android.graphics.Bitmap)
 com.facebook.widget.SimpleGraphObjectCursor: SimpleGraphObjectCursor()
 com.facebook.widget.UserSettingsFragment: UserSettingsFragment()
+com.github.johnpersano.supertoasts.R: R()
+com.github.johnpersano.supertoasts.R$color: int black
+com.github.johnpersano.supertoasts.R$color: int dark_gray
+com.github.johnpersano.supertoasts.R$color: int light_gray
+com.github.johnpersano.supertoasts.R$color: int white
+com.github.johnpersano.supertoasts.R$color: R$color()
+com.github.johnpersano.supertoasts.R$dimen: int buttontoast_hover
+com.github.johnpersano.supertoasts.R$dimen: int buttontoast_x_padding
+com.github.johnpersano.supertoasts.R$dimen: int cardtoast_margin
+com.github.johnpersano.supertoasts.R$dimen: int toast_hover
+com.github.johnpersano.supertoasts.R$dimen: R$dimen()
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_black
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_blue
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_gray
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_green
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_orange
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_purple
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_red
+com.github.johnpersano.supertoasts.R$drawable: int background_kitkat_white
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_black
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_blue
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_gray
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_green
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_orange
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_purple
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_red
+com.github.johnpersano.supertoasts.R$drawable: int background_standard_white
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_edit
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_exit
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_info
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_redo
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_refresh
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_save
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_share
+com.github.johnpersano.supertoasts.R$drawable: int icon_dark_undo
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_edit
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_exit
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_info
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_redo
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_refresh
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_save
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_share
+com.github.johnpersano.supertoasts.R$drawable: int icon_light_undo
+com.github.johnpersano.supertoasts.R$drawable: int selector_kitkat_square_undobutton
+com.github.johnpersano.supertoasts.R$drawable: int selector_kitkat_undobutton
+com.github.johnpersano.supertoasts.R$drawable: int selector_undobutton
+com.github.johnpersano.supertoasts.R$drawable: int shape_kitkat_square_undobarfocused
+com.github.johnpersano.supertoasts.R$drawable: int shape_kitkat_square_undobarselected
+com.github.johnpersano.supertoasts.R$drawable: int shape_kitkat_undobarfocused
+com.github.johnpersano.supertoasts.R$drawable: int shape_kitkat_undobarselected
+com.github.johnpersano.supertoasts.R$drawable: int shape_undobarfocused
+com.github.johnpersano.supertoasts.R$drawable: int shape_undobarselected
+com.github.johnpersano.supertoasts.R$drawable: R$drawable()
+com.github.johnpersano.supertoasts.R$id: int button
+com.github.johnpersano.supertoasts.R$id: int card_container
+com.github.johnpersano.supertoasts.R$id: int divider
+com.github.johnpersano.supertoasts.R$id: int message_textview
+com.github.johnpersano.supertoasts.R$id: int progress_bar
+com.github.johnpersano.supertoasts.R$id: int root_layout
+com.github.johnpersano.supertoasts.R$id: R$id()
+com.github.johnpersano.supertoasts.R$layout: int dummy_layout
+com.github.johnpersano.supertoasts.R$layout: int superactivitytoast_button
+com.github.johnpersano.supertoasts.R$layout: int superactivitytoast_progresscircle
+com.github.johnpersano.supertoasts.R$layout: int superactivitytoast_progresshorizontal
+com.github.johnpersano.supertoasts.R$layout: int supercardtoast
+com.github.johnpersano.supertoasts.R$layout: int supercardtoast_button
+com.github.johnpersano.supertoasts.R$layout: int supercardtoast_progresscircle
+com.github.johnpersano.supertoasts.R$layout: int supercardtoast_progresshorizontal
+com.github.johnpersano.supertoasts.R$layout: int supertoast
+com.github.johnpersano.supertoasts.R$layout: R$layout()
+com.github.johnpersano.supertoasts.R$style: int DefaultRootLayout
+com.github.johnpersano.supertoasts.R$style: int DefaultText
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Button_Button
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Button_Divider
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Button_RootLayout
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Button_TextView
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_ProgressHorizontal_ProgressBar
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_ProgressHorizontal_RootLayout
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_ProgressHorizontal_TextView
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Progress_ProgressBar
+com.github.johnpersano.supertoasts.R$style: int SuperActivityToast_Progress_TextView
+com.github.johnpersano.supertoasts.R$style: int SuperCardToast_Button_RootLayout
+com.github.johnpersano.supertoasts.R$style: R$style()
+com.github.johnpersano.supertoasts.SuperActivityToast$ReferenceHolder: android.os.Parcelable$Creator CREATOR
+com.github.johnpersano.supertoasts.SuperActivityToast$ReferenceHolder$1: SuperActivityToast$ReferenceHolder$1()
+com.github.johnpersano.supertoasts.SuperCardToast$ReferenceHolder: android.os.Parcelable$Creator CREATOR
+com.github.johnpersano.supertoasts.SuperCardToast$ReferenceHolder$1: SuperCardToast$ReferenceHolder$1()
+com.github.johnpersano.supertoasts.SuperToast$Animations: com.github.johnpersano.supertoasts.SuperToast$Animations[] values()
+com.github.johnpersano.supertoasts.SuperToast$Animations: com.github.johnpersano.supertoasts.SuperToast$Animations valueOf(java.lang.String)
+com.github.johnpersano.supertoasts.SuperToast$Background: SuperToast$Background()
+com.github.johnpersano.supertoasts.SuperToast$Duration: SuperToast$Duration()
+com.github.johnpersano.supertoasts.SuperToast$Icon: SuperToast$Icon()
+com.github.johnpersano.supertoasts.SuperToast$Icon$Dark: SuperToast$Icon$Dark()
+com.github.johnpersano.supertoasts.SuperToast$Icon$Light: SuperToast$Icon$Light()
+com.github.johnpersano.supertoasts.SuperToast$IconPosition: com.github.johnpersano.supertoasts.SuperToast$IconPosition[] values()
+com.github.johnpersano.supertoasts.SuperToast$IconPosition: com.github.johnpersano.supertoasts.SuperToast$IconPosition valueOf(java.lang.String)
+com.github.johnpersano.supertoasts.SuperToast$TextSize: SuperToast$TextSize()
+com.github.johnpersano.supertoasts.SuperToast$Type: com.github.johnpersano.supertoasts.SuperToast$Type[] values()
+com.github.johnpersano.supertoasts.SuperToast$Type: com.github.johnpersano.supertoasts.SuperToast$Type valueOf(java.lang.String)
+com.github.johnpersano.supertoasts.util.Style: Style()
+com.github.johnpersano.supertoasts.util.Wrappers: Wrappers()
 com.google.ads.AdRequest$ErrorCode: com.google.ads.AdRequest$ErrorCode[] values()
 com.google.ads.AdRequest$ErrorCode: com.google.ads.AdRequest$ErrorCode valueOf(java.lang.String)
 com.google.ads.AdRequest$Gender: com.google.ads.AdRequest$Gender[] values()

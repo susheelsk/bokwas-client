@@ -23,9 +23,29 @@ public class Post {
 	private String postedBy;
 	@SerializedName("isBokwasPost")
 	private boolean isBokwasPost;
+	@SerializedName("name")
+	private String name;
+	@SerializedName("avatar_id")
+	private String avatarId;
 	@SerializedName("comments")
 	private List<Comment> comments = new ArrayList<Comment>();
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAvatarId() {
+		return avatarId;
+	}
+
+	public void setAvatarId(String avatarId) {
+		this.avatarId = avatarId;
+	}
+	
 	public long getUpdatedTime() {
 		return updatedTime;
 	}

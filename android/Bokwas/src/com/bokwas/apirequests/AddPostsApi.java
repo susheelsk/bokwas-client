@@ -51,6 +51,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 				List<Comment> comments = new ArrayList<Comment>();
 				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, "", personId, true, comments);
 				UserDataStore.getStore().addPost(post);
+				UserDataStore.getStore().sortPosts();
 				UserDataStore.getStore().save(activity);
 				return true;
 			}

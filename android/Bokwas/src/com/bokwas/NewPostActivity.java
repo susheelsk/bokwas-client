@@ -1,7 +1,6 @@
 package com.bokwas;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +14,8 @@ import com.bokwas.apirequests.AddPostsApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
+import com.github.johnpersano.supertoasts.SuperActivityToast;
+import com.github.johnpersano.supertoasts.SuperToast;
 
 public class NewPostActivity extends Activity implements OnClickListener {
 
@@ -61,23 +62,30 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if (editText.getText().toString().trim() != null
 				&& !editText.getText().toString().trim().equals("")) {
-			final ProgressDialog pdia = new ProgressDialog(NewPostActivity.this);
-			pdia.setMessage("Adding new post...");
-			pdia.setCancelable(false);
-			pdia.show();
+//			final ProgressDialog pdia = new ProgressDialog(NewPostActivity.this);
+//			pdia.setMessage("Adding new post...");
+//			pdia.setCancelable(false);
+//			pdia.show();
+			
+			final SuperActivityToast superActivityToast = new SuperActivityToast(NewPostActivity.this, SuperToast.Type.PROGRESS);
+			superActivityToast.setIndeterminate(true);
+			superActivityToast.setProgressIndeterminate(true);
+			superActivityToast.setText("Adding new post...");
+			superActivityToast.show();
 			new AddPostsApi(this, UserDataStore.getStore().getAccessKey(),
 					UserDataStore.getStore().getUserId(), editText.getText()
 							.toString(), new APIListener() {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-							if (pdia.isShowing()) {
-								pdia.dismiss();
+							if (superActivityToast.isShowing()) {
+								superActivityToast.dismiss();
 							}
 							if (status) {
 								Toast.makeText(NewPostActivity.this,
 										"Post added!", Toast.LENGTH_SHORT)
 										.show();
+								moveToHomescreen();
 							} else {
 								Toast.makeText(NewPostActivity.this,
 										"Couldn't add post. Try again",
@@ -86,6 +94,10 @@ public class NewPostActivity extends Activity implements OnClickListener {
 						}
 					}).execute("");
 		}
+	}
+
+	protected void moveToHomescreen() {
+		onBackPressed();
 	}
 
 }

@@ -29,6 +29,7 @@ import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 
+@SuppressWarnings("deprecation")
 public class ProfileChooserActivity extends Activity implements OnClickListener {
 
 	private Integer[] imageIds = { R.drawable.avatar_1, R.drawable.avatar_2,
@@ -162,19 +163,23 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 					@Override
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
-						// avatarChooser.refreshList();
-						for (int i = 0; i < parent.getChildCount(); i++) {
-							View childView = parent.getChildAt(i);
-							childView.setLayoutParams(new Gallery.LayoutParams(
-									avatarChooserList.getHeight() / 2,
-									avatarChooserList.getHeight() / 2));
-							childView.setBackgroundResource(imageIds[i]);
+						try {
+							// avatarChooser.refreshList();
+							for (int i = 0; i < parent.getChildCount(); i++) {
+								View childView = parent.getChildAt(i);
+								childView.setLayoutParams(new Gallery.LayoutParams(
+										avatarChooserList.getHeight() / 2,
+										avatarChooserList.getHeight() / 2));
+								childView.setBackgroundResource(imageIds[i]);
+							}
+							view.setLayoutParams(new Gallery.LayoutParams(
+									avatarChooserList.getHeight(),
+									avatarChooserList.getHeight()));
+							view.setBackgroundResource(imageIds[position]);
+							UserDataStore.getStore().setAvatarId(position + 1);
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-						view.setLayoutParams(new Gallery.LayoutParams(
-								avatarChooserList.getHeight(),
-								avatarChooserList.getHeight()));
-						view.setBackgroundResource(imageIds[position]);
-						UserDataStore.getStore().setAvatarId(position + 1);
 					}
 
 					@Override
@@ -233,6 +238,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			pdia.setMessage("Syncing..");
 			pdia.setCancelable(false);
 			pdia.show();
+			Log.d("ProfileChooserActivity","AccessToken : "+UserDataStore.getStore().getUserAccessToken());
 			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(),
 					UserDataStore.getStore().getBokwasName(),
 					String.valueOf(UserDataStore.getStore().getAvatarId()),UserDataStore.getStore().getGcmRegId(),

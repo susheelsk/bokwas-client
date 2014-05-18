@@ -57,6 +57,7 @@ public class DateUtil {
 //		return date;
 //	}
 	
+	@SuppressWarnings("deprecation")
 	public static String formatToYesterdayOrToday(Date date) {
 		Format formatter = new SimpleDateFormat("MMMM, dd");
 		String s = formatter.format(date);

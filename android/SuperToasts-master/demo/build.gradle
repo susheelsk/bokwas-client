@@ -1,0 +1,49 @@
+apply plugin: 'android'
+
+
+buildscript{
+	repositories{
+		mavenCentral()
+	}
+	dependencies{
+        classpath 'com.android.tools.build:gradle:0.9.+'
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+	compile project(':supertoasts')
+	compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+	compile 'com.android.support:support-v4:19.0.+'
+}
+
+android {
+	 lintOptions {  
+	      abortOnError false  
+	}
+	compileSdkVersion 19
+	buildToolsVersion "19.0.2"
+
+	defaultConfig {
+		minSdkVersion 8
+		targetSdkVersion 19
+	}
+
+    sourceSets {
+
+        main{
+            java.srcDirs = ['src']
+            manifest.srcFile 'AndroidManifest.xml'
+            res.srcDirs = ['res']
+        }
+
+    }
+
+}

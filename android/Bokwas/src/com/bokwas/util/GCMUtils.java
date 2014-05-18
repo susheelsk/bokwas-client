@@ -20,8 +20,8 @@ public class GCMUtils {
 				.isGooglePlayServicesAvailable(activity);
 		if (resultCode != ConnectionResult.SUCCESS) {
 			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-				GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
-						9000).show();
+//				GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
+//						9000).show();
 			} else {
 				Log.d("GCMRegistrar", "This device is not supported.");
 				return false;
@@ -33,16 +33,19 @@ public class GCMUtils {
 
 	public static void getRegistrationId(final Context context) {
 		new AsyncTask<String, Void, Boolean>() {
-			
+
 			private String regId = null;
 
 			@Override
 			protected void onPostExecute(Boolean result) {
 				super.onPostExecute(result);
 				if (regId != null) {
-					new UpdateGcmRegId(context, UserDataStore.getStore()
-							.getUserId(), UserDataStore.getStore()
-							.getAccessKey(), regId, null).execute("");
+					if (UserDataStore.getStore().isGcmUpdated() == false
+							&& UserDataStore.getStore().getAccessKey() != null) {
+						new UpdateGcmRegId(context, UserDataStore.getStore()
+								.getUserId(), UserDataStore.getStore()
+								.getAccessKey(), regId, null).execute("");
+					}
 				}
 			}
 
