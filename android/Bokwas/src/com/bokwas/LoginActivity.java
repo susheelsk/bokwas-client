@@ -54,6 +54,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		finish();
 	}
 
+	@SuppressWarnings("unused")
 	private void getFriendsAndStore() {
 		pdia = new ProgressDialog(this);
 		pdia.setCancelable(false);

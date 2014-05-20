@@ -8,7 +8,6 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bokwas.apirequests.AddPostsApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
@@ -16,6 +15,9 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class NewPostActivity extends Activity implements OnClickListener {
 
@@ -82,14 +84,14 @@ public class NewPostActivity extends Activity implements OnClickListener {
 								superActivityToast.dismiss();
 							}
 							if (status) {
-								Toast.makeText(NewPostActivity.this,
-										"Post added!", Toast.LENGTH_SHORT)
+								Crouton.makeText(NewPostActivity.this,
+										"Post added!", Style.INFO)
 										.show();
 								moveToHomescreen();
 							} else {
-								Toast.makeText(NewPostActivity.this,
+								Crouton.makeText(NewPostActivity.this,
 										"Couldn't add post. Try again",
-										Toast.LENGTH_SHORT).show();
+										Style.ALERT).show();
 							}
 						}
 					}).execute("");

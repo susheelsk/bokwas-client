@@ -1,10 +1,13 @@
 package com.bokwas.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -36,25 +39,40 @@ public class BokwasHttpClient {
 		return responseString;
 	}
 
-	public static String getData(String url, List<BasicNameValuePair> params)
-			throws Exception {
-		HttpClient httpclient = new DefaultHttpClient();
+	public static String getData(String url, List<BasicNameValuePair> params) {
+		String responseString;
+		try {
+			HttpClient httpclient = new DefaultHttpClient();
 
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		for (BasicNameValuePair pair : params) {
-			nameValuePairs.add(pair);
+			if (params != null) {
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				for (BasicNameValuePair pair : params) {
+					nameValuePairs.add(pair);
+				}
+
+				String paramString = URLEncodedUtils.format(nameValuePairs,
+						"utf-8");
+				url += paramString;
+			}
+			HttpGet httpGet = new HttpGet(url);
+
+			HttpResponse response = httpclient.execute(httpGet);
+			responseString = EntityUtils
+					.toString(response.getEntity(), "UTF-8");
+			Log.d("BokwasHttpClient" + url, "Response : " + responseString);
+			return responseString;
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		String paramString = URLEncodedUtils.format(nameValuePairs, "utf-8");
-		url += paramString;
-		HttpGet httpGet = new HttpGet(url);
-
-		HttpResponse response = httpclient.execute(httpGet);
-		String responseString = EntityUtils.toString(response.getEntity(),
-				"UTF-8");
-		Log.d("doGet : " + url, "Response : " + responseString);
-		return responseString;
-
+		return "";
 	}
 
 }

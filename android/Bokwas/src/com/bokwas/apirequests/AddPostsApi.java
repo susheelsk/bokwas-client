@@ -12,6 +12,7 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.AddPostResponse;
 import com.bokwas.response.Comment;
+import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.AppData;
 import com.bokwas.util.BokwasHttpClient;
@@ -49,7 +50,8 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 					response, AddPostResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				List<Comment> comments = new ArrayList<Comment>();
-				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, "", personId, true, comments);
+				List<Likes> likes = new ArrayList<Likes>();
+				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, likes, personId, true, comments);
 				UserDataStore.getStore().addPost(post);
 				UserDataStore.getStore().sortPosts();
 				UserDataStore.getStore().save(activity);

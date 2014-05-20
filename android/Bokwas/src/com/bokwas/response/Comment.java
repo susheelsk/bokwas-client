@@ -1,5 +1,8 @@
 package com.bokwas.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Comment {
@@ -10,12 +13,12 @@ public class Comment {
 	@SerializedName("message")
 	private String commentText;
 	@SerializedName("likes")
-	private String likes;
+	private List<Likes> likes = new ArrayList<Likes>();
 	@SerializedName("commented_by")
 	private String commentedBy;
 
 	public Comment(String commentId, long timestamp, String commentText,
-			String likes, String commentedBy) {
+			List<Likes> likes, String commentedBy) {
 		super();
 		this.commentId = commentId;
 		this.timestamp = timestamp;
@@ -48,11 +51,11 @@ public class Comment {
 		this.commentText = commentText;
 	}
 
-	public String getLikes() {
+	public List<Likes> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(String likes) {
+	public void setLikes(List<Likes> likes) {
 		this.likes = likes;
 	}
 
@@ -63,13 +66,32 @@ public class Comment {
 	public void setCommentedBy(String commentedBy) {
 		this.commentedBy = commentedBy;
 	}
+	
+	public boolean isAlreadyLiked(String id) {
+		for(Likes like : getLikes()) {
+			if(like.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Likes getLikes(String id) {
+		for(Likes like : getLikes()) {
+			if(like.getId().equals(id)) {
+				return like;
+			}
+		}
+		return null;
+	}
 
-	public void addLikes(String personId) {
-		String likes = getLikes();
-		if(likes.contains(personId)) {
+	public void addLikes(String personId,String name) {
+		if(isAlreadyLiked(personId)) {
+			getLikes().remove(getLikes(personId));
 			return;
 		}
-		likes += personId + ",";
+		List<Likes>likes = getLikes();
+		likes.add(new Likes(personId, name));
 		setLikes(likes);
 	}
 

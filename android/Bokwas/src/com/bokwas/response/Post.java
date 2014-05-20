@@ -18,7 +18,7 @@ public class Post {
 	@SerializedName("message")
 	private String postText;
 	@SerializedName("likes")
-	private String likes;
+	private List<Likes> likes = new ArrayList<Likes>();
 	@SerializedName("posted_by")
 	private String postedBy;
 	@SerializedName("isBokwasPost")
@@ -78,11 +78,11 @@ public class Post {
 		this.postText = postText;
 	}
 
-	public String getLikes() {
+	public List<Likes> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(String likes) {
+	public void setLikes(List<Likes> likes) {
 		this.likes = likes;
 	}
 
@@ -124,17 +124,36 @@ public class Post {
 		comments.add(comment);
 	}
 	
-	public void addLikes(String personId) {
-		String likes = getLikes();
-		if(likes.contains(personId)) {
+	public boolean isAlreadyLiked(String id) {
+		for(Likes like : getLikes()) {
+			if(like.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Likes getLikes(String id) {
+		for(Likes like : getLikes()) {
+			if(like.getId().equals(id)) {
+				return like;
+			}
+		}
+		return null;
+	}
+	
+	public void addLikes(String personId,String name) {
+		if(isAlreadyLiked(personId)) {
+			getLikes().remove(getLikes(personId));
 			return;
 		}
-		likes += personId + ",";
+		List<Likes>likes = getLikes();
+		likes.add(new Likes(personId, name));
 		setLikes(likes);
 	}
 
 	public Post(String postId, long timestamp,long updatedTime, String postText,
-			String likes, String postedBy, boolean isBokwasPost,
+			List<Likes> likes, String postedBy, boolean isBokwasPost,
 			List<Comment> comments) {
 		super();
 		this.postId = postId;

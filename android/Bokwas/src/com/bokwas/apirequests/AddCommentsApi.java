@@ -12,6 +12,7 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.AddCommentResponse;
 import com.bokwas.response.Comment;
+import com.bokwas.response.Likes;
 import com.bokwas.util.AppData;
 import com.bokwas.util.BokwasHttpClient;
 import com.google.gson.Gson;
@@ -54,7 +55,8 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean>{
 					response, AddCommentResponse.class);
 			if(apiResponse.status.statusCode == 200) {
 				UserDataStore.getStore().getPost(postId).setUpdatedTime(System.currentTimeMillis());
-				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis(), commentText, "", personId);
+				List<Likes> likes = new ArrayList<Likes>();
+				Comment comment = new Comment(apiResponse.commentId, System.currentTimeMillis(), commentText, likes, personId);
 				UserDataStore.getStore().getPost(postId).addComment(comment);
 				UserDataStore.getStore().save(activity);
 				return true;

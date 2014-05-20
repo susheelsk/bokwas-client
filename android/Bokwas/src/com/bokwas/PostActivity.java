@@ -2,6 +2,7 @@ package com.bokwas;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -12,19 +13,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.FbProfilePicBatchApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.CommentsDialog;
+import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class PostActivity extends Activity{
 	
@@ -66,12 +70,9 @@ public class PostActivity extends Activity{
 		TextView commentSize = (TextView) findViewById(R.id.post_comment_number);
 		commentSize.setText(String.valueOf(post.getComments().size()));
 		TextView likeSize = (TextView) findViewById(R.id.post_like_number);
-		String temp = post.getLikes();
-		String[] likes = null;
-		if (temp != null && !temp.trim().equals("") && !temp.trim().equals(",")) {
-			temp = method(temp);
-			likes = temp.split(",");
-			likeSize.setText(String.valueOf(likes.length));
+		List<Likes> likes = post.getLikes();
+		if (likes.size() > 0) {
+			likeSize.setText(String.valueOf(likes.size()));
 		} else {
 			likeSize.setText(String.valueOf(0));
 		}
@@ -132,13 +133,20 @@ public class PostActivity extends Activity{
 		
 		findViewById(R.id.post_like_button).setOnClickListener(new OnClickListener() {
 			
+			private boolean isLike = true;
+			
 			@Override
 			public void onClick(View v) {
 
 				final SuperActivityToast superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
 				superActivityToast.setIndeterminate(true);
 				superActivityToast.setProgressIndeterminate(true);
-				superActivityToast.setText("Liking the post");
+				if(post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+					isLike = false;
+					superActivityToast.setText("Unliking the post");
+				}else {
+					superActivityToast.setText("Liking the post");
+				}
 				superActivityToast.show();
 //				final ProgressDialog pdia = new ProgressDialog(PostActivity.this);
 //				pdia.setMessage("Liking the post");
@@ -155,14 +163,19 @@ public class PostActivity extends Activity{
 									superActivityToast.dismiss();
 								}
 								if (status) {
-									Toast.makeText(PostActivity.this, "Post liked!",
-											Toast.LENGTH_SHORT).show();
+									if(isLike) {
+									Crouton.makeText(PostActivity.this, "Post liked!",
+											Style.INFO).show();
+									}else {
+										Crouton.makeText(PostActivity.this, "Post unliked!",
+												Style.INFO).show();
+									}
 									setupUI();
 								} else {
-									Toast.makeText(
+									Crouton.makeText(
 											PostActivity.this,
 											"Post couldn't be liked. Try again",
-											Toast.LENGTH_SHORT).show();
+											Style.ALERT).show();
 								}
 							}
 						}).execute("");
@@ -181,11 +194,11 @@ public class PostActivity extends Activity{
 		finish();
 	}
 	
-	private String method(String str) {
-		if (str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
-			str = str.substring(0, str.length() - 1);
-		}
-		return str;
-	}
+//	private String method(String str) {
+//		if (str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
+//			str = str.substring(0, str.length() - 1);
+//		}
+//		return str;
+//	}
 
 }
