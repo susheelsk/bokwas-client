@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bokwas.PostActivity;
 import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
@@ -22,6 +23,7 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 
@@ -122,21 +124,25 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 			.setBackgroundResource(R.drawable.like_icon);
 		}
 
-		if (comment.getCommentedBy().equals(
-				UserDataStore.getStore().getUserId())) {
-			holder.name.setText(UserDataStore.getStore().getBokwasName());
-			String avatarId = String.valueOf(UserDataStore.getStore()
-					.getAvatarId());
-			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
-					GeneralUtil.getAvatarResourceId(avatarId), activity));
-		} else {
-			holder.name.setText(UserDataStore.getStore()
-					.getFriend(comment.getCommentedBy()).getBokwasName());
-			String avatarId = UserDataStore.getStore()
-					.getFriend(comment.getCommentedBy()).getBokwasAvatarId();
-			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
-					GeneralUtil.getAvatarResourceId(avatarId), activity));
-		}
+//		if (comment.getCommentedBy().equals(
+//				UserDataStore.getStore().getUserId())) {
+//			holder.name.setText(UserDataStore.getStore().getBokwasName());
+//			String avatarId = String.valueOf(UserDataStore.getStore()
+//					.getAvatarId());
+//			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
+//					GeneralUtil.getAvatarResourceId(avatarId), activity));
+//		} else {
+//			holder.name.setText(UserDataStore.getStore()
+//					.getFriend(comment.getCommentedBy()).getBokwasName());
+//			String avatarId = UserDataStore.getStore()
+//					.getFriend(comment.getCommentedBy()).getBokwasAvatarId();
+//			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
+//					GeneralUtil.getAvatarResourceId(avatarId), activity));
+//		}
+		
+		holder.name.setText(comment.getBokwasName());
+		holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
+					GeneralUtil.getAvatarResourceId(comment.getAvatarId()), activity));
 		
 		holder.likeLayout.setOnClickListener(new OnClickListener() {
 			
@@ -150,15 +156,13 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 				
 				if(comment.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 					isLike = false;
-					superActivityToast.setText("Unliking the comment");
+//					superActivityToast.setText("Unliking the comment");
+					NotificationProgress.showNotificationProgress(activity, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				}else {
-					superActivityToast.setText("Liking the comment");
+//					superActivityToast.setText("Liking the comment");
+					NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				}
-				superActivityToast.show();
-//				final ProgressDialog pdia = new ProgressDialog(activity);
-//				pdia.setMessage("Liking the post");
-//				pdia.setCancelable(false);
-//				pdia.show();
+//				superActivityToast.show();
 				new AddLikesApi(activity, UserDataStore.getStore()
 						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), comment
@@ -166,9 +170,10 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 
 					@Override
 					public void onAPIStatus(boolean status) {
-						if (superActivityToast.isShowing()) {
-							superActivityToast.dismiss();
-						}
+//						if (superActivityToast.isShowing()) {
+//							superActivityToast.dismiss();
+//						}
+						NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 						if (status) {
 //							Toast.makeText(activity, "Post liked!",
 //									Toast.LENGTH_SHORT).show();

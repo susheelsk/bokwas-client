@@ -27,7 +27,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 	private APIListener listener;
 
 	public AddPostsApi(Activity activity, String accessKey, String personId,
-			String postText,APIListener listener) {
+			String postText, APIListener listener) {
 		super();
 		this.activity = activity;
 		this.accessKey = accessKey;
@@ -39,34 +39,37 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
-		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
+		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
 		apiUrl = AppData.baseURL + "/addpost";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("post_text", postText));
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
-			AddPostResponse apiResponse = new Gson().fromJson(
-					response, AddPostResponse.class);
-			if(apiResponse.status.statusCode == 200) {
+			AddPostResponse apiResponse = new Gson().fromJson(response,
+					AddPostResponse.class);
+			if (apiResponse.status.statusCode == 200) {
 				List<Comment> comments = new ArrayList<Comment>();
 				List<Likes> likes = new ArrayList<Likes>();
-				Post post = new Post(apiResponse.postId, System.currentTimeMillis(),System.currentTimeMillis(), postText, likes, personId, true, comments);
+				Post post = new Post(apiResponse.postId,
+						System.currentTimeMillis(), System.currentTimeMillis(),
+						postText, likes, personId, true, comments,
+						UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()),"");
 				UserDataStore.getStore().addPost(post);
 				UserDataStore.getStore().sortPosts();
 				UserDataStore.getStore().save(activity);
 				return true;
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	@Override
 	protected void onPostExecute(Boolean result) {
 		super.onPostExecute(result);
-		if(listener!=null) {
+		if (listener != null) {
 			listener.onAPIStatus(result);
 		}
 	}

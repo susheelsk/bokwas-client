@@ -27,8 +27,18 @@ public class Post {
 	private String name;
 	@SerializedName("avatar_id")
 	private String avatarId;
+	@SerializedName("profile_picture")
+	private String profilePicture;
 	@SerializedName("comments")
 	private List<Comment> comments = new ArrayList<Comment>();
+	
+	public String getProfilePicture() {
+		return profilePicture;
+	}
+
+	public void setProfilePicture(String profilePicture) {
+		this.profilePicture = profilePicture;
+	}
 
 	public String getName() {
 		return name;
@@ -154,7 +164,7 @@ public class Post {
 
 	public Post(String postId, long timestamp,long updatedTime, String postText,
 			List<Likes> likes, String postedBy, boolean isBokwasPost,
-			List<Comment> comments) {
+			List<Comment> comments,String name, String avatarId,String profilePic) {
 		super();
 		this.postId = postId;
 		this.timestamp = timestamp;
@@ -164,6 +174,9 @@ public class Post {
 		this.postedBy = postedBy;
 		this.isBokwasPost = isBokwasPost;
 		this.comments = comments;
+		this.name = name;
+		this.avatarId = avatarId;
+		this.profilePicture = profilePic;
 	}
 	
 	private class CommentComparator implements Comparator<Comment> {

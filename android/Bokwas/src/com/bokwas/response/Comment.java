@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 public class Comment {
 	@SerializedName("comment_id")
 	private String commentId;
+	@SerializedName("bokwas_name")
+	private String bokwasName;
+	@SerializedName("avatar_id")
+	private String avatarId;
 	@SerializedName("created_time")
 	private long timestamp;
 	@SerializedName("message")
@@ -18,13 +22,31 @@ public class Comment {
 	private String commentedBy;
 
 	public Comment(String commentId, long timestamp, String commentText,
-			List<Likes> likes, String commentedBy) {
+			List<Likes> likes, String commentedBy,String bokwasName,String avatarId) {
 		super();
 		this.commentId = commentId;
 		this.timestamp = timestamp;
 		this.commentText = commentText;
 		this.likes = likes;
 		this.commentedBy = commentedBy;
+		this.bokwasName = bokwasName;
+		this.avatarId = avatarId;
+	}
+
+	public String getBokwasName() {
+		return bokwasName;
+	}
+
+	public void setBokwasName(String bokwasName) {
+		this.bokwasName = bokwasName;
+	}
+
+	public String getAvatarId() {
+		return avatarId;
+	}
+
+	public void setAvatarId(String avatarId) {
+		this.avatarId = avatarId;
 	}
 
 	public String getCommentId() {

@@ -17,8 +17,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bokwas.PostActivity;
 import com.bokwas.R;
+import com.bokwas.PostActivity;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
@@ -27,6 +27,7 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
@@ -111,54 +112,33 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		holder.time.setText(dateString);
 		holder.commentSize.setText(String.valueOf(post.getComments().size()));
 		List<Likes> likes = post.getLikes();
-		if (likes.size()>0) {
+		if (likes.size() > 0) {
 			holder.likeSize.setText(String.valueOf(likes.size()));
 		} else {
 			holder.likeSize.setText(String.valueOf(0));
 		}
-		
-		if(post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-//			holder.likeButton.setBackgroundColor(Color.GRAY);
-//			holder.likeButton.setClickable(false);
-//			holder.likeButton.setEnabled(false);
-			holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
-		}else {
-			holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
+
+		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+			// holder.likeButton.setBackgroundColor(Color.GRAY);
+			// holder.likeButton.setClickable(false);
+			// holder.likeButton.setEnabled(false);
+			holder.likeButton.findViewById(R.id.like_image)
+					.setBackgroundResource(R.drawable.facebook_icon_enable);
+		} else {
+			holder.likeButton.findViewById(R.id.like_image)
+					.setBackgroundResource(R.drawable.like_icon);
 		}
 
 		if (post.isBokwasPost()) {
-			if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
-				holder.name.setText(UserDataStore.getStore().getBokwasName());
-				String avatarId = String.valueOf(UserDataStore.getStore()
-						.getAvatarId());
-				holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
-						GeneralUtil.getAvatarResourceId(avatarId), activity));
-			} else {
-				holder.name.setText(post.getName());
-				String avatarId = post.getAvatarId();
-				holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
-						GeneralUtil.getAvatarResourceId(avatarId), activity));
-			}
-
+			holder.name.setText(post.getName());
+			String avatarId = post.getAvatarId();
+			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
+					GeneralUtil.getAvatarResourceId(avatarId), activity));
 		} else {
-			if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
-				holder.name.setText(UserDataStore.getStore().getFbName());
-				UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
-						.getStore().getFbPicLink(), null, 60000 * 100);
-			} else {
-				Log.d("HomeScreenPostsListAdapter","postedBy : "+post.getPostedBy());
-				holder.name.setText(post.getName());
-				
-				if(UserDataStore.getStore().getFriend(post.getPostedBy())!=null) {
-					UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
-							.getStore().getFriend(post.getPostedBy())
-							.getFbPicLink(), null, 60000 * 100);
-				}
-				
-//				UrlImageViewHelper.setUrlDrawable(holder.picture, UserDataStore
-//						.getStore().getFriend(post.getPostedBy())
-//						.getFbPicLink(), null, 60000 * 100);
-			}
+			String url = post.getProfilePicture();
+			holder.name.setText(post.getName());
+			UrlImageViewHelper.setUrlDrawable(holder.picture, url, null,
+					60000 * 100);
 		}
 
 		holder.commentButton.setOnClickListener(new OnClickListener() {
@@ -168,7 +148,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				CommentsDialog commentsDialog = new CommentsDialog(activity,
 						posts.get(position).getComments(), post);
 				commentsDialog.setOnDismissListener(new OnDismissListener() {
-					
+
 					@Override
 					public void onDismiss(DialogInterface dialog) {
 						notifyDataSetChanged();
@@ -179,22 +159,22 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		});
 		holder.likeButton.setOnClickListener(new OnClickListener() {
 			private boolean isLike = true;
+
 			@Override
 			public void onClick(View v) {
-				final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
+				final SuperActivityToast superActivityToast = new SuperActivityToast(
+						activity, SuperToast.Type.PROGRESS);
 				superActivityToast.setIndeterminate(true);
 				superActivityToast.setProgressIndeterminate(true);
-				if(post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+				if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 					isLike = false;
-					superActivityToast.setText("Unliking the post");
-				}else {
-					superActivityToast.setText("Liking the post");
+//					superActivityToast.setText("Unliking the post");
+					NotificationProgress.showNotificationProgress(activity, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+				} else {
+//					superActivityToast.setText("Liking the post");
+					NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				}
-				superActivityToast.show();
-//				final ProgressDialog pdia = new ProgressDialog(activity);
-//				pdia.setMessage("Liking the post");
-//				pdia.setCancelable(false);
-//				pdia.show();
+//				superActivityToast.show();
 				new AddLikesApi(activity, UserDataStore.getStore()
 						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), null,
@@ -202,16 +182,19 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if (superActivityToast.isShowing()) {
-									superActivityToast.dismiss();
-								}
+//								if (superActivityToast.isShowing()) {
+//									superActivityToast.dismiss();
+//								}
+								NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 								if (status) {
-									if(isLike) {
-									Crouton.makeText(activity, "Post liked!",
-											Style.INFO).show();
-									}else {
-										Crouton.makeText(activity, "Post unliked!",
-												Style.INFO).show();
+									if (isLike) {
+										Crouton.makeText(activity,
+												"Post liked!", Style.INFO)
+												.show();
+									} else {
+										Crouton.makeText(activity,
+												"Post unliked!", Style.INFO)
+												.show();
 									}
 									notifyDataSetChanged();
 								} else {
@@ -224,20 +207,21 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 						}).execute("");
 			}
 		});
-		
+
 		rowView.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(activity,PostActivity.class);
+				Intent intent = new Intent(activity, PostActivity.class);
 				intent.putExtra("postId", post.getPostId());
 				activity.startActivity(intent);
 				activity.finish();
-				activity.overridePendingTransition(R.anim.activity_slide_in_left,
+				activity.overridePendingTransition(
+						R.anim.activity_slide_in_left,
 						R.anim.activity_slide_out_left);
 			}
 		});
-		
+
 		return rowView;
 	}
 

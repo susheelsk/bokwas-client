@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bokwas.apirequests.AddLikesApi;
-import com.bokwas.apirequests.FbProfilePicBatchApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.CommentsDialog;
@@ -23,6 +22,7 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
@@ -48,15 +48,15 @@ public class PostActivity extends Activity{
 		setupUI();
 		ArrayList<Post> postList = new ArrayList<Post>();
 		postList.add(post);
-		new FbProfilePicBatchApi(
-				postList,
-				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
-
-					@Override
-					public void onDownloadComplete() {
-						setupUI();
-					}
-				}).execute("");
+//		new FbProfilePicBatchApi(
+//				postList,
+//				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
+//
+//					@Override
+//					public void onDownloadComplete() {
+//						setupUI();
+//					}
+//				}).execute("");
 
 	}
 
@@ -94,22 +94,8 @@ public class PostActivity extends Activity{
 			}
 
 		} else {
-			if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
-				name.setText(UserDataStore.getStore().getFbName());
-				UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
-						.getStore().getFbPicLink(), null, 60000 * 100);
-			} else {
-
-				name.setText(post.getName());
-				if(UserDataStore.getStore().getFriend(post.getPostedBy())!=null) {
-					UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
-							.getStore().getFriend(post.getPostedBy())
-							.getFbPicLink(), null, 60000 * 100);
-				}
-//				UrlImageViewHelper.setUrlDrawable(picture, UserDataStore
-//						.getStore().getFriend(post.getPostedBy())
-//						.getFbPicLink(), null, 60000 * 100);
-			}
+			name.setText(post.getName());
+			UrlImageViewHelper.setUrlDrawable(picture, post.getProfilePicture(), null, 60000 * 100);
 		}
 	}
 
@@ -143,15 +129,13 @@ public class PostActivity extends Activity{
 				superActivityToast.setProgressIndeterminate(true);
 				if(post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 					isLike = false;
-					superActivityToast.setText("Unliking the post");
+//					superActivityToast.setText("Unliking the post");
+					NotificationProgress.showNotificationProgress(PostActivity.this, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				}else {
-					superActivityToast.setText("Liking the post");
+//					superActivityToast.setText("Liking the post");
+					NotificationProgress.showNotificationProgress(PostActivity.this, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				}
-				superActivityToast.show();
-//				final ProgressDialog pdia = new ProgressDialog(PostActivity.this);
-//				pdia.setMessage("Liking the post");
-//				pdia.setCancelable(false);
-//				pdia.show();
+//				superActivityToast.show();
 				new AddLikesApi(PostActivity.this, UserDataStore.getStore()
 						.getAccessKey(), post.getPostId(), UserDataStore
 						.getStore().getUserId(), post.getPostedBy(), null,
@@ -159,9 +143,10 @@ public class PostActivity extends Activity{
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if (superActivityToast.isShowing()) {
-									superActivityToast.dismiss();
-								}
+//								if (superActivityToast.isShowing()) {
+//									superActivityToast.dismiss();
+//								}
+								NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 								if (status) {
 									if(isLike) {
 									Crouton.makeText(PostActivity.this, "Post liked!",

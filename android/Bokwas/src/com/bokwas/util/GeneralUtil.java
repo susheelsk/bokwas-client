@@ -1,12 +1,21 @@
 package com.bokwas.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.bokwas.R;
 
 public class GeneralUtil {
+
+	public static final int NOTIFICATION_PROGRESS_NEWPOST = 501;
+	public static final int NOTIFICATION_PROGRESS_NEWCOMMENT = 502;
+	public static final int NOTIFICATION_PROGRESS_ADDLIKES = 503;
 
 	public static int getAvatarResourceId(String avatarId) {
 		try {
@@ -92,9 +101,28 @@ public class GeneralUtil {
 	public static Bitmap getImageBitmap(int id, Context context) {
 		Bitmap srcBmp = BitmapFactory
 				.decodeResource(context.getResources(), id);
-		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0,
-				srcBmp.getWidth(), 3*srcBmp.getHeight()/4);
+		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(),
+				3 * srcBmp.getHeight() / 4);
 		return modBmp;
 	}
-	
+
+	public static void showPopupMenu(final Activity activity, View v,int menuId) {
+		PopupMenu popupMenu = new PopupMenu(activity, v);
+		popupMenu.getMenuInflater().inflate(menuId,
+				popupMenu.getMenu());
+
+		popupMenu
+				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						Toast.makeText(activity, item.toString(),
+								Toast.LENGTH_LONG).show();
+						return true;
+					}
+				});
+
+		popupMenu.show();
+	}
+
 }

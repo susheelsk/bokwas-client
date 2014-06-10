@@ -13,8 +13,7 @@ import com.bokwas.apirequests.AddPostsApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
-import com.github.johnpersano.supertoasts.SuperActivityToast;
-import com.github.johnpersano.supertoasts.SuperToast;
+import com.bokwas.util.NotificationProgress;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -64,25 +63,24 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if (editText.getText().toString().trim() != null
 				&& !editText.getText().toString().trim().equals("")) {
-//			final ProgressDialog pdia = new ProgressDialog(NewPostActivity.this);
-//			pdia.setMessage("Adding new post...");
-//			pdia.setCancelable(false);
-//			pdia.show();
+//			final SuperActivityToast superActivityToast = new SuperActivityToast(NewPostActivity.this, SuperToast.Type.PROGRESS);
+//			superActivityToast.setIndeterminate(true);
+//			superActivityToast.setProgressIndeterminate(true);
+//			superActivityToast.setText("Adding new post...");
+//			superActivityToast.show();
 			
-			final SuperActivityToast superActivityToast = new SuperActivityToast(NewPostActivity.this, SuperToast.Type.PROGRESS);
-			superActivityToast.setIndeterminate(true);
-			superActivityToast.setProgressIndeterminate(true);
-			superActivityToast.setText("Adding new post...");
-			superActivityToast.show();
+			NotificationProgress.showNotificationProgress(this, "Adding a new post", GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 			new AddPostsApi(this, UserDataStore.getStore().getAccessKey(),
 					UserDataStore.getStore().getUserId(), editText.getText()
 							.toString(), new APIListener() {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-							if (superActivityToast.isShowing()) {
-								superActivityToast.dismiss();
-							}
+//							if (superActivityToast.isShowing()) {
+//								superActivityToast.dismiss();
+//							}
+							
+							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 							if (status) {
 								Crouton.makeText(NewPostActivity.this,
 										"Post added!", Style.INFO)

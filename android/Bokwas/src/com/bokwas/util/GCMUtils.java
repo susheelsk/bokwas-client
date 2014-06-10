@@ -9,25 +9,23 @@ import android.util.Log;
 
 import com.bokwas.apirequests.UpdateGcmRegId;
 import com.bokwas.datasets.UserDataStore;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GCMUtils {
 
 	public static boolean checkPlayServices(Activity activity) {
-		int resultCode = GooglePlayServicesUtil
-				.isGooglePlayServicesAvailable(activity);
-		if (resultCode != ConnectionResult.SUCCESS) {
-			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-//				GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
-//						9000).show();
-			} else {
-				Log.d("GCMRegistrar", "This device is not supported.");
-				return false;
-			}
-			return false;
-		}
+//		int resultCode = GooglePlayServicesUtil
+//				.isGooglePlayServicesAvailable(activity);
+//		if (resultCode != ConnectionResult.SUCCESS) {
+//			if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+////				GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
+////						9000).show();
+//			} else {
+//				Log.d("GCMRegistrar", "This device is not supported.");
+//				return false;
+//			}
+//			return false;
+//		}
 		return true;
 	}
 

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
 
-import com.bokwas.apirequests.FbProfilePicBatchApi;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
@@ -36,15 +35,16 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 				this, UserDataStore.getStore().getPosts());
 		final PullToRefreshListView listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
-		new FbProfilePicBatchApi(
-				UserDataStore.getStore().getPosts(),
-				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
-
-					@Override
-					public void onDownloadComplete() {
-						adapter.notifyDataSetChanged();
-					}
-				}).execute("");
+		// new FbProfilePicBatchApi(
+		// UserDataStore.getStore().getPosts(),
+		// new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload()
+		// {
+		//
+		// @Override
+		// public void onDownloadComplete() {
+		// adapter.notifyDataSetChanged();
+		// }
+		// }).execute("");
 		listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -71,8 +71,9 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 
 	private void setOnClickListeners() {
 		findViewById(R.id.newPostButton).setOnClickListener(this);
+		findViewById(R.id.overflowButton).setOnClickListener(this);
 	}
-
+	
 	@Override
 	public void onClick(View view) {
 		if (view.getId() == R.id.newPostButton) {
@@ -81,6 +82,8 @@ public class HomescreenActivity extends Activity implements OnClickListener {
 			overridePendingTransition(R.anim.activity_slide_in_left,
 					R.anim.activity_slide_out_left);
 			finish();
+		} else if (view.getId() == R.id.overflowButton) {
+			
 		}
 	}
 

@@ -3366,6 +3366,7 @@ com.bokwas.util.GcmBroadcastReceiver
 com.bokwas.util.GcmBroadcastReceiver: GcmBroadcastReceiver()
 com.bokwas.util.GeneralUtil: GeneralUtil()
 com.bokwas.util.LocalStorage: LocalStorage()
+com.bokwas.util.NotificationProgress: NotificationProgress()
 com.bokwas.util.UserDetails: UserDetails()
 com.facebook.AccessTokenSource: com.facebook.AccessTokenSource[] values()
 com.facebook.AccessTokenSource: com.facebook.AccessTokenSource valueOf(java.lang.String)

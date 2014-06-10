@@ -24,6 +24,8 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Post;
 import com.bokwas.ui.CommentsDialogListAdapter;
+import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 
@@ -33,7 +35,6 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 	private List<Comment> comments;
 	private EditText editText;
 	private Post post;
-	private ProgressDialog pdia;
 	private ListView listView;
 	private CommentsDialogListAdapter adapter;
 	private SuperActivityToast superActivityToast;
@@ -62,7 +63,6 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		window.setAttributes(wlp);
 		getWindow().setLayout(width, height);
 
-		pdia = new ProgressDialog(activity);
 		superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
@@ -79,11 +79,11 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		if (view.getId() == R.id.commentButton) {
 			if (editText.getText().toString().trim() != null
 					&& !editText.getText().toString().trim().equals("")) {
-				superActivityToast.setText("Adding comment");
-				superActivityToast.show();
-//				pdia.setMessage("Adding comment");
-//				pdia.setCancelable(false);
-//				pdia.show();
+//				superActivityToast.setText("Adding comment");
+//				superActivityToast.show();
+				
+				NotificationProgress.showNotificationProgress(activity, "Adding a new comment", GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
+				
 				new AddCommentsApi(UserDataStore.getStore().getAccessKey(),
 						post.getPostId(), post.getPostedBy(), editText
 								.getText().toString(), UserDataStore.getStore()
@@ -91,12 +91,10 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 
 							@Override
 							public void onAPIStatus(boolean status) {
-								if(superActivityToast.isShowing()) {
-									superActivityToast.dismiss();
-								}
-//								if (pdia.isShowing()) {
-//									pdia.dismiss();
+//								if(superActivityToast.isShowing()) {
+//									superActivityToast.dismiss();
 //								}
+								NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
 								if (status) {
 									Toast.makeText(activity, "Comment added!",
 											Toast.LENGTH_SHORT).show();
