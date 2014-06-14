@@ -11,9 +11,9 @@
         android:layout_marginTop="2dp"
         android:layout_marginRight="2dp"
         android:id="@+id/overflowButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@android:drawable/ic_menu_more" />
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
 
     <TextView
         android:id="@+id/post_name"

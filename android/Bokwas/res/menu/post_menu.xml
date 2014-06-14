@@ -4,13 +4,13 @@
     <group android:id="@+id/post_popupmenu" >
         <item
             android:id="@+id/post_share"
-            android:title="Home"/>
+            android:title="Share"/>
         <item
             android:id="@+id/post_like"
-            android:title="New Post"/>
+            android:title="Like"/>
         <item
             android:id="@+id/post_comment"
-            android:title="Profile"/>
+            android:title="Comment"/>
     </group>
 
 </menu>

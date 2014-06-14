@@ -1,11 +1,26 @@
 package com.bokwas.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.net.Uri;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -16,7 +31,181 @@ public class GeneralUtil {
 	public static final int NOTIFICATION_PROGRESS_NEWPOST = 501;
 	public static final int NOTIFICATION_PROGRESS_NEWCOMMENT = 502;
 	public static final int NOTIFICATION_PROGRESS_ADDLIKES = 503;
+	
+	public static Bitmap loadBitmapFromView(View view) throws Exception{
+		try {
+			int width = view.getWidth();
+		    int height = view.getHeight();
 
+		    int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+		    int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+
+		    //Cause the view to re-layout
+		    view.measure(measuredWidth, measuredHeight);
+		    view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+		    //Create a bitmap backed Canvas to draw the view into
+		    Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		    Canvas c = new Canvas(b);
+
+		    //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
+		    view.draw(c);
+
+		    return b;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	public static Bitmap getImageBitmap(int id, Context context) {
+		Bitmap srcBmp = BitmapFactory
+				.decodeResource(context.getResources(), id);
+		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(),
+				3 * srcBmp.getHeight() / 4);
+		return modBmp;
+	}
+
+	public static void showPopupMenu(final Activity activity, View v,int menuId) {
+		PopupMenu popupMenu = new PopupMenu(activity, v);
+		popupMenu.getMenuInflater().inflate(menuId,
+				popupMenu.getMenu());
+
+		popupMenu
+				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						Toast.makeText(activity, item.toString(),
+								Toast.LENGTH_LONG).show();
+						return true;
+					}
+				});
+
+		popupMenu.show();
+	}
+	
+	public static void sharePhotoIntent(Activity activity, Bitmap img, String text) {
+		String path = saveImageLocally(activity,img);
+		img = BitmapFactory.decodeFile(path);
+		Intent share = new Intent(Intent.ACTION_SEND);
+		share.setType("image/png");
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		img.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+		java.io.File f = new java.io.File(path);
+		try {
+			f.createNewFile();
+			FileOutputStream fo = new FileOutputStream(f);
+			fo.write(bytes.toByteArray());
+			fo.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Native email client doesn't currently support HTML, but it doesn't
+		// hurt to try in case they fix it
+		share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
+		share.putExtra(Intent.EXTRA_SUBJECT, activity.getResources()
+				.getString(R.string.app_name));
+		share.setType("message/rfc822");
+
+		PackageManager pm = activity.getPackageManager();
+		Intent sendIntent = new Intent(Intent.ACTION_SEND);
+		sendIntent.setType("text/plain");
+
+		Intent openInChooser = Intent.createChooser(share, "Share via");
+
+		List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
+		List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+		for (int i = 0; i < resInfo.size(); i++) {
+			// Extract the label, append it, and repackage it in a LabeledIntent
+			ResolveInfo ri = resInfo.get(i);
+			String packageName = ri.activityInfo.packageName;
+			Log.d("Share", "PackageName : " + packageName);
+			if (packageName.contains("hike")) {
+				share.setPackage(packageName);
+			} else if (packageName.contains("twitter")
+					|| packageName.contains("facebook")
+					|| packageName.contains("whatsapp")
+					|| packageName.contains("hike")
+					|| packageName.contains("plus")
+					|| packageName.contains("naver")
+					|| packageName.contains("tencent")) {
+				Intent intent = new Intent();
+				intent.setComponent(new ComponentName(packageName,
+						ri.activityInfo.name));
+				intent.setAction(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				if (packageName.contains("twitter")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				} else if (packageName.contains("facebook")) {
+					intent.setType("image/*");
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				} else if (packageName.contains("mms")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+				} else if (packageName.contains("android.gm")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_SUBJECT, activity
+							.getResources().getString(R.string.app_name));
+					intent.setType("message/rfc822");
+				} else if (packageName.contains("whatsapp")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+//					intent.putExtra(Intent.EXTRA_TEXT, text);
+					intent.setType("message/rfc822");
+				} else if (packageName.contains("hike")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				} else if (packageName.contains("plus")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				} else if (packageName.contains("naver")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				} else if (packageName.contains("tencent")) {
+					intent.putExtra(Intent.EXTRA_STREAM,
+							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
+				}
+
+				intentList.add(new LabeledIntent(intent, packageName, ri
+						.loadLabel(pm), ri.icon));
+			}
+		}
+
+		// convert intentList to array
+		LabeledIntent[] extraIntents = intentList
+				.toArray(new LabeledIntent[intentList.size()]);
+
+		openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+
+		activity.startActivity(Intent.createChooser(openInChooser,
+				"Share Image"));
+	}
+	
+	private static String saveImageLocally(Activity activity, Bitmap _bitmap) {
+		java.io.File outputFile = null;
+		outputFile = new java.io.File(activity.getExternalFilesDir(null),
+				"temp.png");
+		try {
+			FileOutputStream out = new FileOutputStream(outputFile);
+			_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.close();
+		} catch (Exception e) {
+			// handle exception
+		}
+		return outputFile.getAbsolutePath();
+	}
+	
 	public static int getAvatarResourceId(String avatarId) {
 		try {
 			int id = Integer.parseInt(avatarId);
@@ -96,33 +285,6 @@ public class GeneralUtil {
 			e.printStackTrace();
 		}
 		return R.drawable.avatar_13;
-	}
-
-	public static Bitmap getImageBitmap(int id, Context context) {
-		Bitmap srcBmp = BitmapFactory
-				.decodeResource(context.getResources(), id);
-		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(),
-				3 * srcBmp.getHeight() / 4);
-		return modBmp;
-	}
-
-	public static void showPopupMenu(final Activity activity, View v,int menuId) {
-		PopupMenu popupMenu = new PopupMenu(activity, v);
-		popupMenu.getMenuInflater().inflate(menuId,
-				popupMenu.getMenu());
-
-		popupMenu
-				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
-						Toast.makeText(activity, item.toString(),
-								Toast.LENGTH_LONG).show();
-						return true;
-					}
-				});
-
-		popupMenu.show();
 	}
 
 }

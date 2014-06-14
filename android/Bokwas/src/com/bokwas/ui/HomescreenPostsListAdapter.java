@@ -7,18 +7,19 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bokwas.R;
 import com.bokwas.PostActivity;
+import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
@@ -39,16 +40,24 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 	private Activity activity;
 	private List<Post> posts;
+	private boolean isLike = true;
+	private PostShare postShare;
+
+	public interface PostShare {
+		public void onPostShare(int position);
+	}
 
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
 		notifyDataSetChanged();
 	}
 
-	public HomescreenPostsListAdapter(Activity activity, List<Post> posts) {
+	public HomescreenPostsListAdapter(Activity activity, List<Post> posts,
+			PostShare postShare) {
 		super(activity, R.layout.post_list_item, posts);
 		this.activity = activity;
 		this.posts = posts;
+		this.postShare = postShare;
 	}
 
 	static class ViewHolder {
@@ -58,6 +67,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		public TextView commentSize;
 		public TextView likeSize;
 		public ImageView picture;
+		public ImageView optionsButton;
 		public RelativeLayout commentButton;
 		public RelativeLayout likeButton;
 	}
@@ -78,7 +88,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 	}
 
 	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, final View convertView,
+			ViewGroup parent) {
 		View rowView = convertView;
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
@@ -94,13 +105,14 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 					.findViewById(R.id.post_like_number);
 			viewHolder.picture = (ImageView) rowView
 					.findViewById(R.id.post_profile_pic);
+			viewHolder.optionsButton = (ImageView) rowView
+					.findViewById(R.id.overflowButton);
 			viewHolder.commentButton = (RelativeLayout) rowView
 					.findViewById(R.id.post_comment_button);
 			viewHolder.likeButton = (RelativeLayout) rowView
 					.findViewById(R.id.post_like_button);
 			rowView.setTag(viewHolder);
 		}
-
 		ViewHolder holder = (ViewHolder) rowView.getTag();
 		final Post post = posts.get(position);
 
@@ -141,6 +153,64 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 					60000 * 100);
 		}
 
+		holder.optionsButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(final View view) {
+				PopupMenu popup = new PopupMenu(activity, view);
+				popup.getMenuInflater().inflate(R.menu.post_menu,
+						popup.getMenu());
+				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+					boolean isLike = true;
+
+					@Override
+					public boolean onMenuItemClick(MenuItem item) {
+						switch (item.getItemId()) {
+						case R.id.post_share:
+
+							try {
+								// Bitmap bitmap =
+								// GeneralUtil.loadBitmapFromView(duplicate);
+								// GeneralUtil.sharePhotoIntent(activity,
+								// bitmap, "Check out what I saw on Bokwas");
+								if (postShare != null) {
+									postShare.onPostShare(position);
+								}
+							} catch (Exception e) {
+								Crouton.makeText(activity,
+										"Post couldn't be shared. Try again",
+										Style.ALERT).show();
+								e.printStackTrace();
+							}
+
+							break;
+						case R.id.post_like:
+							likePost(post);
+							break;
+						case R.id.post_comment:
+							CommentsDialog commentsDialog = new CommentsDialog(
+									activity,
+									posts.get(position).getComments(), post);
+							commentsDialog
+									.setOnDismissListener(new OnDismissListener() {
+
+										@Override
+										public void onDismiss(
+												DialogInterface dialog) {
+											notifyDataSetChanged();
+										}
+									});
+							commentsDialog.show();
+							break;
+						}
+						return true;
+					}
+
+				});
+				popup.show();
+			}
+		});
+
 		holder.commentButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -162,49 +232,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 			@Override
 			public void onClick(View v) {
-				final SuperActivityToast superActivityToast = new SuperActivityToast(
-						activity, SuperToast.Type.PROGRESS);
-				superActivityToast.setIndeterminate(true);
-				superActivityToast.setProgressIndeterminate(true);
-				if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-					isLike = false;
-//					superActivityToast.setText("Unliking the post");
-					NotificationProgress.showNotificationProgress(activity, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-				} else {
-//					superActivityToast.setText("Liking the post");
-					NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-				}
-//				superActivityToast.show();
-				new AddLikesApi(activity, UserDataStore.getStore()
-						.getAccessKey(), post.getPostId(), UserDataStore
-						.getStore().getUserId(), post.getPostedBy(), null,
-						new APIListener() {
-
-							@Override
-							public void onAPIStatus(boolean status) {
-//								if (superActivityToast.isShowing()) {
-//									superActivityToast.dismiss();
-//								}
-								NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-								if (status) {
-									if (isLike) {
-										Crouton.makeText(activity,
-												"Post liked!", Style.INFO)
-												.show();
-									} else {
-										Crouton.makeText(activity,
-												"Post unliked!", Style.INFO)
-												.show();
-									}
-									notifyDataSetChanged();
-								} else {
-									Crouton.makeText(
-											activity,
-											"Post couldn't be liked. Try again",
-											Style.ALERT).show();
-								}
-							}
-						}).execute("");
+				likePost(post);
 			}
 		});
 
@@ -223,6 +251,54 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		});
 
 		return rowView;
+	}
+
+	private void likePost(Post post) {
+		final SuperActivityToast superActivityToast = new SuperActivityToast(
+				activity, SuperToast.Type.PROGRESS);
+		superActivityToast.setIndeterminate(true);
+		superActivityToast.setProgressIndeterminate(true);
+		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+			isLike = false;
+			// superActivityToast.setText("Unliking the post");
+			NotificationProgress.showNotificationProgress(activity,
+					"Unliking the post",
+					GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+		} else {
+			// superActivityToast.setText("Liking the post");
+			NotificationProgress.showNotificationProgress(activity,
+					"Liking the post",
+					GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+		}
+		// superActivityToast.show();
+		new AddLikesApi(activity, UserDataStore.getStore().getAccessKey(),
+				post.getPostId(), UserDataStore.getStore().getUserId(),
+				post.getPostedBy(), null, new APIListener() {
+
+					@Override
+					public void onAPIStatus(boolean status) {
+						// if (superActivityToast.isShowing()) {
+						// superActivityToast.dismiss();
+						// }
+						NotificationProgress
+								.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+						if (status) {
+							if (isLike) {
+								Crouton.makeText(activity, "Post liked!",
+										Style.INFO).show();
+							} else {
+								Crouton.makeText(activity, "Post unliked!",
+										Style.INFO).show();
+							}
+							notifyDataSetChanged();
+						} else {
+							Crouton.makeText(activity,
+									"Post couldn't be liked. Try again",
+									Style.ALERT).show();
+						}
+						isLike = true;
+					}
+				}).execute("");
 	}
 
 	public String method(String str) {

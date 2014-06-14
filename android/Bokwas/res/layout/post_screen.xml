@@ -9,6 +9,7 @@
         layout="@layout/header_main" />
     
 <RelativeLayout
+    android:id="@+id/post_relative_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="48dp"
@@ -16,6 +17,7 @@
     android:layout_marginRight="1dp"
     android:background="@drawable/rectangle_white_stroke"
     android:orientation="vertical" >
+    
     
     <TextView
         android:id="@+id/post_name"
