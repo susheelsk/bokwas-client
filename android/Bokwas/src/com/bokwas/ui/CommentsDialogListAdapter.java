@@ -75,7 +75,7 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 		View rowView = convertView;
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.post_list_item_new, null);
+			rowView = inflater.inflate(R.layout.comment_list_item, null);
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) rowView.findViewById(R.id.post_name);
 			viewHolder.postText = (TextView) rowView

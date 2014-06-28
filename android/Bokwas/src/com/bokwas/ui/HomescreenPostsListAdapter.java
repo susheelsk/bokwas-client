@@ -215,16 +215,23 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 			@Override
 			public void onClick(View v) {
-				CommentsDialog commentsDialog = new CommentsDialog(activity,
-						posts.get(position).getComments(), post);
-				commentsDialog.setOnDismissListener(new OnDismissListener() {
-
-					@Override
-					public void onDismiss(DialogInterface dialog) {
-						notifyDataSetChanged();
-					}
-				});
-				commentsDialog.show();
+//				CommentsDialog commentsDialog = new CommentsDialog(activity,
+//						posts.get(position).getComments(), post);
+//				commentsDialog.setOnDismissListener(new OnDismissListener() {
+//
+//					@Override
+//					public void onDismiss(DialogInterface dialog) {
+//						notifyDataSetChanged();
+//					}
+//				});
+//				commentsDialog.show();
+				Intent intent = new Intent(activity, PostActivity.class);
+				intent.putExtra("postId", post.getPostId());
+				activity.startActivity(intent);
+				activity.finish();
+				activity.overridePendingTransition(
+						R.anim.activity_slide_in_left,
+						R.anim.activity_slide_out_left);
 			}
 		});
 		holder.likeButton.setOnClickListener(new OnClickListener() {

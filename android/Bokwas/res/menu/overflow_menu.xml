@@ -3,9 +3,9 @@
 
     <group android:id="@+id/overflow_popupmenu" >
         <item
-            android:id="@+id/overflow_home"
+            android:id="@+id/overflow_refresh"
             android:showAsAction="never"
-            android:title="Home"/>
+            android:title="Refresh"/>
         <item
             android:id="@+id/oveflow_newpost"
             android:showAsAction="never"

@@ -2775,6 +2775,7 @@ com.bokwas.NewPostActivity: NewPostActivity()
 com.bokwas.NewPostActivity: void onClick(android.view.View)
 com.bokwas.PostActivity
 com.bokwas.PostActivity: PostActivity()
+com.bokwas.PostActivity: void onClick(android.view.View)
 com.bokwas.ProfileChooserActivity
 com.bokwas.ProfileChooserActivity: ProfileChooserActivity()
 com.bokwas.ProfileChooserActivity: void onClick(android.view.View)
@@ -3146,6 +3147,7 @@ com.bokwas.R$id: int post_comment_number
 com.bokwas.R$id: int post_content
 com.bokwas.R$id: int post_content_line
 com.bokwas.R$id: int post_footer_layout
+com.bokwas.R$id: int post_home
 com.bokwas.R$id: int post_image
 com.bokwas.R$id: int post_like
 com.bokwas.R$id: int post_like_button
@@ -3195,6 +3197,7 @@ com.bokwas.R$layout: int com_facebook_placepickerfragment_list_row
 com.bokwas.R$layout: int com_facebook_search_bar_layout
 com.bokwas.R$layout: int com_facebook_usersettingsfragment
 com.bokwas.R$layout: int comment_dialog
+com.bokwas.R$layout: int comment_list_item
 com.bokwas.R$layout: int dialog_generic_singlebutton
 com.bokwas.R$layout: int dummy_layout
 com.bokwas.R$layout: int header_main
@@ -3220,6 +3223,7 @@ com.bokwas.R$layout: int supertoast
 com.bokwas.R$layout: R$layout()
 com.bokwas.R$menu: int action_bar_menu
 com.bokwas.R$menu: int overflow_menu
+com.bokwas.R$menu: int post_activity_menu
 com.bokwas.R$menu: int post_menu
 com.bokwas.R$menu: int splash_screen
 com.bokwas.R$menu: R$menu()

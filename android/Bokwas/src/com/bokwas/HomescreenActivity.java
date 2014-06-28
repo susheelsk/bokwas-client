@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -53,7 +55,7 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 		setupUI();
 
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -65,6 +67,19 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 				.getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
+		listView.setOnScrollListener(new OnScrollListener() {
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				
+			}
+		});
 		listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -85,7 +100,7 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 			}
 		});
 		if (getIntent().getBooleanExtra("fromSplashscreen", false)) {
-			// listView.setRefreshing(true);// pdia.show
+			listView.setRefreshing(true);// pdia.show
 		}
 	}
 
@@ -109,8 +124,8 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
-					case R.id.overflow_home:
-
+					case R.id.overflow_refresh:
+						listView.setRefreshing();
 						break;
 					case R.id.overflow_profile:
 						break;

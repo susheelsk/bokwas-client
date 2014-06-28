@@ -35,6 +35,9 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	}
 
 	private void setupUI() {
+
+		String shareableText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+
 		editText = (EditText) findViewById(R.id.post_content);
 		ImageView profilePic = (ImageView) findViewById(R.id.post_profile_pic);
 		TextView nameTextView = (TextView) findViewById(R.id.post_name);
@@ -43,6 +46,10 @@ public class NewPostActivity extends Activity implements OnClickListener {
 				.valueOf(UserDataStore.getStore().getAvatarId());
 		profilePic.setImageBitmap(GeneralUtil.getImageBitmap(
 				GeneralUtil.getAvatarResourceId(avatarId), this));
+
+		if (shareableText != null && !shareableText.equals("")) {
+			editText.setText(shareableText);
+		}
 	}
 
 	private void setOnClickListeners() {
@@ -63,28 +70,32 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if (editText.getText().toString().trim() != null
 				&& !editText.getText().toString().trim().equals("")) {
-//			final SuperActivityToast superActivityToast = new SuperActivityToast(NewPostActivity.this, SuperToast.Type.PROGRESS);
-//			superActivityToast.setIndeterminate(true);
-//			superActivityToast.setProgressIndeterminate(true);
-//			superActivityToast.setText("Adding new post...");
-//			superActivityToast.show();
-			
-			NotificationProgress.showNotificationProgress(this, "Adding a new post", GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
+			// final SuperActivityToast superActivityToast = new
+			// SuperActivityToast(NewPostActivity.this,
+			// SuperToast.Type.PROGRESS);
+			// superActivityToast.setIndeterminate(true);
+			// superActivityToast.setProgressIndeterminate(true);
+			// superActivityToast.setText("Adding new post...");
+			// superActivityToast.show();
+
+			NotificationProgress.showNotificationProgress(this,
+					"Adding a new post",
+					GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 			new AddPostsApi(this, UserDataStore.getStore().getAccessKey(),
 					UserDataStore.getStore().getUserId(), editText.getText()
 							.toString(), new APIListener() {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-//							if (superActivityToast.isShowing()) {
-//								superActivityToast.dismiss();
-//							}
-							
-							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
+							// if (superActivityToast.isShowing()) {
+							// superActivityToast.dismiss();
+							// }
+
+							NotificationProgress
+									.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 							if (status) {
 								Crouton.makeText(NewPostActivity.this,
-										"Post added!", Style.INFO)
-										.show();
+										"Post added!", Style.INFO).show();
 								moveToHomescreen();
 							} else {
 								Crouton.makeText(NewPostActivity.this,
