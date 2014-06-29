@@ -11,6 +11,9 @@
         <item
             android:id="@+id/post_like"
             android:title="Like"/>
+        <item
+            android:id="@+id/post_delete"
+            android:title="Delete"/>
     </group>
 
 </menu>

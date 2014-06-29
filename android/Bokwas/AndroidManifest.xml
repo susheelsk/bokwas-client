@@ -56,6 +56,10 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
+            android:name="com.bokwas.ProfileActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+        <activity
             android:name="com.bokwas.LoginActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />

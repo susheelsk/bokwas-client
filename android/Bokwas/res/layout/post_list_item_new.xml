@@ -6,13 +6,23 @@
     android:orientation="vertical" >
 
     <ImageView
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="2dp"
-        android:layout_marginRight="2dp"
+        android:id="@+id/post_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/post_footer_layout"
+        android:background="@drawable/rectangle_white_stroke"
+        android:layout_alignParentTop="true" >
+    </ImageView>
+
+    <ImageView
         android:id="@+id/overflowButton"
         android:layout_width="26dp"
         android:layout_height="26dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
         android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
 
     <TextView
@@ -63,10 +73,10 @@
         android:layout_marginLeft="90dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
-        android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
-        android:textColor="#777777"
         android:autoLink="web"
         android:linksClickable="true"
+        android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
+        android:textColor="#777777"
         android:textSize="12sp"
         android:textStyle="normal" />
 

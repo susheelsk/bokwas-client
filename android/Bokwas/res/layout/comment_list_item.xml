@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rectangle_white_stroke"
     android:orientation="vertical" >
 
     <ImageView
@@ -22,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="72dp"
+        android:layout_marginLeft="60dp"
         android:layout_marginTop="6dp"
         android:gravity="center"
         android:lines="1"
@@ -62,7 +61,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/post_content_line"
-        android:layout_marginLeft="72dp"
+        android:layout_marginLeft="60dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
         android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
@@ -120,7 +119,7 @@
 
             <RelativeLayout
                 android:visibility="gone"
-                android:id="@+id/post_comment_button"
+                android:id="@+id/post_delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
@@ -128,16 +127,16 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="3dp"
-                android:background="@drawable/selector_rectangle_grey"
                 android:gravity="center" >
 
                 <ImageView
                     android:id="@+id/post_image"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/comment_icon" />
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/delete_icon" />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/post_comment_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -150,8 +149,9 @@
             </RelativeLayout>
 
             <View
+                android:visibility="gone"
                 android:id="@+id/like_line_seperator"
-                android:layout_width="0dp"
+                android:layout_width="2dp"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="12dp"
@@ -191,8 +191,8 @@
 
     <ImageView
         android:id="@+id/post_profile_pic"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"

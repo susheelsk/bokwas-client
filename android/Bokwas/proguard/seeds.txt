@@ -2762,9 +2762,6 @@ com.bokwas.BuildConfig: BuildConfig()
 com.bokwas.HomescreenActivity
 com.bokwas.HomescreenActivity: HomescreenActivity()
 com.bokwas.HomescreenActivity: void onClick(android.view.View)
-com.bokwas.HomescreenActivityExperimental
-com.bokwas.HomescreenActivityExperimental: HomescreenActivityExperimental()
-com.bokwas.HomescreenActivityExperimental: void onClick(android.view.View)
 com.bokwas.LoginActivity
 com.bokwas.LoginActivity: LoginActivity()
 com.bokwas.LoginActivity: void onClick(android.view.View)
@@ -2776,6 +2773,9 @@ com.bokwas.NewPostActivity: void onClick(android.view.View)
 com.bokwas.PostActivity
 com.bokwas.PostActivity: PostActivity()
 com.bokwas.PostActivity: void onClick(android.view.View)
+com.bokwas.ProfileActivity
+com.bokwas.ProfileActivity: ProfileActivity()
+com.bokwas.ProfileActivity: void onClick(android.view.View)
 com.bokwas.ProfileChooserActivity
 com.bokwas.ProfileChooserActivity: ProfileChooserActivity()
 com.bokwas.ProfileChooserActivity: void onClick(android.view.View)
@@ -2865,6 +2865,9 @@ com.bokwas.R$color: int common_signin_btn_light_text_pressed
 com.bokwas.R$color: int common_signin_btn_text_dark
 com.bokwas.R$color: int common_signin_btn_text_light
 com.bokwas.R$color: int dark_gray
+com.bokwas.R$color: int dark_slate_gray
+com.bokwas.R$color: int gray_1
+com.bokwas.R$color: int gray_2
 com.bokwas.R$color: int light_gray
 com.bokwas.R$color: int white
 com.bokwas.R$color: R$color()
@@ -3011,8 +3014,10 @@ com.bokwas.R$drawable: int common_signin_btn_text_normal_dark
 com.bokwas.R$drawable: int common_signin_btn_text_normal_light
 com.bokwas.R$drawable: int common_signin_btn_text_pressed_dark
 com.bokwas.R$drawable: int common_signin_btn_text_pressed_light
+com.bokwas.R$drawable: int costum_progress_bar
 com.bokwas.R$drawable: int default_ptr_flip
 com.bokwas.R$drawable: int default_ptr_rotate
+com.bokwas.R$drawable: int delete_icon
 com.bokwas.R$drawable: int dialog_bg
 com.bokwas.R$drawable: int facebook_icon_enable
 com.bokwas.R$drawable: int fb_login_main_button
@@ -3056,6 +3061,7 @@ com.bokwas.R$drawable: int overflow_icon
 com.bokwas.R$drawable: int plus_icon
 com.bokwas.R$drawable: int rectangle_grey_topcorner
 com.bokwas.R$drawable: int rectangle_lightgrey_bottomcorner
+com.bokwas.R$drawable: int rectangle_orange_stroke
 com.bokwas.R$drawable: int rectangle_transparent
 com.bokwas.R$drawable: int rectangle_white
 com.bokwas.R$drawable: int rectangle_white_stroke
@@ -3125,6 +3131,8 @@ com.bokwas.R$id: int hybrid
 com.bokwas.R$id: int large
 com.bokwas.R$id: int like_image
 com.bokwas.R$id: int like_line_seperator
+com.bokwas.R$id: int load_more_footer
+com.bokwas.R$id: int load_more_progressBar
 com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int login_text
 com.bokwas.R$id: int manualOnly
@@ -3136,9 +3144,9 @@ com.bokwas.R$id: int none
 com.bokwas.R$id: int normal
 com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
-com.bokwas.R$id: int overflow_home
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
+com.bokwas.R$id: int overflow_refresh
 com.bokwas.R$id: int picker_subtitle
 com.bokwas.R$id: int playerDoc
 com.bokwas.R$id: int post_comment
@@ -3146,9 +3154,12 @@ com.bokwas.R$id: int post_comment_button
 com.bokwas.R$id: int post_comment_number
 com.bokwas.R$id: int post_content
 com.bokwas.R$id: int post_content_line
+com.bokwas.R$id: int post_delete
+com.bokwas.R$id: int post_delete_button
 com.bokwas.R$id: int post_footer_layout
 com.bokwas.R$id: int post_home
 com.bokwas.R$id: int post_image
+com.bokwas.R$id: int post_layout
 com.bokwas.R$id: int post_like
 com.bokwas.R$id: int post_like_button
 com.bokwas.R$id: int post_like_number
@@ -3164,10 +3175,12 @@ com.bokwas.R$id: int pullDownFromTop
 com.bokwas.R$id: int pullFromEnd
 com.bokwas.R$id: int pullFromStart
 com.bokwas.R$id: int pullUpFromBottom
+com.bokwas.R$id: int pull_to_refresh_header
 com.bokwas.R$id: int pull_to_refresh_image
 com.bokwas.R$id: int pull_to_refresh_progress
 com.bokwas.R$id: int pull_to_refresh_sub_text
 com.bokwas.R$id: int pull_to_refresh_text
+com.bokwas.R$id: int pull_to_refresh_updated_at
 com.bokwas.R$id: int root_layout
 com.bokwas.R$id: int rotate
 com.bokwas.R$id: int satellite
@@ -3176,6 +3189,7 @@ com.bokwas.R$id: int small
 com.bokwas.R$id: int terrain
 com.bokwas.R$id: int textView1
 com.bokwas.R$id: int titlebar
+com.bokwas.R$id: int top_line
 com.bokwas.R$id: int webview
 com.bokwas.R$id: int whyFacebookLoginButton
 com.bokwas.R$id: R$id()
@@ -3203,12 +3217,14 @@ com.bokwas.R$layout: int dummy_layout
 com.bokwas.R$layout: int header_main
 com.bokwas.R$layout: int home_screen
 com.bokwas.R$layout: int home_screen_experimental
+com.bokwas.R$layout: int load_more_footer
 com.bokwas.R$layout: int login_page
 com.bokwas.R$layout: int newpost_dialog
 com.bokwas.R$layout: int post_activity
 com.bokwas.R$layout: int post_list_item
 com.bokwas.R$layout: int post_list_item_new
 com.bokwas.R$layout: int post_screen
+com.bokwas.R$layout: int pull_to_refresh_header
 com.bokwas.R$layout: int pull_to_refresh_header_horizontal
 com.bokwas.R$layout: int pull_to_refresh_header_vertical
 com.bokwas.R$layout: int spash_screen
@@ -4617,12 +4633,18 @@ com.handmark.pulltorefresh.library.R$attr: int ptrScrollingWhileRefreshingEnable
 com.handmark.pulltorefresh.library.R$attr: int ptrShowIndicator
 com.handmark.pulltorefresh.library.R$attr: int ptrSubHeaderTextAppearance
 com.handmark.pulltorefresh.library.R$attr: R$attr()
+com.handmark.pulltorefresh.library.R$color: int black
+com.handmark.pulltorefresh.library.R$color: int dark_slate_gray
+com.handmark.pulltorefresh.library.R$color: int gray_1
+com.handmark.pulltorefresh.library.R$color: int gray_2
+com.handmark.pulltorefresh.library.R$color: R$color()
 com.handmark.pulltorefresh.library.R$dimen: int header_footer_left_right_padding
 com.handmark.pulltorefresh.library.R$dimen: int header_footer_top_bottom_padding
 com.handmark.pulltorefresh.library.R$dimen: int indicator_corner_radius
 com.handmark.pulltorefresh.library.R$dimen: int indicator_internal_padding
 com.handmark.pulltorefresh.library.R$dimen: int indicator_right_padding
 com.handmark.pulltorefresh.library.R$dimen: R$dimen()
+com.handmark.pulltorefresh.library.R$drawable: int costum_progress_bar
 com.handmark.pulltorefresh.library.R$drawable: int default_ptr_flip
 com.handmark.pulltorefresh.library.R$drawable: int default_ptr_rotate
 com.handmark.pulltorefresh.library.R$drawable: int indicator_arrow
@@ -4635,19 +4657,26 @@ com.handmark.pulltorefresh.library.R$id: int disabled
 com.handmark.pulltorefresh.library.R$id: int fl_inner
 com.handmark.pulltorefresh.library.R$id: int flip
 com.handmark.pulltorefresh.library.R$id: int gridview
+com.handmark.pulltorefresh.library.R$id: int load_more_footer
+com.handmark.pulltorefresh.library.R$id: int load_more_progressBar
 com.handmark.pulltorefresh.library.R$id: int manualOnly
 com.handmark.pulltorefresh.library.R$id: int pullDownFromTop
 com.handmark.pulltorefresh.library.R$id: int pullFromEnd
 com.handmark.pulltorefresh.library.R$id: int pullFromStart
 com.handmark.pulltorefresh.library.R$id: int pullUpFromBottom
+com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_header
 com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_image
 com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_progress
 com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_sub_text
 com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_text
+com.handmark.pulltorefresh.library.R$id: int pull_to_refresh_updated_at
 com.handmark.pulltorefresh.library.R$id: int rotate
 com.handmark.pulltorefresh.library.R$id: int scrollview
+com.handmark.pulltorefresh.library.R$id: int top_line
 com.handmark.pulltorefresh.library.R$id: int webview
 com.handmark.pulltorefresh.library.R$id: R$id()
+com.handmark.pulltorefresh.library.R$layout: int load_more_footer
+com.handmark.pulltorefresh.library.R$layout: int pull_to_refresh_header
 com.handmark.pulltorefresh.library.R$layout: int pull_to_refresh_header_horizontal
 com.handmark.pulltorefresh.library.R$layout: int pull_to_refresh_header_vertical
 com.handmark.pulltorefresh.library.R$layout: R$layout()

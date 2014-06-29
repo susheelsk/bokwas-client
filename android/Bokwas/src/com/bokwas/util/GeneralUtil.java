@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -31,6 +30,8 @@ public class GeneralUtil {
 	public static final int NOTIFICATION_PROGRESS_NEWPOST = 501;
 	public static final int NOTIFICATION_PROGRESS_NEWCOMMENT = 502;
 	public static final int NOTIFICATION_PROGRESS_ADDLIKES = 503;
+	public static final int NOTIFICATION_PROGRESS_DELETEPOST = 504;
+	public static final int NOTIFICATION_PROGRESS_DELETECOMMENT = 504;
 	
 	public static Bitmap loadBitmapFromView(View view) throws Exception{
 		try {

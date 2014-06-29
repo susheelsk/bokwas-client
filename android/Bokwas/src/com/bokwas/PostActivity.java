@@ -11,17 +11,16 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bokwas.apirequests.AddCommentsApi;
 import com.bokwas.apirequests.AddLikesApi;
+import com.bokwas.apirequests.DeleteApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
@@ -61,19 +60,12 @@ public class PostActivity extends Activity implements OnClickListener{
 		setupUI();
 		ArrayList<Post> postList = new ArrayList<Post>();
 		postList.add(post);
-//		new FbProfilePicBatchApi(
-//				postList,
-//				new com.bokwas.apirequests.FbProfilePicBatchApi.ProfilePicDownload() {
-//
-//					@Override
-//					public void onDownloadComplete() {
-//						setupUI();
-//					}
-//				}).execute("");
-
 	}
 
 	private void setupUI() {
+		if(post.isBokwasPost()) {
+			findViewById(R.id.post_relative_view).setBackgroundResource(R.drawable.rectangle_orange_stroke);
+		}
 		editText = (EditText) findViewById(R.id.comment_edittext);
 		comments = post.getComments();
 		adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
@@ -164,6 +156,7 @@ public class PostActivity extends Activity implements OnClickListener{
 												Toast.LENGTH_SHORT).show();
 										editText.setText("");
 										adapter.notifyDataSetChanged();
+										setupUI();
 									} else {
 										Toast.makeText(PostActivity.this,
 												"Comment couldn't be added!",
@@ -240,6 +233,12 @@ public class PostActivity extends Activity implements OnClickListener{
 			PopupMenu popup = new PopupMenu(PostActivity.this, view);
 			popup.getMenuInflater().inflate(R.menu.post_activity_menu,
 					popup.getMenu());
+			MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
+			if(post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
+				deleteItem.setVisible(true);
+			}else {
+				deleteItem.setVisible(false);
+			}
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
@@ -252,12 +251,45 @@ public class PostActivity extends Activity implements OnClickListener{
 					case R.id.post_share:
 						sharePost();
 						break;
+					case R.id.post_delete: 
+						deletePost();
+						break;
 					}
 					return true;
 				}
 			});
 			popup.show();
 		}
+	}
+	
+	private void deletePost() {
+		final SuperActivityToast superActivityToast = new SuperActivityToast(
+				this, SuperToast.Type.PROGRESS);
+		superActivityToast.setIndeterminate(true);
+		superActivityToast.setProgressIndeterminate(true);
+		NotificationProgress.showNotificationProgress(this,
+				"Deleting the post",
+				GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		new DeleteApi(UserDataStore.getStore().getAccessKey(),
+				post.getPostId(), UserDataStore.getStore().getUserId(),null,
+				this, new APIListener() {
+
+					@Override
+					public void onAPIStatus(boolean status) {
+						NotificationProgress
+								.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+						if (status) {
+							Crouton.makeText(PostActivity.this, "Post deleted!",
+									Style.INFO).show();
+							onBackPressed();
+						} else {
+							Crouton.makeText(PostActivity.this,
+									"Post couldn't be deleted. Try again",
+									Style.ALERT).show();
+						}
+					}
+				}).execute("");
+	
 	}
 
 	protected void sharePost() {

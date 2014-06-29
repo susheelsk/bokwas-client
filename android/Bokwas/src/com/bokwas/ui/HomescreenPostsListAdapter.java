@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import com.bokwas.PostActivity;
 import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
+import com.bokwas.apirequests.DeleteApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.CommentsDialog;
@@ -68,6 +71,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		public TextView likeSize;
 		public ImageView picture;
 		public ImageView optionsButton;
+		public ImageView postLayout;
 		public RelativeLayout commentButton;
 		public RelativeLayout likeButton;
 	}
@@ -111,6 +115,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 					.findViewById(R.id.post_comment_button);
 			viewHolder.likeButton = (RelativeLayout) rowView
 					.findViewById(R.id.post_like_button);
+			viewHolder.postLayout = (ImageView) rowView
+					.findViewById(R.id.post_layout);
 			rowView.setTag(viewHolder);
 		}
 		ViewHolder holder = (ViewHolder) rowView.getTag();
@@ -146,6 +152,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			String avatarId = post.getAvatarId();
 			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 					GeneralUtil.getAvatarResourceId(avatarId), activity));
+			holder.postLayout.setBackgroundResource(R.drawable.rectangle_orange_stroke);
 		} else {
 			String url = post.getProfilePicture();
 			holder.name.setText(post.getName());
@@ -160,8 +167,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				PopupMenu popup = new PopupMenu(activity, view);
 				popup.getMenuInflater().inflate(R.menu.post_menu,
 						popup.getMenu());
+				MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
+				if(post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
+					deleteItem.setVisible(true);
+				}else {
+					deleteItem.setVisible(false);
+				}
 				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-					boolean isLike = true;
 
 					@Override
 					public boolean onMenuItemClick(MenuItem item) {
@@ -169,10 +181,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 						case R.id.post_share:
 
 							try {
-								// Bitmap bitmap =
-								// GeneralUtil.loadBitmapFromView(duplicate);
-								// GeneralUtil.sharePhotoIntent(activity,
-								// bitmap, "Check out what I saw on Bokwas");
 								if (postShare != null) {
 									postShare.onPostShare(position);
 								}
@@ -201,6 +209,9 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 										}
 									});
 							commentsDialog.show();
+							break;
+						case R.id.post_delete:
+							deletePost(post);
 							break;
 						}
 						return true;
@@ -235,14 +246,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			}
 		});
 		holder.likeButton.setOnClickListener(new OnClickListener() {
-			private boolean isLike = true;
 
 			@Override
 			public void onClick(View v) {
 				likePost(post);
 			}
 		});
-
+		
 		rowView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -258,6 +268,37 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		});
 
 		return rowView;
+	}
+	
+	private void deletePost(Post post) {
+
+		final SuperActivityToast superActivityToast = new SuperActivityToast(
+				activity, SuperToast.Type.PROGRESS);
+		superActivityToast.setIndeterminate(true);
+		superActivityToast.setProgressIndeterminate(true);
+		NotificationProgress.showNotificationProgress(activity,
+				"Deleting the post",
+				GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		new DeleteApi(UserDataStore.getStore().getAccessKey(),
+				post.getPostId(), UserDataStore.getStore().getUserId(),null,
+				activity, new APIListener() {
+
+					@Override
+					public void onAPIStatus(boolean status) {
+						NotificationProgress
+								.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+						if (status) {
+							Crouton.makeText(activity, "Post deleted!",
+									Style.INFO).show();
+							notifyDataSetChanged();
+						} else {
+							Crouton.makeText(activity,
+									"Post couldn't be deleted. Try again",
+									Style.ALERT).show();
+						}
+					}
+				}).execute("");
+	
 	}
 
 	private void likePost(Post post) {

@@ -10,53 +10,57 @@ import android.os.AsyncTask;
 
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
-import com.bokwas.response.AddPostResponse;
+import com.bokwas.response.ApiResponse;
 import com.bokwas.response.Comment;
-import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.AppData;
 import com.bokwas.util.BokwasHttpClient;
 import com.google.gson.Gson;
 
-public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
-
+public class DeleteApi extends AsyncTask<String, Void, Boolean>{
+	
 	private String accessKey;
+	private String postId;
 	private String personId;
-	private String postText;
+	private String commentId;
 	private Activity activity;
 	private APIListener listener;
 
-	public AddPostsApi(Activity activity, String accessKey, String personId,
-			String postText, APIListener listener) {
+	public DeleteApi(String accessKey, String postId, String personId,
+			String commentId, Activity activity, APIListener listener) {
 		super();
-		this.activity = activity;
 		this.accessKey = accessKey;
+		this.postId = postId;
 		this.personId = personId;
-		this.postText = postText;
+		this.commentId = commentId;
+		this.activity = activity;
 		this.listener = listener;
 	}
 
 	@Override
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
-		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/addpost";
+		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
+		apiUrl = AppData.baseURL + "/deletepost";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
+		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
-		apiParams.add(new BasicNameValuePair("post_text", postText));
+		apiParams.add(new BasicNameValuePair("comment_id", commentId));
+		
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
-			AddPostResponse apiResponse = new Gson().fromJson(response,
-					AddPostResponse.class);
-			if (apiResponse.status.statusCode == 200) {
-				List<Comment> comments = new ArrayList<Comment>();
-				List<Likes> likes = new ArrayList<Likes>();
-				Post post = new Post(apiResponse.postId,
-						System.currentTimeMillis(), System.currentTimeMillis(),
-						postText, likes, personId, true, comments,
-						UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()),"");
-				UserDataStore.getStore().addPost(post);
-				UserDataStore.getStore().save(activity);
+			ApiResponse apiResponse = new Gson().fromJson(
+					response, ApiResponse.class);
+			if(apiResponse.statusCode == 200) {
+				if (commentId == null) {
+					Post post = UserDataStore.getStore().getPost(postId);
+					UserDataStore.getStore().deletePost(post);
+					UserDataStore.getStore().save(activity);
+				}else {
+					Comment comment = UserDataStore.getStore().getPost(postId).getComment(commentId);
+					UserDataStore.getStore().getPost(postId).getComments().remove(comment);
+					UserDataStore.getStore().save(activity);
+				}
 				return true;
 			}
 		} catch (Exception e) {
@@ -68,8 +72,9 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 	@Override
 	protected void onPostExecute(Boolean result) {
 		super.onPostExecute(result);
-		if (listener != null) {
+		if(listener!=null) {
 			listener.onAPIStatus(result);
 		}
 	}
+
 }

@@ -11,6 +11,9 @@
         <item
             android:id="@+id/post_comment"
             android:title="Comment"/>
+        <item
+            android:id="@+id/post_delete"
+            android:title="Delete"/>
     </group>
 
 </menu>

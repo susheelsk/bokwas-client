@@ -44,8 +44,10 @@ public class PullAndLoadListView extends PullToRefreshListView {
 	// private TextView mLabLoadMore;
 	private ProgressBar mProgressBarLoadMore;
 
-	public PullAndLoadListView(Context context) { super(context);
-	  initComponent(context); }
+	public PullAndLoadListView(Context context) {
+		super(context);
+		initComponent(context);
+	}
 
 	public PullAndLoadListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);

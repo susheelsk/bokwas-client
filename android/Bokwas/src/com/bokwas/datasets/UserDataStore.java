@@ -65,6 +65,26 @@ public class UserDataStore {
 		}
 		return null;
 	}
+	
+	public List<Post> getBokwasPostsOfPerson(String personId) {
+		List<Post> userPosts = new ArrayList<Post>();
+		for (Post post : getPosts()) {
+			if (post.getPostedBy().equals(personId) && post.isBokwasPost()) {
+				userPosts.add(post);
+			}
+		}
+		return userPosts;
+	}
+	
+	public List<Post> getPostsOfPerson(String personId) {
+		List<Post> userPosts = new ArrayList<Post>();
+		for (Post post : getPosts()) {
+			if (post.getPostedBy().equals(personId)) {
+				userPosts.add(post);
+			}
+		}
+		return userPosts;
+	}
 
 	public Post getPost(String postId) {
 		for (Post post : posts) {

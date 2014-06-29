@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF" >
+    android:background="#DDDDDD" >
 
     <include
         android:id="@+id/header_layout"
@@ -19,8 +19,7 @@
         android:layout_marginTop="48dp"
         android:cacheColorHint="@android:color/transparent"
         android:divider="@android:color/transparent"
-        android:dividerHeight="4dp" >
-    </com.handmark.pulltorefresh.library.PullToRefreshListView>
+        android:dividerHeight="4dp" />
 
     <RelativeLayout
         android:id="@+id/hidden_view"

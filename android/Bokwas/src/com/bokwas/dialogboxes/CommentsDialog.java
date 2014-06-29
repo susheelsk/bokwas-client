@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Display;
@@ -46,6 +45,7 @@ public class CommentsDialog extends Dialog implements OnClickListener {
 		this.post = post;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

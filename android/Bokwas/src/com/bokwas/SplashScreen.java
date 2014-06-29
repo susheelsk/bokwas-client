@@ -107,7 +107,7 @@ public class SplashScreen extends Activity {
 					+ UserDataStore.getStore().getBokwasName());
 			Log.d(TAG, "accessToken: "
 					+ UserDataStore.getStore().getUserAccessToken());
-
+			UserDataStore.getStore().sortPosts();
 			if (UserDataStore.getStore().isGcmUpdated() == false) {
 				GCMUtils.getRegistrationId(this);
 			}
