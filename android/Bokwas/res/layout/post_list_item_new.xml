@@ -5,7 +5,7 @@
     android:background="@drawable/rectangle_white_stroke"
     android:orientation="vertical" >
 
-    <ImageView
+    <!-- <ImageView
         android:id="@+id/post_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:layout_above="@+id/post_footer_layout"
         android:background="@drawable/rectangle_white_stroke"
         android:layout_alignParentTop="true" >
-    </ImageView>
+    </ImageView> -->
 
     <ImageView
         android:id="@+id/overflowButton"
@@ -93,8 +93,6 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/post_line_separator"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:background="@drawable/rectangle_lightgrey_bottomcorner" >
 
         <TextView
@@ -219,7 +217,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
         android:background="@drawable/rectangle_white_stroke"
-        android:padding="1dp"
         android:src="@drawable/avatar_15" />
 
 </RelativeLayout>

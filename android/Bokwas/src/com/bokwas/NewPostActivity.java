@@ -20,7 +20,8 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class NewPostActivity extends Activity implements OnClickListener {
 
-	EditText editText;
+	private EditText editText;
+	private boolean isShareIntent = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,8 @@ public class NewPostActivity extends Activity implements OnClickListener {
 
 		if (shareableText != null && !shareableText.equals("")) {
 			editText.setText(shareableText);
+			isShareIntent = true;
+			UserDataStore.initData(this);
 		}
 	}
 
@@ -59,10 +62,12 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		Intent intent = new Intent(this, HomescreenActivity.class);
-		startActivity(intent);
-		overridePendingTransition(R.anim.activity_slide_in_right,
-				R.anim.activity_slide_out_right);
+		if (!isShareIntent) {
+			Intent intent = new Intent(this, HomescreenActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.activity_slide_in_right,
+					R.anim.activity_slide_out_right);
+		}
 		finish();
 	}
 

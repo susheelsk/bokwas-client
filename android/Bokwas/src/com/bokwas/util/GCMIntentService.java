@@ -14,8 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.bokwas.PostActivity;
 import com.bokwas.R;
+import com.bokwas.SplashScreen;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
@@ -55,8 +55,7 @@ public class GCMIntentService extends IntentService {
 	private void addLikes(Bundle extras) {
 		try {
 			if (!isAppRunning()) {
-				UserDataStore.setInstance(LocalStorage.getObj(this,
-						UserDataStore.class));
+				UserDataStore.initData(this);
 			}
 			String commentId = extras.getString("likesCommentId", "");
 			String postId = extras.getString("likesPostId", "");
@@ -76,8 +75,7 @@ public class GCMIntentService extends IntentService {
 	private void addCommentToPost(Bundle extras) {
 		try {
 			if (!isAppRunning()) {
-				UserDataStore.setInstance(LocalStorage.getObj(this,
-						UserDataStore.class));
+				UserDataStore.initData(this);
 			}
 			Comment comment = new Comment(extras.getString("commentId"),
 					Long.valueOf(extras.getString("commentTime")),
@@ -114,16 +112,16 @@ public class GCMIntentService extends IntentService {
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		
-		Intent intent = null;
-		if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
-			intent = new Intent(this, PostActivity.class);
-			intent.putExtra("postId", bundle.getString("postId"));
-		}else if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
-			intent = new Intent(this, PostActivity.class);
-			intent.putExtra("postId", bundle.getString("likesPostId"));
-		}else {
-			intent = new Intent(this, PostActivity.class);
-		}
+		Intent intent = new Intent(this, SplashScreen.class);
+//		if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
+//			intent = new Intent(this, PostActivity.class);
+//			intent.putExtra("postId", bundle.getString("postId"));
+//		}else if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
+//			intent = new Intent(this, PostActivity.class);
+//			intent.putExtra("postId", bundle.getString("likesPostId"));
+//		}else {
+//			intent = new Intent(this, PostActivity.class);
+//		}
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				intent, 0);
 

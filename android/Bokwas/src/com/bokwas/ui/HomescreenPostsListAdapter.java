@@ -69,7 +69,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		public TextView likeSize;
 		public ImageView picture;
 		public ImageView optionsButton;
-		public ImageView postLayout;
 		public RelativeLayout commentButton;
 		public RelativeLayout likeButton;
 	}
@@ -133,8 +132,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 					.findViewById(R.id.post_comment_button);
 			viewHolder.likeButton = (RelativeLayout) rowView
 					.findViewById(R.id.post_like_button);
-			viewHolder.postLayout = (ImageView) rowView
-					.findViewById(R.id.post_layout);
 			rowView.setTag(viewHolder);
 		}
 		ViewHolder holder = (ViewHolder) rowView.getTag();

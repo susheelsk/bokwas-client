@@ -240,6 +240,11 @@ public class UserDataStore {
 	public static synchronized void setInstance(UserDataStore userDataStore) {
 		instance = userDataStore;
 	}
+	
+	public static void initData(Context context) {
+		setInstance(LocalStorage.getObj(context,
+				UserDataStore.class));
+	}
 
 	public static synchronized UserDataStore getStore() {
 		if (instance == null) {

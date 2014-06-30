@@ -3019,6 +3019,7 @@ com.bokwas.R$drawable: int default_ptr_flip
 com.bokwas.R$drawable: int default_ptr_rotate
 com.bokwas.R$drawable: int delete_icon
 com.bokwas.R$drawable: int dialog_bg
+com.bokwas.R$drawable: int dialog_full_holo_light
 com.bokwas.R$drawable: int facebook_icon_enable
 com.bokwas.R$drawable: int fb_login_main_button
 com.bokwas.R$drawable: int fconnect_login
@@ -3059,8 +3060,10 @@ com.bokwas.R$drawable: int new_posticon_inactive
 com.bokwas.R$drawable: int notification_template
 com.bokwas.R$drawable: int overflow_icon
 com.bokwas.R$drawable: int plus_icon
+com.bokwas.R$drawable: int post_bg
 com.bokwas.R$drawable: int rectangle_grey_topcorner
 com.bokwas.R$drawable: int rectangle_lightgrey_bottomcorner
+com.bokwas.R$drawable: int rectangle_orange
 com.bokwas.R$drawable: int rectangle_orange_stroke
 com.bokwas.R$drawable: int rectangle_transparent
 com.bokwas.R$drawable: int rectangle_white
@@ -3069,6 +3072,7 @@ com.bokwas.R$drawable: int selector_kitkat_square_undobutton
 com.bokwas.R$drawable: int selector_kitkat_undobutton
 com.bokwas.R$drawable: int selector_rectangle_grey
 com.bokwas.R$drawable: int selector_undobutton
+com.bokwas.R$drawable: int shadow
 com.bokwas.R$drawable: int shape_kitkat_square_undobarfocused
 com.bokwas.R$drawable: int shape_kitkat_square_undobarselected
 com.bokwas.R$drawable: int shape_kitkat_undobarfocused
@@ -3159,7 +3163,6 @@ com.bokwas.R$id: int post_delete_button
 com.bokwas.R$id: int post_footer_layout
 com.bokwas.R$id: int post_home
 com.bokwas.R$id: int post_image
-com.bokwas.R$id: int post_layout
 com.bokwas.R$id: int post_like
 com.bokwas.R$id: int post_like_button
 com.bokwas.R$id: int post_like_number
