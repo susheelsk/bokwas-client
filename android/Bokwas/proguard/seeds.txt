@@ -3222,6 +3222,7 @@ com.bokwas.R$layout: int login_page
 com.bokwas.R$layout: int newpost_dialog
 com.bokwas.R$layout: int post_activity
 com.bokwas.R$layout: int post_list_item
+com.bokwas.R$layout: int post_list_item_bokwas
 com.bokwas.R$layout: int post_list_item_new
 com.bokwas.R$layout: int post_screen
 com.bokwas.R$layout: int pull_to_refresh_header

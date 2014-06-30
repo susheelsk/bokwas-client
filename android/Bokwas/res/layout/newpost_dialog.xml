@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:background="@drawable/rectangle_white_stroke" >
+        android:background="@drawable/rectangle_orange_stroke" >
 
         <ImageView
             android:id="@+id/post_profile_pic"

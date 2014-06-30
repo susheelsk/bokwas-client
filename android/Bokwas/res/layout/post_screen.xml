@@ -123,6 +123,8 @@
             android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
             android:textColor="#777777"
             android:textSize="12sp"
+            android:maxLines="7"
+            android:scrollbars="vertical"
             android:textStyle="normal" />
 
         <View

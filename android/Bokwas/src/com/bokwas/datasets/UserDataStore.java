@@ -129,6 +129,16 @@ public class UserDataStore {
 		posts.add(newPost);
 	}
 	
+	public void addNewPost(Post newPost) {
+		for (Post post : posts) {
+			if (post.getPostId().equals(newPost.getPostId())) {
+				updatePost(newPost);
+				return;
+			}
+		}
+		posts.add(0,newPost);
+	}
+	
 	public void sortPosts() {
 		Collections.sort(posts, new PostComparator());
 	}

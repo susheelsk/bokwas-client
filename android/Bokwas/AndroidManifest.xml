@@ -44,6 +44,7 @@
         <activity
             android:name="com.bokwas.SplashScreen"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,22 +55,29 @@
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.ProfileActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.LoginActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.ProfileChooserActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.HomescreenActivity"
             android:label="@string/app_name"
+            android:launchMode="standard"
+            android:noHistory="false"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.HomescreenActivityExperimental"
@@ -77,6 +85,7 @@
         <activity
             android:name="com.bokwas.NewPostActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <intent-filter android:label="Share on Bokwas" >
             <action android:name="android.intent.action.SEND" />
@@ -87,6 +96,7 @@
         <activity
             android:name="com.bokwas.PostActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
     </application>
 

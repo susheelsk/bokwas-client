@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,8 @@ public class GeneralUtil {
 	public static final int NOTIFICATION_PROGRESS_ADDLIKES = 503;
 	public static final int NOTIFICATION_PROGRESS_DELETEPOST = 504;
 	public static final int NOTIFICATION_PROGRESS_DELETECOMMENT = 504;
+	
+	public static Parcelable listSavedInstance = null;
 	
 	public static Bitmap loadBitmapFromView(View view) throws Exception{
 		try {

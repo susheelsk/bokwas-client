@@ -14,8 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.bokwas.PostActivity;
 import com.bokwas.R;
-import com.bokwas.SplashScreen;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
@@ -41,6 +41,7 @@ public class GCMIntentService extends IntentService {
 		Log.d(TAG, "MessageType : " + messageType);
 
 		if (extras.getString("type").equals("ADDLIKES_NOTI")) {
+			addLikes(extras);
 			sendNotification(extras);
 		} else if (extras.getString("type").equals("ADDCOMMENT_NOTI")) {
 			addCommentToPost(extras);
@@ -49,6 +50,27 @@ public class GCMIntentService extends IntentService {
 
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
+	}
+
+	private void addLikes(Bundle extras) {
+		try {
+			if (!isAppRunning()) {
+				UserDataStore.setInstance(LocalStorage.getObj(this,
+						UserDataStore.class));
+			}
+			String commentId = extras.getString("likesCommentId", "");
+			String postId = extras.getString("likesPostId", "");
+			String likesPersonName = extras.getString("likesPersonName", "");
+			String likesPersonId = extras.getString("likesPersonId", "");
+			if (commentId.equals("")) {
+				UserDataStore.getStore().getPost(postId).addLikes(likesPersonId, likesPersonName);
+			} else {
+				UserDataStore.getStore().getPost(postId).getComment(commentId).addLikes(likesPersonId, likesPersonName);
+			}
+			UserDataStore.getStore().save(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void addCommentToPost(Bundle extras) {
@@ -91,8 +113,19 @@ public class GCMIntentService extends IntentService {
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
+		
+		Intent intent = null;
+		if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
+			intent = new Intent(this, PostActivity.class);
+			intent.putExtra("postId", bundle.getString("postId"));
+		}else if(bundle.getString("type").equals("ADDLIKES_NOTI")) {
+			intent = new Intent(this, PostActivity.class);
+			intent.putExtra("postId", bundle.getString("likesPostId"));
+		}else {
+			intent = new Intent(this, PostActivity.class);
+		}
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, SplashScreen.class), 0);
+				intent, 0);
 
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
 				this)

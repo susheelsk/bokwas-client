@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -82,6 +80,20 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 	}
 
 	@Override
+	public int getItemViewType(int position) {
+		if (posts.get(position).isBokwasPost()) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
+	
+	@Override
+	public int getViewTypeCount() {
+		return 2;
+	}
+
+	@Override
 	public Post getItem(int position) {
 		return posts.get(position);
 	}
@@ -95,9 +107,15 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 	public View getView(final int position, final View convertView,
 			ViewGroup parent) {
 		View rowView = convertView;
+		final Post post = posts.get(position);
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.post_list_item_new, null);
+			if(getItemViewType(position)==0) {
+				rowView = inflater.inflate(R.layout.post_list_item_bokwas, null);
+			}else {
+				rowView = inflater.inflate(R.layout.post_list_item_new, null);
+			}
+			
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) rowView.findViewById(R.id.post_name);
 			viewHolder.postText = (TextView) rowView
@@ -120,11 +138,14 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			rowView.setTag(viewHolder);
 		}
 		ViewHolder holder = (ViewHolder) rowView.getTag();
-		final Post post = posts.get(position);
+		
+		String postText = post.getPostText();
+		if(postText.length()>250) {
+			holder.postText.setText(postText.subSequence(0, 250)+" ...");
+		}else {
+			holder.postText.setText(postText);
+		}
 
-		holder.postText.setText(post.getPostText());
-
-		// Timestamp stamp = new Timestamp(post.getTimestamp());
 		Date date = new Date(post.getTimestamp());
 		String dateString = DateUtil.formatToYesterdayOrToday(date);
 		holder.time.setText(dateString);
@@ -137,9 +158,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		}
 
 		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-			// holder.likeButton.setBackgroundColor(Color.GRAY);
-			// holder.likeButton.setClickable(false);
-			// holder.likeButton.setEnabled(false);
 			holder.likeButton.findViewById(R.id.like_image)
 					.setBackgroundResource(R.drawable.facebook_icon_enable);
 		} else {
@@ -152,7 +170,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			String avatarId = post.getAvatarId();
 			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
 					GeneralUtil.getAvatarResourceId(avatarId), activity));
-			holder.postLayout.setBackgroundResource(R.drawable.rectangle_orange_stroke);
 		} else {
 			String url = post.getProfilePicture();
 			holder.name.setText(post.getName());
@@ -167,10 +184,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				PopupMenu popup = new PopupMenu(activity, view);
 				popup.getMenuInflater().inflate(R.menu.post_menu,
 						popup.getMenu());
-				MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
-				if(post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
+				MenuItem deleteItem = popup.getMenu()
+						.findItem(R.id.post_delete);
+				if (post.isBokwasPost()
+						&& post.getPostedBy().equals(
+								UserDataStore.getStore().getUserId())) {
 					deleteItem.setVisible(true);
-				}else {
+				} else {
 					deleteItem.setVisible(false);
 				}
 				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -226,16 +246,16 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 			@Override
 			public void onClick(View v) {
-//				CommentsDialog commentsDialog = new CommentsDialog(activity,
-//						posts.get(position).getComments(), post);
-//				commentsDialog.setOnDismissListener(new OnDismissListener() {
-//
-//					@Override
-//					public void onDismiss(DialogInterface dialog) {
-//						notifyDataSetChanged();
-//					}
-//				});
-//				commentsDialog.show();
+				// CommentsDialog commentsDialog = new CommentsDialog(activity,
+				// posts.get(position).getComments(), post);
+				// commentsDialog.setOnDismissListener(new OnDismissListener() {
+				//
+				// @Override
+				// public void onDismiss(DialogInterface dialog) {
+				// notifyDataSetChanged();
+				// }
+				// });
+				// commentsDialog.show();
 				Intent intent = new Intent(activity, PostActivity.class);
 				intent.putExtra("postId", post.getPostId());
 				activity.startActivity(intent);
@@ -252,7 +272,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				likePost(post);
 			}
 		});
-		
+
 		rowView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -269,7 +289,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 		return rowView;
 	}
-	
+
 	private void deletePost(Post post) {
 
 		final SuperActivityToast superActivityToast = new SuperActivityToast(
@@ -280,7 +300,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				"Deleting the post",
 				GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
 		new DeleteApi(UserDataStore.getStore().getAccessKey(),
-				post.getPostId(), UserDataStore.getStore().getUserId(),null,
+				post.getPostId(), UserDataStore.getStore().getUserId(), null,
 				activity, new APIListener() {
 
 					@Override
@@ -298,7 +318,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 						}
 					}
 				}).execute("");
-	
+
 	}
 
 	private void likePost(Post post) {

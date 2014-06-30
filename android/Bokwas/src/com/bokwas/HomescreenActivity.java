@@ -46,6 +46,7 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 
 	private PullToRefreshListView listView;
 	private HomescreenPostsListAdapter adapter;
+	protected boolean isLoadingLastItems = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,20 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 				.getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
+
+		setupListViewListeners();
+
+		if (getIntent().getBooleanExtra("fromSplashscreen", false)) {
+			// listView.onRefresh();
+		}
+
+		if (GeneralUtil.listSavedInstance != null) {
+			listView.getRefreshableView().onRestoreInstanceState(
+					GeneralUtil.listSavedInstance);
+		}
+	}
+
+	private void setupListViewListeners() {
 		listView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
@@ -83,7 +98,22 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 
 			}
 		});
-		
+
+		listView.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				GeneralUtil.listSavedInstance = listView.getRefreshableView()
+						.onSaveInstanceState();
+			}
+		});
+
 		listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
 			@Override
@@ -104,76 +134,43 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 				}).execute("");
 			}
 		});
-		
+
 		listView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
 
 			@Override
 			public void onLastItemVisible() {
-				Toast.makeText(HomescreenActivity.this, "Getting more posts!", Toast.LENGTH_SHORT).show();
-				long timestamp = UserDataStore.getStore().getPosts().get(UserDataStore.getStore().getPosts().size()-1).getTimestamp();
-				new GetNewPosts(HomescreenActivity.this, UserDataStore.getStore()
-						.getAccessKey(), UserDataStore.getStore().getUserAccessToken(),UserDataStore.getStore()
-						.getUserId(),timestamp, new APIListener() {
+				if (isLoadingLastItems == false) {
+					isLoadingLastItems = true;
+					Toast.makeText(HomescreenActivity.this,
+							"Getting more posts!", Toast.LENGTH_SHORT).show();
+					long timestamp = UserDataStore
+							.getStore()
+							.getPosts()
+							.get(UserDataStore.getStore().getPosts().size() - 1)
+							.getTimestamp();
+					new GetNewPosts(HomescreenActivity.this, UserDataStore
+							.getStore().getAccessKey(), UserDataStore
+							.getStore().getUserAccessToken(), UserDataStore
+							.getStore().getUserId(), timestamp,
+							new APIListener() {
 
-					@Override
-					public void onAPIStatus(boolean status) {
-						if (status) {
-							adapter.setPosts(UserDataStore.getStore()
-									.getPosts());
-							adapter.notifyDataSetChanged();
-						}
-					}
-				}).execute("");
+								@Override
+								public void onAPIStatus(boolean status) {
+									if (status) {
+										isLoadingLastItems = false;
+										adapter.setPosts(UserDataStore
+												.getStore().getPosts());
+										adapter.notifyDataSetChanged();
+									}
+								}
+
+							}).execute("");
+				}
 			}
 		});
-		
-//		listView.setOnLoadMoreListener(new OnLoadMoreListener() {
-//			
-//			@Override
-//			public void onLoadMore() {
-//				long timestamp = UserDataStore.getStore().getPosts().get(UserDataStore.getStore().getPosts().size()-1).getTimestamp();
-//				new GetNewPosts(HomescreenActivity.this, UserDataStore.getStore()
-//						.getAccessKey(), UserDataStore.getStore().getUserAccessToken(),UserDataStore.getStore()
-//						.getUserId(),timestamp, new APIListener() {
-//
-//					@Override
-//					public void onAPIStatus(boolean status) {
-//						listView.onLoadMoreComplete();
-//						if (status) {
-//							adapter.setPosts(UserDataStore.getStore()
-//									.getPosts());
-//							adapter.notifyDataSetChanged();
-//						}
-//					}
-//				}).execute("");
-//			}
-//		});
-		// listView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-		// @Override
-		// public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-		// new GetPosts(HomescreenActivity.this, UserDataStore.getStore()
-		// .getUserAccessToken(), UserDataStore.getStore()
-		// .getUserId(), new APIListener() {
-		//
-		// @Override
-		// public void onAPIStatus(boolean status) {
-		// listView.onRefreshComplete();
-		// if (status) {
-		// adapter.setPosts(UserDataStore.getStore()
-		// .getPosts());
-		// adapter.notifyDataSetChanged();
-		// }
-		// }
-		// }).execute("");
-		// }
-		// });
-		if (getIntent().getBooleanExtra("fromSplashscreen", false)) {
-//			listView.onRefresh();
-		}
 	}
 
 	private void setOnClickListeners() {
-		// findViewById(R.id.newPostButton).setOnClickListener(this);
 		findViewById(R.id.overflowButton).setOnClickListener(this);
 	}
 

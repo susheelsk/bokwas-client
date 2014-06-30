@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,6 +74,7 @@ public class PostActivity extends Activity implements OnClickListener{
 		listView.setAdapter(adapter);
 		
 		TextView postText = (TextView) findViewById(R.id.post_content);
+		postText.setMovementMethod(new ScrollingMovementMethod());
 		postText.setText(post.getPostText());
 		TextView time = (TextView) findViewById(R.id.post_time);
 		Date date = new Date(post.getTimestamp());
@@ -82,6 +84,8 @@ public class PostActivity extends Activity implements OnClickListener{
 		commentSize.setText(String.valueOf(post.getComments().size()));
 		if(comments==null || comments.size()<1) {
 			listView.setBackgroundResource(android.R.color.transparent);
+		}else {
+			listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
 		}
 		TextView likeSize = (TextView) findViewById(R.id.post_like_number);
 		List<Likes> likes = post.getLikes();

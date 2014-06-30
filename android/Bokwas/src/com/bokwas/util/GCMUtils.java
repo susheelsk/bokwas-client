@@ -12,7 +12,7 @@ import com.bokwas.datasets.UserDataStore;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GCMUtils {
-
+	
 	public static boolean checkPlayServices(Activity activity) {
 //		int resultCode = GooglePlayServicesUtil
 //				.isGooglePlayServicesAvailable(activity);

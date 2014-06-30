@@ -83,7 +83,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 				List<Post> posts = getPostsResponse.getPosts();
 				Log.d("GetPosts","Posts size : "+posts.size());
 				for (Post post : posts) {
-					UserDataStore.getStore().addPost(post);
+					UserDataStore.getStore().addNewPost(post);
 				}
 				if(gcmRegId!=null && !gcmRegId.trim().equals("")) {
 					UserDataStore.getStore().setGcmUpdated(true);
