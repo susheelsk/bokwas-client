@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GCMUtils;
+import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.LocalStorage;
+import com.bokwas.util.NotificationProgress;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.listeners.OnLoginListener;
@@ -99,6 +101,7 @@ public class SplashScreen extends Activity {
 	}
 
 	private void initAppData() {
+		NotificationProgress.clearNotificationProgress(GeneralUtil.GENERAL_NOTIFICATIONS);
 		if (LocalStorage.getObj(this, UserDataStore.class) != null) {
 			UserDataStore.setInstance(LocalStorage.getObj(this,
 					UserDataStore.class));

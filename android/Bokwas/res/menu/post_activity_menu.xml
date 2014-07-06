@@ -12,6 +12,9 @@
             android:id="@+id/post_like"
             android:title="Like"/>
         <item
+            android:id="@+id/post_show_like"
+            android:title="Show Likes"/>
+        <item
             android:id="@+id/post_delete"
             android:title="Delete"/>
     </group>

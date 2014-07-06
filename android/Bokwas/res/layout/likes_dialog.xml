@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="320dp"
+    android:layout_gravity="center"
+    android:layout_marginLeft="24dp"
+    android:layout_marginRight="24dp"
+    android:background="#DDDDDD"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#F99238"
+        android:gravity="center"
+        android:text="Likes"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/like_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/comment_edittext"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="4dp"
+        android:divider="#777777"
+        android:cacheColorHint="@android:color/transparent"
+        android:dividerHeight="4dp" >
+    </ListView>
+    
+</RelativeLayout>

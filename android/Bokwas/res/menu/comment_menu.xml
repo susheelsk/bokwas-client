@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:id="@+id/comment_popupmenu" >
+        <item
+            android:id="@+id/comment_like"
+            android:title="Like"/>
+        <item
+            android:id="@+id/comment_show_like"
+            android:title="Show Likes"/>
+        <item
+            android:id="@+id/comment_delete"
+            android:title="Delete"/>
+    </group>
+
+</menu>

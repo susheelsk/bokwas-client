@@ -24,8 +24,10 @@ import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.DeleteApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.dialogboxes.LikesDialog;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
+import com.bokwas.response.Notification;
 import com.bokwas.response.Post;
 import com.bokwas.ui.CommentsDialogListAdapter;
 import com.bokwas.util.DateUtil;
@@ -38,24 +40,33 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class PostActivity extends Activity implements OnClickListener{
-	
+public class PostActivity extends Activity implements OnClickListener {
+
 	private Post post;
 	private EditText editText;
 	private CommentsDialogListAdapter adapter;
 	private List<Comment> comments;
 	private ListView listView;
 	private boolean isLike = true;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.post_screen);
-		
-		String postId = getIntent().getStringExtra("postId");
-		post = UserDataStore.getStore().getPost(postId);
 
+		String postId = getIntent().getStringExtra("postId");
+
+		boolean isFromNoti = getIntent().getBooleanExtra("fromNoti", false);
+		if (isFromNoti) {
+			try {
+				UserDataStore.initData(this);
+				NotificationProgress.clearNotificationProgress(GeneralUtil.GENERAL_NOTIFICATIONS);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		post = UserDataStore.getStore().getPost(postId);
 		setOnClickListeners();
 
 		setupUI();
@@ -64,15 +75,16 @@ public class PostActivity extends Activity implements OnClickListener{
 	}
 
 	private void setupUI() {
-		if(post.isBokwasPost()) {
+		if (post.isBokwasPost()) {
 			findViewById(R.id.post_relative_view).setBackgroundResource(R.drawable.rectangle_orange_stroke);
 		}
+		setupNotificationBar();
 		editText = (EditText) findViewById(R.id.comment_edittext);
 		comments = post.getComments();
 		adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
 		listView = (ListView) findViewById(R.id.comment_list);
 		listView.setAdapter(adapter);
-		
+
 		TextView postText = (TextView) findViewById(R.id.post_content);
 		postText.setMovementMethod(new ScrollingMovementMethod());
 		postText.setText(post.getPostText());
@@ -82,9 +94,9 @@ public class PostActivity extends Activity implements OnClickListener{
 		time.setText(dateString);
 		TextView commentSize = (TextView) findViewById(R.id.post_comment_number);
 		commentSize.setText(String.valueOf(post.getComments().size()));
-		if(comments==null || comments.size()<1) {
+		if (comments == null || comments.size() < 1) {
 			listView.setBackgroundResource(android.R.color.transparent);
-		}else {
+		} else {
 			listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
 		}
 		TextView likeSize = (TextView) findViewById(R.id.post_like_number);
@@ -94,21 +106,18 @@ public class PostActivity extends Activity implements OnClickListener{
 		} else {
 			likeSize.setText(String.valueOf(0));
 		}
-		
+
 		TextView name = (TextView) findViewById(R.id.post_name);
 		ImageView picture = (ImageView) findViewById(R.id.post_profile_pic);
 		if (post.isBokwasPost()) {
 			if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 				name.setText(UserDataStore.getStore().getBokwasName());
-				String avatarId = String.valueOf(UserDataStore.getStore()
-						.getAvatarId());
-				picture.setImageBitmap(GeneralUtil.getImageBitmap(
-						GeneralUtil.getAvatarResourceId(avatarId), this));
+				String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
+				picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
 			} else {
 				name.setText(post.getName());
 				String avatarId = post.getAvatarId();
-				picture.setImageBitmap(GeneralUtil.getImageBitmap(
-						GeneralUtil.getAvatarResourceId(avatarId), this));
+				picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
 			}
 
 		} else {
@@ -116,109 +125,98 @@ public class PostActivity extends Activity implements OnClickListener{
 			UrlImageViewHelper.setUrlDrawable(picture, post.getProfilePicture(), null, 60000 * 100);
 		}
 	}
+	
+	protected void setupNotificationBar() {
+		try {
+			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+			notificationButton.setText(String.valueOf(UserDataStore.getStore().getNotifications().size()));
+			boolean isNotifNotSeen = false;
+			for(Notification notif : UserDataStore.getStore().getNotifications()) {
+				if(notif.isViewed()==false) {
+					isNotifNotSeen = true;
+				}
+			}
+			
+			if (isNotifNotSeen) {
+				notificationButton.setBackgroundResource(R.drawable.circle_red);
+			} else {
+				notificationButton.setBackgroundResource(R.drawable.circle_grey);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	private void setOnClickListeners() {
-//		findViewById(R.id.post_comment_button).setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				CommentsDialog commentsDialog = new CommentsDialog(PostActivity.this,
-//						post.getComments(), post);
-//				commentsDialog.setOnDismissListener(new OnDismissListener() {
-//					
-//					@Override
-//					public void onDismiss(DialogInterface dialog) {
-//						setupUI();
-//					}
-//				});
-//				commentsDialog.show();
-//			}
-//		});
-		
 		findViewById(R.id.overflowButton).setOnClickListener(this);
-		
+
 		findViewById(R.id.commentButton).setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 
-				if (editText.getText().toString().trim() != null
-						&& !editText.getText().toString().trim().equals("")) {
-					
+				if (editText.getText().toString().trim() != null && !editText.getText().toString().trim().equals("")) {
+
 					NotificationProgress.showNotificationProgress(PostActivity.this, "Adding a new comment", GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
-					
-					new AddCommentsApi(UserDataStore.getStore().getAccessKey(),
-							post.getPostId(), post.getPostedBy(), editText
-									.getText().toString(), UserDataStore.getStore()
-									.getUserId(), PostActivity.this, new APIListener() {
+
+					new AddCommentsApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), post.getPostedBy(), editText.getText().toString(), UserDataStore.getStore().getUserId(),
+							PostActivity.this, new APIListener() {
 
 								@Override
 								public void onAPIStatus(boolean status) {
 									NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
 									if (status) {
-										Toast.makeText(PostActivity.this, "Comment added!",
-												Toast.LENGTH_SHORT).show();
+										Toast.makeText(PostActivity.this, "Comment added!", Toast.LENGTH_SHORT).show();
 										editText.setText("");
 										adapter.notifyDataSetChanged();
 										setupUI();
 									} else {
-										Toast.makeText(PostActivity.this,
-												"Comment couldn't be added!",
-												Toast.LENGTH_SHORT).show();
+										Toast.makeText(PostActivity.this, "Comment couldn't be added!", Toast.LENGTH_SHORT).show();
 									}
 								}
 							}).execute("");
 				}
-			
+
 			}
 		});
-		
+
 		findViewById(R.id.post_like_button).setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				likePost();
 			}
 		});
 	}
-	
+
 	protected void likePost() {
 		final SuperActivityToast superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
-		if(post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 			isLike = false;
 			NotificationProgress.showNotificationProgress(PostActivity.this, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-		}else {
+		} else {
 			NotificationProgress.showNotificationProgress(PostActivity.this, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		}
-		new AddLikesApi(PostActivity.this, UserDataStore.getStore()
-				.getAccessKey(), post.getPostId(), UserDataStore
-				.getStore().getUserId(), post.getPostedBy(), null,
-				new APIListener() {
+		new AddLikesApi(PostActivity.this, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), null, new APIListener() {
 
-					@Override
-					public void onAPIStatus(boolean status) {
-						NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-						if (status) {
-							if(isLike) {
-							Crouton.makeText(PostActivity.this, "Post liked!",
-									Style.INFO).show();
-							}else {
-								Crouton.makeText(PostActivity.this, "Post unliked!",
-										Style.INFO).show();
-							}
-							setupUI();
-						} else {
-							Crouton.makeText(
-									PostActivity.this,
-									"Post couldn't be liked. Try again",
-									Style.ALERT).show();
-						}
+			@Override
+			public void onAPIStatus(boolean status) {
+				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+				if (status) {
+					if (isLike) {
+						Crouton.makeText(PostActivity.this, "Post liked!", Style.INFO).show();
+					} else {
+						Crouton.makeText(PostActivity.this, "Post unliked!", Style.INFO).show();
 					}
-				}).execute("");
-	
-	
+					setupUI();
+				} else {
+					Crouton.makeText(PostActivity.this, "Post couldn't be liked. Try again", Style.ALERT).show();
+				}
+			}
+		}).execute("");
+
 	}
 
 	@Override
@@ -226,22 +224,24 @@ public class PostActivity extends Activity implements OnClickListener{
 		super.onBackPressed();
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		startActivity(intent);
-		overridePendingTransition(R.anim.activity_slide_in_right,
-				R.anim.activity_slide_out_right);
+		overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
 		finish();
 	}
 
 	@Override
 	public void onClick(View view) {
-		if(view.getId() == R.id.overflowButton) {
+		if (view.getId() == R.id.overflowButton) {
 			PopupMenu popup = new PopupMenu(PostActivity.this, view);
-			popup.getMenuInflater().inflate(R.menu.post_activity_menu,
-					popup.getMenu());
+			popup.getMenuInflater().inflate(R.menu.post_activity_menu, popup.getMenu());
 			MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
-			if(post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
+			MenuItem showLikesItem = popup.getMenu().findItem(R.id.post_show_like);
+			if (post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 				deleteItem.setVisible(true);
-			}else {
+			} else {
 				deleteItem.setVisible(false);
+			}
+			if (post.getLikes().size() < 1) {
+				showLikesItem.setVisible(false);
 			}
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
@@ -255,8 +255,11 @@ public class PostActivity extends Activity implements OnClickListener{
 					case R.id.post_share:
 						sharePost();
 						break;
-					case R.id.post_delete: 
+					case R.id.post_delete:
 						deletePost();
+						break;
+					case R.id.post_show_like:
+						showLikes();
 						break;
 					}
 					return true;
@@ -265,61 +268,48 @@ public class PostActivity extends Activity implements OnClickListener{
 			popup.show();
 		}
 	}
-	
+
+	private void showLikes() {
+		LikesDialog likesDialog = new LikesDialog(this, post.getLikes());
+		likesDialog.show();
+	}
+
 	private void deletePost() {
-		final SuperActivityToast superActivityToast = new SuperActivityToast(
-				this, SuperToast.Type.PROGRESS);
+		final SuperActivityToast superActivityToast = new SuperActivityToast(this, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
-		NotificationProgress.showNotificationProgress(this,
-				"Deleting the post",
-				GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
-		new DeleteApi(UserDataStore.getStore().getAccessKey(),
-				post.getPostId(), UserDataStore.getStore().getUserId(),null,
-				this, new APIListener() {
+		NotificationProgress.showNotificationProgress(this, "Deleting the post", GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), null, this, new APIListener() {
 
-					@Override
-					public void onAPIStatus(boolean status) {
-						NotificationProgress
-								.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
-						if (status) {
-							Crouton.makeText(PostActivity.this, "Post deleted!",
-									Style.INFO).show();
-							onBackPressed();
-						} else {
-							Crouton.makeText(PostActivity.this,
-									"Post couldn't be deleted. Try again",
-									Style.ALERT).show();
-						}
-					}
-				}).execute("");
-	
+			@Override
+			public void onAPIStatus(boolean status) {
+				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+				if (status) {
+					Crouton.makeText(PostActivity.this, "Post deleted!", Style.INFO).show();
+					onBackPressed();
+				} else {
+					Crouton.makeText(PostActivity.this, "Post couldn't be deleted. Try again", Style.ALERT).show();
+				}
+			}
+		}).execute("");
+
 	}
 
 	protected void sharePost() {
 		final View view = getWindow().getDecorView().findViewById(android.R.id.content);
-		view.findViewById(R.id.comment_edittext).setVisibility(
-				View.INVISIBLE);
-		view.findViewById(R.id.commentButton).setVisibility(
-				View.INVISIBLE);
+		view.findViewById(R.id.comment_edittext).setVisibility(View.INVISIBLE);
+		view.findViewById(R.id.commentButton).setVisibility(View.INVISIBLE);
 		view.layout(0, 0, getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
 		try {
-			Bitmap bitmap = GeneralUtil
-					.loadBitmapFromView(view);
-			GeneralUtil.sharePhotoIntent(
-					PostActivity.this, bitmap,
-					"Check out what I saw on Bokwas");
+			Bitmap bitmap = GeneralUtil.loadBitmapFromView(view);
+			GeneralUtil.sharePhotoIntent(PostActivity.this, bitmap, "Check out what I saw on Bokwas");
 
 		} catch (Exception e) {
-			Crouton.makeText(PostActivity.this,
-					"Post couldn't be shared. Try again",
-					Style.ALERT).show();
+			Crouton.makeText(PostActivity.this, "Post couldn't be shared. Try again", Style.ALERT).show();
 			e.printStackTrace();
 		}
-		view.findViewById(R.id.comment_edittext).setVisibility(
-				View.VISIBLE);
-		view.findViewById(R.id.commentButton).setVisibility(
-				View.VISIBLE);
+		view.findViewById(R.id.comment_edittext).setVisibility(View.VISIBLE);
+		view.findViewById(R.id.commentButton).setVisibility(View.VISIBLE);
 	}
-	
+
 }

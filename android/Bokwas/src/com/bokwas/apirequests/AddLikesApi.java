@@ -53,11 +53,11 @@ public class AddLikesApi extends AsyncTask<String, Void, Boolean>{
 			if(apiResponse.statusCode == 200) {
 				if (commentId == null) {
 					UserDataStore.getStore().getPost(postId).setUpdatedTime(System.currentTimeMillis());
-					UserDataStore.getStore().getPost(postId).addLikes(personId,UserDataStore.getStore().getBokwasName());
+					UserDataStore.getStore().getPost(postId).addLikes(String.valueOf(UserDataStore.getStore().getUserId()),UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()));
 					UserDataStore.getStore().save(activity);
 				}else {
 					UserDataStore.getStore().getPost(postId).setUpdatedTime(System.currentTimeMillis());
-					UserDataStore.getStore().getPost(postId).getComment(commentId).addLikes(personId,UserDataStore.getStore().getBokwasName());
+					UserDataStore.getStore().getPost(postId).getComment(commentId).addLikes(String.valueOf(UserDataStore.getStore().getUserId()),UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()));
 					UserDataStore.getStore().save(activity);
 				}
 				return true;

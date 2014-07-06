@@ -15,6 +15,7 @@ import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
 import com.bokwas.util.GCMUtils;
+import com.bokwas.util.GeneralUtil;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -49,8 +50,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private void moveToNextScreen() {
 		Intent intent = new Intent(this, ProfileChooserActivity.class);
 		startActivity(intent);
-		overridePendingTransition(R.anim.activity_slide_in_left,
-				R.anim.activity_slide_out_left);
+		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 		finish();
 	}
 
@@ -63,15 +63,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 		Properties properties = new Properties.Builder().add(Properties.ID).add(Properties.NAME).add(Properties.PICTURE).build();
 		mSimpleFacebook.getFriends(properties, new OnFriendsListener() {
 			@Override
-		    public void onComplete(List<Profile> friends) {
-		        Log.i(TAG, "Number of friends = " + friends.size());
-		        for(Profile friend : friends) {
-		        	UserDataStore.getStore().getFriends().add(new Friends(friend.getName(), friend.getId(), friend.getPicture(), null, null));
-		        }
-		        UserDataStore.getStore().save(LoginActivity.this);
-		        pdia.dismiss();
-		        moveToNextScreen();
-		    }
+			public void onComplete(List<Profile> friends) {
+				Log.i(TAG, "Number of friends = " + friends.size());
+				for (Profile friend : friends) {
+					UserDataStore.getStore().getFriends().add(new Friends(friend.getName(), friend.getId(), friend.getPicture(), null, null));
+				}
+				UserDataStore.getStore().save(LoginActivity.this);
+				pdia.dismiss();
+				moveToNextScreen();
+			}
 		});
 	}
 
@@ -80,10 +80,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 		pdia.setMessage("Fetching details...");
 		pdia.setCancelable(false);
 		pdia.setCanceledOnTouchOutside(false);
-		Log.d("LoginActivity","AccessToken : "+
-				mSimpleFacebook.getSession().getAccessToken());
-		UserDataStore.getStore().setUserAccessToken(
-				mSimpleFacebook.getSession().getAccessToken());
+		Log.d("LoginActivity", "AccessToken : " + mSimpleFacebook.getSession().getAccessToken());
+		UserDataStore.getStore().setUserAccessToken(mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().save(this);
 
 		mSimpleFacebook.getProfile(new OnProfileListener() {
@@ -95,7 +93,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Log.d(TAG, "Gender :" + profile.getGender());
 				Log.d(TAG, "email :" + profile.getEmail());
 				Log.d(TAG, "Facebook Id :" + profile.getId());
-//				getFriendsAndStore();
+				getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit().putString(GeneralUtil.userGender, profile.getGender()).commit();
+				// getFriendsAndStore();
 				UserDataStore.getStore().setUserId(profile.getId());
 				UserDataStore.getStore().setFbName(profile.getName());
 				UserDataStore.getStore().setFbPicLink(profile.getPicture());
@@ -106,17 +105,13 @@ public class LoginActivity extends Activity implements OnClickListener {
 			@Override
 			public void onFail(String reason) {
 				pdia.dismiss();
-				Toast.makeText(LoginActivity.this,
-						"Something went wrongbecause "+reason+". Try again", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(LoginActivity.this, "Something went wrongbecause " + reason + ". Try again", Toast.LENGTH_SHORT).show();
 			}
 
 			@Override
 			public void onException(Throwable throwable) {
 				pdia.dismiss();
-				Toast.makeText(LoginActivity.this,
-						"Something went wrongbecause "+throwable.getMessage()+". Try again", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(LoginActivity.this, "Something went wrongbecause " + throwable.getMessage() + ". Try again", Toast.LENGTH_SHORT).show();
 			}
 
 		});
@@ -143,38 +138,26 @@ public class LoginActivity extends Activity implements OnClickListener {
 			pdia.setCancelable(false);
 			pdia.setCanceledOnTouchOutside(false);
 			if (GCMUtils.checkPlayServices(this)) {
-	            GCMUtils.getRegistrationId(this);
-	        } else {
-	            Log.d(TAG, "No valid Google Play Services APK found.");
-	        }
-			Permission[] permissions = new Permission[] {
-				    Permission.USER_PHOTOS,
-				    Permission.EMAIL,
-				    Permission.READ_STREAM,
-				};
-			SimpleFacebookConfiguration configuration = new SimpleFacebookConfiguration.Builder()
-		    .setAppId("282335065256850")
-		    .setNamespace("bokwas_android")
-		    .setPermissions(permissions)
-		    .build();
+				GCMUtils.getRegistrationId(this);
+			} else {
+				Log.d(TAG, "No valid Google Play Services APK found.");
+			}
+			Permission[] permissions = new Permission[] { Permission.USER_PHOTOS, Permission.EMAIL, Permission.READ_STREAM, };
+			SimpleFacebookConfiguration configuration = new SimpleFacebookConfiguration.Builder().setAppId("282335065256850").setNamespace("bokwas_android").setPermissions(permissions).build();
 			SimpleFacebook.setConfiguration(configuration);
 			mSimpleFacebook.login(new OnLoginListener() {
 
 				@Override
 				public void onFail(String reason) {
 					pdia.dismiss();
-					Toast.makeText(LoginActivity.this,
-							"Something went wrong because "+reason+". Try again",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(LoginActivity.this, "Something went wrong because " + reason + ". Try again", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onException(Throwable throwable) {
 					pdia.dismiss();
-					
-					Toast.makeText(LoginActivity.this,
-							"Something went wrongbecause "+throwable.getMessage()+". Try again",
-							Toast.LENGTH_SHORT).show();
+
+					Toast.makeText(LoginActivity.this, "Something went wrongbecause " + throwable.getMessage() + ". Try again", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -185,8 +168,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				@Override
 				public void onNotAcceptingPermissions(Type type) {
 					pdia.dismiss();
-					Toast.makeText(LoginActivity.this, "Permissions not given",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(LoginActivity.this, "Permissions not given", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -197,9 +179,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 			});
 
 		} else if (view.getId() == R.id.whyFacebookLoginButton) {
-			GenericDialogOk dialog = new GenericDialogOk(
-					this,
-					"Why connect to facebook?",
+			GenericDialogOk dialog = new GenericDialogOk(this, "Why connect to facebook?",
 					"We retrieve only posts from facebook so that you can talk about it on Bokwas. We do NOT post anything back on facebook.");
 			dialog.show();
 		}

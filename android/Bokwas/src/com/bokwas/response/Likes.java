@@ -1,22 +1,28 @@
 package com.bokwas.response;
 
 public class Likes {
-	
-	private String id;
+
+	private String fbid;
 	private String name;
-	
+	private String avatar_id;
+
 	public String getId() {
-		return id;
+		return fbid;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Likes(String id, String name) {
-		super();
-		this.id = id;
-		this.name = name;
+	public String getAvatarId() {
+		return avatar_id;
 	}
-	
+
+	public Likes(String id, String name, String avatarId) {
+		super();
+		this.fbid = id;
+		this.name = name;
+		this.avatar_id = avatarId;
+	}
+
 }

@@ -4,6 +4,7 @@ public class AppData {
 
 	private static AppData instance = null;
 	private boolean isDevMode = true;
+	public static int MAX_POSTS_LIMIT = 100;
 	
 	public static String baseURL = "http://162.243.118.127:8080"; 
 //	public static String baseURL = "http://10.0.0.5:8080/BokwasServer";

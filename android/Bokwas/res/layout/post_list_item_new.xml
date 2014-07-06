@@ -140,6 +140,7 @@
                     android:id="@+id/post_image"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:layout_centerVertical="true"
                     android:background="@drawable/comment_icon" />
 
                 <TextView
@@ -149,6 +150,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@+id/post_image"
                     android:text="12"
+                    android:layout_centerVertical="true"
                     android:textColor="#777777"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -179,6 +181,7 @@
                     android:id="@+id/like_image"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:layout_centerVertical="true"
                     android:background="@drawable/like_icon" />
 
                 <TextView
@@ -188,6 +191,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@+id/like_image"
                     android:text="12"
+                    android:layout_centerVertical="true"
                     android:textColor="#777777"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -216,7 +220,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
-        android:background="@drawable/rectangle_white_stroke"
         android:src="@drawable/avatar_15" />
 
 </RelativeLayout>

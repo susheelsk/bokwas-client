@@ -33,6 +33,10 @@ public class GeneralUtil {
 	public static final int NOTIFICATION_PROGRESS_ADDLIKES = 503;
 	public static final int NOTIFICATION_PROGRESS_DELETEPOST = 504;
 	public static final int NOTIFICATION_PROGRESS_DELETECOMMENT = 504;
+	public static final int GENERAL_NOTIFICATIONS = 500;
+	public static final String sharedPreferences = "bokwasSharePreferences";
+	public static final String isLoggedInKey = "isLoggedIn";
+	public static final String userGender = "userGender";
 	
 	public static Parcelable listSavedInstance = null;
 	
@@ -66,7 +70,7 @@ public class GeneralUtil {
 		Bitmap srcBmp = BitmapFactory
 				.decodeResource(context.getResources(), id);
 		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(),
-				3 * srcBmp.getHeight() / 4);
+				  srcBmp.getHeight() );
 		return modBmp;
 	}
 
@@ -126,7 +130,7 @@ public class GeneralUtil {
 			ResolveInfo ri = resInfo.get(i);
 			String packageName = ri.activityInfo.packageName;
 			Log.d("Share", "PackageName : " + packageName);
-			if (packageName.contains("hike")) {
+			if (packageName.contains("gm")) {
 				share.setPackage(packageName);
 			} else if (packageName.contains("twitter")
 					|| packageName.contains("facebook")
@@ -274,16 +278,6 @@ public class GeneralUtil {
 				return R.drawable.avatar_29;
 			case 30:
 				return R.drawable.avatar_30;
-			case 31:
-				return R.drawable.avatar_31;
-			case 32:
-				return R.drawable.avatar_32;
-			case 33:
-				return R.drawable.avatar_33;
-			case 34:
-				return R.drawable.avatar_34;
-			case 35:
-				return R.drawable.avatar_35;
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();

@@ -5,11 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.util.Log;
 
+import com.bokwas.response.Notification;
 import com.bokwas.response.Post;
+import com.bokwas.util.AppData;
+import com.bokwas.util.DateUtil;
 import com.bokwas.util.LocalStorage;
 
 /**
@@ -38,6 +42,7 @@ public class UserDataStore {
 	private String accessKey;
 	private List<Post> posts = new ArrayList<Post>();
 	private List<Friends> friends = new ArrayList<Friends>();
+	private List<Notification> notificationList = new ArrayList<Notification>();
 	private String gcmRegId;
 	private boolean gcmUpdated = false;
 
@@ -53,6 +58,65 @@ public class UserDataStore {
 		return gcmRegId;
 	}
 
+	public void addNotification(Notification newNotification) {
+		Post post = getPost(newNotification.getNotification_data().get("postId"));
+		Date today = new Date();
+		Date notificationDate = new Date(newNotification.getTimestamp());
+		int diffInDays = (int) DateUtil.getDateDiff(today, notificationDate, TimeUnit.DAYS);
+		for (Notification notif : notificationList) {
+			if (notif.getNotification_id().equals(newNotification.getNotification_id())) {
+				// duplicate notification. Already exists
+				return;
+			}
+			if (notif.getNotification_data().get("postId").equals(newNotification.getNotification_data().get("postId")) && diffInDays < 2) {
+				//one notification for this post alreay exists and it came within 2 days
+				return;
+			}
+		}
+		if (post != null) {
+			notificationList.add(newNotification);
+		} else {
+			Log.d("BokwasNotification", "Post not found concerning notification");
+		}
+	}
+
+	public List<Notification> getNotifications() {
+		return notificationList;
+	}
+
+	public Notification getNotification(String notificationId) {
+		for (Notification notif : notificationList) {
+			if (notificationId.equals(notif.getNotification_id())) {
+				return notif;
+			}
+		}
+		return null;
+	}
+
+	public void removeNotification(String notificationId) {
+		notificationList.remove(getNotification(notificationId));
+	}
+
+	public void removeOldNotifications() {
+		List<Integer> removeIds = new ArrayList<Integer>();
+		int i = 0;
+		Date today = new Date();
+		for (Notification notification : notificationList) {
+			Date notificationDate = new Date(notification.getTimestamp());
+			int diffInDays = (int) DateUtil.getDateDiff(today, notificationDate, TimeUnit.DAYS);
+			Post post = getPost(notification.getNotification_data().get("postId"));
+			if (post == null || diffInDays > 15) {
+				removeIds.add(i);
+			}
+			i++;
+		}
+		if (removeIds.size() > 0) {
+			for (Integer removalId : removeIds) {
+				notificationList.remove(removalId);
+			}
+		}
+	}
+
 	public void setGcmRegId(String gcmRegId) {
 		this.gcmRegId = gcmRegId;
 	}
@@ -65,7 +129,7 @@ public class UserDataStore {
 		}
 		return null;
 	}
-	
+
 	public List<Post> getBokwasPostsOfPerson(String personId) {
 		List<Post> userPosts = new ArrayList<Post>();
 		for (Post post : getPosts()) {
@@ -75,7 +139,7 @@ public class UserDataStore {
 		}
 		return userPosts;
 	}
-	
+
 	public List<Post> getPostsOfPerson(String personId) {
 		List<Post> userPosts = new ArrayList<Post>();
 		for (Post post : getPosts()) {
@@ -94,7 +158,7 @@ public class UserDataStore {
 		}
 		return null;
 	}
-	
+
 	public String getAccessKey() {
 		return accessKey;
 	}
@@ -128,7 +192,7 @@ public class UserDataStore {
 		}
 		posts.add(newPost);
 	}
-	
+
 	public void addNewPost(Post newPost) {
 		for (Post post : posts) {
 			if (post.getPostId().equals(newPost.getPostId())) {
@@ -136,9 +200,9 @@ public class UserDataStore {
 				return;
 			}
 		}
-		posts.add(0,newPost);
+		posts.add(0, newPost);
 	}
-	
+
 	public void sortPosts() {
 		Collections.sort(posts, new PostComparator());
 	}
@@ -163,7 +227,7 @@ public class UserDataStore {
 	}
 
 	public List<Post> getPosts() {
-//		Collections.sort(posts, new PostComparator());
+		// Collections.sort(posts, new PostComparator());
 		return posts;
 	}
 
@@ -240,10 +304,17 @@ public class UserDataStore {
 	public static synchronized void setInstance(UserDataStore userDataStore) {
 		instance = userDataStore;
 	}
-	
+
 	public static void initData(Context context) {
-		setInstance(LocalStorage.getObj(context,
-				UserDataStore.class));
+		setInstance(LocalStorage.getObj(context, UserDataStore.class));
+		getStore().sortPosts();
+		if (getStore().getPosts().size() > AppData.MAX_POSTS_LIMIT) {
+			for (int i = 100; i < getStore().getPosts().size(); i++) {
+				getStore().getPosts().remove(i);
+			}
+			getStore().save(context);
+		}
+		getStore().removeOldNotifications();
 	}
 
 	public static synchronized UserDataStore getStore() {

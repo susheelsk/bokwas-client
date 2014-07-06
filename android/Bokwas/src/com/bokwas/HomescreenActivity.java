@@ -23,10 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bokwas.apirequests.GetNewPosts;
+import com.bokwas.apirequests.GetNotificationsApi;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.dialogboxes.NotificationDialog;
 import com.bokwas.response.Likes;
+import com.bokwas.response.Notification;
 import com.bokwas.response.Post;
 import com.bokwas.ui.HomescreenPostsListAdapter;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
@@ -41,12 +44,12 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class HomescreenActivity extends Activity implements OnClickListener,
-		PostShare {
+public class HomescreenActivity extends Activity implements OnClickListener, PostShare {
 
 	private PullToRefreshListView listView;
 	private HomescreenPostsListAdapter adapter;
 	protected boolean isLoadingLastItems = false;
+	private boolean isRefreshed = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,8 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 		setOnClickListeners();
 
 		setupUI();
+		
+		setupNotificationBar();
 
 	}
 
@@ -67,24 +72,31 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 	}
 
 	private void setupUI() {
-		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore()
-				.getPosts(), this);
+		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore().getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
 
 		setupListViewListeners();
 
-		if (getIntent().getBooleanExtra("fromSplashscreen", false)) {
-			// listView.onRefresh();
+		if (getIntent().getBooleanExtra("fromSplashscreen", false) && isRefreshed == false) {
+			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+
+				@Override
+				public void onAPIStatus(boolean status) {
+					setupNotificationBar();
+				}
+			}).execute("");
+			listView.setRefreshing(true);
+			isRefreshed = true;
 		}
 
 		if (GeneralUtil.listSavedInstance != null) {
-			listView.getRefreshableView().onRestoreInstanceState(
-					GeneralUtil.listSavedInstance);
+			listView.getRefreshableView().onRestoreInstanceState(GeneralUtil.listSavedInstance);
 		}
 	}
 
 	private void setupListViewListeners() {
+
 		listView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
@@ -93,8 +105,7 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 			}
 
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
 			}
 		});
@@ -107,10 +118,8 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 			}
 
 			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				GeneralUtil.listSavedInstance = listView.getRefreshableView()
-						.onSaveInstanceState();
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				GeneralUtil.listSavedInstance = listView.getRefreshableView().onSaveInstanceState();
 			}
 		});
 
@@ -118,16 +127,13 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 
 			@Override
 			public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-				new GetPosts(HomescreenActivity.this, UserDataStore.getStore()
-						.getUserAccessToken(), UserDataStore.getStore()
-						.getUserId(), new APIListener() {
+				new GetPosts(HomescreenActivity.this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getUserId(), new APIListener() {
 
 					@Override
 					public void onAPIStatus(boolean status) {
 						listView.onRefreshComplete();
 						if (status) {
-							adapter.setPosts(UserDataStore.getStore()
-									.getPosts());
+							adapter.setPosts(UserDataStore.getStore().getPosts());
 							adapter.notifyDataSetChanged();
 						}
 					}
@@ -141,25 +147,16 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 			public void onLastItemVisible() {
 				if (isLoadingLastItems == false) {
 					isLoadingLastItems = true;
-					Toast.makeText(HomescreenActivity.this,
-							"Getting more posts!", Toast.LENGTH_SHORT).show();
-					long timestamp = UserDataStore
-							.getStore()
-							.getPosts()
-							.get(UserDataStore.getStore().getPosts().size() - 1)
-							.getTimestamp();
-					new GetNewPosts(HomescreenActivity.this, UserDataStore
-							.getStore().getAccessKey(), UserDataStore
-							.getStore().getUserAccessToken(), UserDataStore
-							.getStore().getUserId(), timestamp,
+					Toast.makeText(HomescreenActivity.this, "Getting more posts!", Toast.LENGTH_SHORT).show();
+					long timestamp = UserDataStore.getStore().getPosts().get(UserDataStore.getStore().getPosts().size() - 1).getTimestamp();
+					new GetNewPosts(HomescreenActivity.this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getUserId(), timestamp,
 							new APIListener() {
 
 								@Override
 								public void onAPIStatus(boolean status) {
 									if (status) {
 										isLoadingLastItems = false;
-										adapter.setPosts(UserDataStore
-												.getStore().getPosts());
+										adapter.setPosts(UserDataStore.getStore().getPosts());
 										adapter.notifyDataSetChanged();
 									}
 								}
@@ -170,8 +167,30 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 		});
 	}
 
+	protected void setupNotificationBar() {
+		try {
+			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+			notificationButton.setText(String.valueOf(UserDataStore.getStore().getNotifications().size()));
+			boolean isNotifNotSeen = false;
+			for(Notification notif : UserDataStore.getStore().getNotifications()) {
+				if(notif.isViewed()==false) {
+					isNotifNotSeen = true;
+				}
+			}
+			
+			if (isNotifNotSeen) {
+				notificationButton.setBackgroundResource(R.drawable.circle_red);
+			} else {
+				notificationButton.setBackgroundResource(R.drawable.circle_grey);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void setOnClickListeners() {
 		findViewById(R.id.overflowButton).setOnClickListener(this);
+		findViewById(R.id.notificationButton).setOnClickListener(this);
 	}
 
 	@Override
@@ -179,13 +198,13 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 		if (view.getId() == R.id.newPostButton) {
 			Intent intent = new Intent(this, NewPostActivity.class);
 			startActivity(intent);
-			overridePendingTransition(R.anim.activity_slide_in_left,
-					R.anim.activity_slide_out_left);
+			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
 		} else if (view.getId() == R.id.overflowButton) {
 			PopupMenu popup = new PopupMenu(HomescreenActivity.this, view);
-			popup.getMenuInflater().inflate(R.menu.overflow_menu,
-					popup.getMenu());
+			popup.getMenuInflater().inflate(R.menu.overflow_menu, popup.getMenu());
+			MenuItem settingsItem = popup.getMenu().findItem(R.id.overflow_settings);
+			settingsItem.setVisible(false);
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
@@ -194,13 +213,16 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 						break;
 					case R.id.overflow_profile:
 						break;
+					case R.id.overflow_settings:
+						Intent intent2 = new Intent(HomescreenActivity.this, SettingsActivity.class);
+						startActivity(intent2);
+						overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+						finish();
+						break;
 					case R.id.oveflow_newpost:
-						Intent intent1 = new Intent(HomescreenActivity.this,
-								NewPostActivity.class);
+						Intent intent1 = new Intent(HomescreenActivity.this, NewPostActivity.class);
 						startActivity(intent1);
-						overridePendingTransition(
-								R.anim.activity_slide_in_left,
-								R.anim.activity_slide_out_left);
+						overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 						finish();
 						break;
 					}
@@ -208,6 +230,11 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 				}
 			});
 			popup.show();
+		} else if (view.getId() == R.id.notificationButton) {
+			if (UserDataStore.getStore().getNotifications().size() > 0) {
+				NotificationDialog dialog = new NotificationDialog(this, UserDataStore.getStore().getNotifications());
+				dialog.show();
+			}
 		}
 	}
 
@@ -215,90 +242,64 @@ public class HomescreenActivity extends Activity implements OnClickListener,
 	public void onPostShare(int position) {
 		final View view = adapter.getView(position, null, listView);
 		((RelativeLayout) findViewById(R.id.hidden_view)).addView(view);
-		view.getViewTreeObserver().addOnGlobalLayoutListener(
-				new OnGlobalLayoutListener() {
+		view.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 
-					@SuppressWarnings("deprecation")
-					@Override
-					public void onGlobalLayout() {
-						view.findViewById(R.id.overflowButton).setVisibility(
-								View.INVISIBLE);
-						view.layout(0, 0, listView.getWidth(), view.getHeight());
-						view.getViewTreeObserver()
-								.removeGlobalOnLayoutListener(this);
-						view.setVisibility(View.GONE);
-						try {
-							Bitmap bitmap = GeneralUtil
-									.loadBitmapFromView(view);
-							GeneralUtil.sharePhotoIntent(
-									HomescreenActivity.this, bitmap,
-									"Check out what I saw on Bokwas");
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onGlobalLayout() {
+				view.findViewById(R.id.overflowButton).setVisibility(View.INVISIBLE);
+				view.layout(0, 0, listView.getWidth(), view.getHeight());
+				view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				view.setVisibility(View.GONE);
+				try {
+					Bitmap bitmap = GeneralUtil.loadBitmapFromView(view);
+					GeneralUtil.sharePhotoIntent(HomescreenActivity.this, bitmap, "Check out what I saw on Bokwas");
 
-						} catch (Exception e) {
-							Crouton.makeText(HomescreenActivity.this,
-									"Post couldn't be shared. Try again",
-									Style.ALERT).show();
-							e.printStackTrace();
-						}
-					}
+				} catch (Exception e) {
+					Crouton.makeText(HomescreenActivity.this, "Post couldn't be shared. Try again", Style.ALERT).show();
+					e.printStackTrace();
+				}
+			}
 
-				});
+		});
 	}
 
 	private View getViewToShare(int position) {
-		final View view = LayoutInflater.from(this).inflate(
-				R.layout.post_list_item_new, null);
+		final View view = LayoutInflater.from(this).inflate(R.layout.post_list_item_new, null);
 		// Do some stuff to the view, like add an ImageView, etc.
 		Post post = adapter.getItem(position);
-		((TextView) view.findViewById(R.id.post_content)).setText(post
-				.getPostText());
+		((TextView) view.findViewById(R.id.post_content)).setText(post.getPostText());
 
 		Date date = new Date(post.getTimestamp());
 		String dateString = DateUtil.formatToYesterdayOrToday(date);
 		((TextView) view.findViewById(R.id.post_time)).setText(dateString);
-		((TextView) view.findViewById(R.id.post_comment_number)).setText(String
-				.valueOf(post.getComments().size()));
+		((TextView) view.findViewById(R.id.post_comment_number)).setText(String.valueOf(post.getComments().size()));
 		List<Likes> likes = post.getLikes();
 		if (likes.size() > 0) {
-			((TextView) view.findViewById(R.id.post_like_number))
-					.setText(String.valueOf(likes.size()));
+			((TextView) view.findViewById(R.id.post_like_number)).setText(String.valueOf(likes.size()));
 		} else {
-			((TextView) view.findViewById(R.id.post_like_number))
-					.setText(String.valueOf(0));
+			((TextView) view.findViewById(R.id.post_like_number)).setText(String.valueOf(0));
 		}
 
 		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-			((RelativeLayout) view.findViewById(R.id.post_like_button))
-					.findViewById(R.id.like_image).setBackgroundResource(
-							R.drawable.facebook_icon_enable);
+			((RelativeLayout) view.findViewById(R.id.post_like_button)).findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
 		} else {
-			((RelativeLayout) view.findViewById(R.id.post_like_button))
-					.findViewById(R.id.like_image).setBackgroundResource(
-							R.drawable.like_icon);
+			((RelativeLayout) view.findViewById(R.id.post_like_button)).findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
 		}
 
 		if (post.isBokwasPost()) {
-			((TextView) view.findViewById(R.id.post_name)).setText(post
-					.getName());
+			((TextView) view.findViewById(R.id.post_name)).setText(post.getName());
 			String avatarId = post.getAvatarId();
-			((ImageView) view.findViewById(R.id.post_profile_pic))
-					.setImageBitmap(GeneralUtil.getImageBitmap(
-							GeneralUtil.getAvatarResourceId(avatarId), this));
+			((ImageView) view.findViewById(R.id.post_profile_pic)).setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
 		} else {
 			String url = post.getProfilePicture();
-			((TextView) view.findViewById(R.id.post_name)).setText(post
-					.getName());
-			UrlImageViewHelper.setUrlDrawable(
-					((ImageView) view.findViewById(R.id.post_profile_pic)),
-					url, null, 60000 * 100);
+			((TextView) view.findViewById(R.id.post_name)).setText(post.getName());
+			UrlImageViewHelper.setUrlDrawable(((ImageView) view.findViewById(R.id.post_profile_pic)), url, null, 60000 * 100);
 		}
 		view.measure(view.getWidth(), view.getHeight());
 		View childView = adapter.getView(position, null, listView);
-		childView.measure(
-				MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-				MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		childView.layout(0, 0, listView.getWidth(),
-				childView.getMeasuredHeight());
+		childView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		childView.layout(0, 0, listView.getWidth(), childView.getMeasuredHeight());
 		return childView;
 	}
 

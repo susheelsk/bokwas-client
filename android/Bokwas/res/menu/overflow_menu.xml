@@ -8,8 +8,13 @@
             android:title="Refresh"/>
         <item
             android:id="@+id/oveflow_newpost"
-            android:showAsAction="never"
+            android:showAsAction="ifRoom"
+            android:icon="@android:drawable/ic_menu_add"
             android:title="New Post"/>
+        <item
+            android:id="@+id/overflow_settings"
+            android:showAsAction="never"
+            android:title="Settings"/>
         <item
             android:id="@+id/overflow_profile"
             android:showAsAction="never"

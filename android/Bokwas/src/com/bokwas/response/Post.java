@@ -152,13 +152,13 @@ public class Post {
 		return null;
 	}
 	
-	public void addLikes(String personId,String name) {
+	public void addLikes(String personId,String name,String avatarId) {
 		if(isAlreadyLiked(personId)) {
 			getLikes().remove(getLikes(personId));
 			return;
 		}
 		List<Likes>likes = getLikes();
-		likes.add(new Likes(personId, name));
+		likes.add(new Likes(personId, name,avatarId));
 		setLikes(likes);
 	}
 

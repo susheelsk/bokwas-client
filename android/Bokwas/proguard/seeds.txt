@@ -2920,11 +2920,6 @@ com.bokwas.R$drawable: int avatar_28
 com.bokwas.R$drawable: int avatar_29
 com.bokwas.R$drawable: int avatar_3
 com.bokwas.R$drawable: int avatar_30
-com.bokwas.R$drawable: int avatar_31
-com.bokwas.R$drawable: int avatar_32
-com.bokwas.R$drawable: int avatar_33
-com.bokwas.R$drawable: int avatar_34
-com.bokwas.R$drawable: int avatar_35
 com.bokwas.R$drawable: int avatar_4
 com.bokwas.R$drawable: int avatar_5
 com.bokwas.R$drawable: int avatar_6
@@ -2956,6 +2951,7 @@ com.bokwas.R$drawable: int bokwas_icon
 com.bokwas.R$drawable: int button_generic
 com.bokwas.R$drawable: int button_generic_selected
 com.bokwas.R$drawable: int circle_grey
+com.bokwas.R$drawable: int circle_red
 com.bokwas.R$drawable: int com_facebook_button_blue
 com.bokwas.R$drawable: int com_facebook_button_blue_focused
 com.bokwas.R$drawable: int com_facebook_button_blue_normal
@@ -3112,16 +3108,19 @@ com.bokwas.R$id: int com_facebook_usersettingsfragment_login_button
 com.bokwas.R$id: int com_facebook_usersettingsfragment_logo_image
 com.bokwas.R$id: int com_facebook_usersettingsfragment_profile_name
 com.bokwas.R$id: int commentButton
+com.bokwas.R$id: int comment_delete
 com.bokwas.R$id: int comment_edittext
+com.bokwas.R$id: int comment_like
 com.bokwas.R$id: int comment_line_seperator
 com.bokwas.R$id: int comment_list
+com.bokwas.R$id: int comment_popupmenu
+com.bokwas.R$id: int comment_show_like
 com.bokwas.R$id: int dialog_button_ok
 com.bokwas.R$id: int dialog_description
 com.bokwas.R$id: int dialog_title
 com.bokwas.R$id: int disabled
 com.bokwas.R$id: int divider
 com.bokwas.R$id: int facebookButton
-com.bokwas.R$id: int feedButton
 com.bokwas.R$id: int feed_list
 com.bokwas.R$id: int fl_inner
 com.bokwas.R$id: int flip
@@ -3135,6 +3134,9 @@ com.bokwas.R$id: int hybrid
 com.bokwas.R$id: int large
 com.bokwas.R$id: int like_image
 com.bokwas.R$id: int like_line_seperator
+com.bokwas.R$id: int like_list
+com.bokwas.R$id: int likes_name
+com.bokwas.R$id: int likes_profile_pic
 com.bokwas.R$id: int load_more_footer
 com.bokwas.R$id: int load_more_progressBar
 com.bokwas.R$id: int login_desc_textview
@@ -3146,11 +3148,13 @@ com.bokwas.R$id: int newPostButton
 com.bokwas.R$id: int nextButton
 com.bokwas.R$id: int none
 com.bokwas.R$id: int normal
+com.bokwas.R$id: int notificationButton
 com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
 com.bokwas.R$id: int overflow_refresh
+com.bokwas.R$id: int overflow_settings
 com.bokwas.R$id: int picker_subtitle
 com.bokwas.R$id: int playerDoc
 com.bokwas.R$id: int post_comment
@@ -3172,6 +3176,7 @@ com.bokwas.R$id: int post_popupmenu
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_relative_view
 com.bokwas.R$id: int post_share
+com.bokwas.R$id: int post_show_like
 com.bokwas.R$id: int post_time
 com.bokwas.R$id: int progress_bar
 com.bokwas.R$id: int pullDownFromTop
@@ -3220,9 +3225,12 @@ com.bokwas.R$layout: int dummy_layout
 com.bokwas.R$layout: int header_main
 com.bokwas.R$layout: int home_screen
 com.bokwas.R$layout: int home_screen_experimental
+com.bokwas.R$layout: int like_list_item
+com.bokwas.R$layout: int likes_dialog
 com.bokwas.R$layout: int load_more_footer
 com.bokwas.R$layout: int login_page
 com.bokwas.R$layout: int newpost_dialog
+com.bokwas.R$layout: int notification_list_item
 com.bokwas.R$layout: int post_activity
 com.bokwas.R$layout: int post_list_item
 com.bokwas.R$layout: int post_list_item_bokwas
@@ -3241,7 +3249,7 @@ com.bokwas.R$layout: int supercardtoast_progresscircle
 com.bokwas.R$layout: int supercardtoast_progresshorizontal
 com.bokwas.R$layout: int supertoast
 com.bokwas.R$layout: R$layout()
-com.bokwas.R$menu: int action_bar_menu
+com.bokwas.R$menu: int comment_menu
 com.bokwas.R$menu: int overflow_menu
 com.bokwas.R$menu: int post_activity_menu
 com.bokwas.R$menu: int post_menu
@@ -3393,6 +3401,9 @@ com.bokwas.R$styleable: int[] com_facebook_profile_picture_view
 com.bokwas.R$styleable: int com_facebook_profile_picture_view_is_cropped
 com.bokwas.R$styleable: int com_facebook_profile_picture_view_preset_size
 com.bokwas.R$styleable: R$styleable()
+com.bokwas.SettingsActivity
+com.bokwas.SettingsActivity: SettingsActivity()
+com.bokwas.SettingsActivity: void onClick(android.view.View)
 com.bokwas.SplashScreen
 com.bokwas.SplashScreen: SplashScreen()
 com.bokwas.apirequests.Body: Body()
@@ -3405,9 +3416,12 @@ com.bokwas.response.AddCommentResponse: AddCommentResponse()
 com.bokwas.response.AddPostResponse: AddPostResponse()
 com.bokwas.response.ApiResponse: ApiResponse()
 com.bokwas.response.BokwasUser: BokwasUser()
+com.bokwas.response.GetNotificationResponse: GetNotificationResponse()
 com.bokwas.response.GetPostsResponse: GetPostsResponse()
 com.bokwas.ui.CommentsDialogListAdapter$ViewHolder: CommentsDialogListAdapter$ViewHolder()
 com.bokwas.ui.HomescreenPostsListAdapter$ViewHolder: HomescreenPostsListAdapter$ViewHolder()
+com.bokwas.ui.LikesDialogListAdapter$ViewHolder: LikesDialogListAdapter$ViewHolder()
+com.bokwas.ui.NotificationDialogListAdapter$ViewHolder: NotificationDialogListAdapter$ViewHolder()
 com.bokwas.util.BokwasHttpClient: BokwasHttpClient()
 com.bokwas.util.DateUtil: DateUtil()
 com.bokwas.util.GCMIntentService
