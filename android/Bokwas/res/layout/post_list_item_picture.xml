@@ -93,8 +93,6 @@
         android:adjustViewBounds="true"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:background="@drawable/placeholder"
-        android:visibility="gone"
         android:scaleType="fitCenter" />
 
     <View
@@ -102,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@+id/post_picture"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:background="#bbbbbb" />
 
     <RelativeLayout
@@ -238,6 +236,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
         android:scaleType="fitXY"
-        android:src="@drawable/placeholder" />
+        android:src="@drawable/header_bg" />
 
 </RelativeLayout>

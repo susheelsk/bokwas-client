@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
@@ -46,7 +50,22 @@ public class GCMIntentService extends IntentService {
 
 		sendNotification(extras);
 
+		logReceivedNotification(extras);
+
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
+	}
+
+	private void logReceivedNotification(Bundle bundle) {
+		JSONObject json = new JSONObject();
+		Set<String> keys = bundle.keySet();
+		for (String key : keys) {
+			try {
+				json.put(key, bundle.get(key));
+			} catch (JSONException e) {
+				// Handle exception here
+			}
+		}
+		Log.d("BokwasNotification","NotificationData : "+json.toString());
 	}
 
 	private void addLikes(Bundle extras) {
@@ -55,7 +74,7 @@ public class GCMIntentService extends IntentService {
 				UserDataStore.initData(this);
 			}
 			String commentId = extras.getString("likesCommentId", "");
-			String postId = extras.getString("likesPostId", "");
+			String postId = extras.getString("postId", "");
 			String likesPersonName = extras.getString("likesPersonName", "");
 			String likesPersonId = extras.getString("likesPersonId", "");
 			String avatarId = extras.getString("avatarId", "");
@@ -107,7 +126,7 @@ public class GCMIntentService extends IntentService {
 			if (bundle.getString("type").equals("ADDLIKES_NOTI")) {
 				addLikes(bundle);
 				intent = new Intent(this, PostActivity.class);
-				intent.putExtra("postId", bundle.getString("likesPostId"));
+				intent.putExtra("postId", bundle.getString("postId"));
 				intent.putExtra("fromNoti", true);
 			} else if (bundle.getString("type").equals("ADDCOMMENT_NOTI")) {
 				addCommentToPost(bundle);
@@ -135,6 +154,7 @@ public class GCMIntentService extends IntentService {
 			}
 			Notification notification = new Notification(notificationId, new Gson().toJson(map), System.currentTimeMillis());
 			UserDataStore.getStore().addNotification(notification);
+			intent.putExtra("fromNoti", true);
 			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.bokwas_icon).setContentTitle(bundle.getString("title"))

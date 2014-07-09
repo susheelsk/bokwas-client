@@ -32,7 +32,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="48dp"
         android:layout_marginBottom="4dp"
-        android:divider="#777777"
         android:cacheColorHint="@android:color/transparent"
         android:dividerHeight="4dp" >
     </ListView>

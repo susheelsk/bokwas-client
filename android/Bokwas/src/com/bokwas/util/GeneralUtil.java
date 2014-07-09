@@ -38,7 +38,7 @@ public class GeneralUtil {
 	public static final String isLoggedInKey = "isLoggedIn";
 	public static final String userGender = "userGender";
 	
-	public static Parcelable listSavedInstance = null;
+	public static Parcelable listSavedInstanceHomeScreen = null;
 	
 	public static Bitmap loadBitmapFromView(View view) throws Exception{
 		try {

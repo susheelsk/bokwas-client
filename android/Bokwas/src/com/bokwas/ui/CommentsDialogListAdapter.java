@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +18,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bokwas.ProfileActivityExperimental;
 import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.DeleteApi;
@@ -115,7 +119,7 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 				} else {
 					deleteItem.setVisible(false);
 				}
-				if(comment.getLikes().size()<1) {
+				if (comment.getLikes().size() < 1) {
 					showLikesItem.setVisible(false);
 				}
 				popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -155,7 +159,40 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 		}
 
 		holder.name.setText(comment.getBokwasName());
+		
+		holder.name.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, ProfileActivityExperimental.class);
+				intent.putExtra("profileId", comment.getCommentedBy());
+				intent.putExtra("name", comment.getBokwasName());
+				intent.putExtra("avatarId", Integer.valueOf(comment.getAvatarId()));
+
+				activity.startActivity(intent);
+				activity.finish();
+				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+
+			}
+		});
+		
 		holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(comment.getAvatarId()), activity));
+
+		holder.picture.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, ProfileActivityExperimental.class);
+				intent.putExtra("profileId", comment.getCommentedBy());
+				intent.putExtra("name", comment.getBokwasName());
+				intent.putExtra("avatarId", Integer.valueOf(comment.getAvatarId()));
+
+				activity.startActivity(intent);
+				activity.finish();
+				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+
+			}
+		});
 
 		holder.deleteLayout.setOnClickListener(new OnClickListener() {
 
@@ -169,18 +206,18 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 
 			@Override
 			public void onClick(View v) {
-				likeComment(comment,post);
+				likeComment(comment, post);
 			}
 		});
 
 		return rowView;
 	}
-	
+
 	private void showLikes(Comment comment) {
 		LikesDialog likesDialog = new LikesDialog(activity, comment.getLikes());
 		likesDialog.show();
 	}
-	
+
 	private void likeComment(Comment comment, Post post) {
 		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
@@ -192,45 +229,77 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 		} else {
 			NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		}
-		new AddLikesApi(activity, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), comment.getCommentId(),
-				new APIListener() {
+		new AddLikesApi(activity, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), comment.getCommentId(), new APIListener() {
 
-					@Override
-					public void onAPIStatus(boolean status) {
-						NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
-						if (status) {
-							if (isLike) {
-								Crouton.makeText(activity, "Comment liked!", Style.INFO).show();
-							} else {
-								Crouton.makeText(activity, "Comment unliked!", Style.INFO).show();
-							}
-							notifyDataSetChanged();
-						} else {
-							Crouton.makeText(activity, "Comment couldn't be liked. Try again", Style.ALERT).show();
-						}
+			@Override
+			public void onAPIStatus(boolean status) {
+				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+				if (status) {
+					if (isLike) {
+						Crouton.makeText(activity, "Comment liked!", Style.INFO).show();
+					} else {
+						Crouton.makeText(activity, "Comment unliked!", Style.INFO).show();
 					}
-				}).execute("");
-	
+					notifyDataSetChanged();
+				} else {
+					Crouton.makeText(activity, "Comment couldn't be liked. Try again", Style.ALERT).show();
+				}
+			}
+		}).execute("");
+
 	}
 
-	private void deleteComment(Comment comment, Post post) {
+	private void deleteComment(final Comment comment, final Post post) {
 		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
 		NotificationProgress.showNotificationProgress(activity, "Deleting the comment", GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
-		new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), comment.getCommentId(), activity, new APIListener() {
-
+		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
-			public void onAPIStatus(boolean status) {
-				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
-				if (status) {
-					Crouton.makeText(activity, "Comment deleted!", Style.INFO).show();
-					notifyDataSetChanged();
-				} else {
-					Crouton.makeText(activity, "Comment couldn't be deleted. Try again", Style.ALERT).show();
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), comment.getCommentId(), activity, new APIListener() {
+
+						@Override
+						public void onAPIStatus(boolean status) {
+							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
+							if (status) {
+								Crouton.makeText(activity, "Comment deleted!", Style.INFO).show();
+								notifyDataSetChanged();
+							} else {
+								Crouton.makeText(activity, "Comment couldn't be deleted. Try again", Style.ALERT).show();
+							}
+						}
+					}).execute("");
+					// Yes button clicked
+					break;
+
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
 				}
 			}
-		}).execute("");
+		};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setMessage("Delete the comment?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
+		// new DeleteApi(UserDataStore.getStore().getAccessKey(),
+		// post.getPostId(), UserDataStore.getStore().getUserId(),
+		// comment.getCommentId(), activity, new APIListener() {
+		//
+		// @Override
+		// public void onAPIStatus(boolean status) {
+		// NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
+		// if (status) {
+		// Crouton.makeText(activity, "Comment deleted!", Style.INFO).show();
+		// notifyDataSetChanged();
+		// } else {
+		// Crouton.makeText(activity, "Comment couldn't be deleted. Try again",
+		// Style.ALERT).show();
+		// }
+		// }
+		// }).execute("");
 
 	}
 

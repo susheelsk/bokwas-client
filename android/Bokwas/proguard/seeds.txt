@@ -2758,7 +2758,14 @@ android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImplJB: SlidingPan
 android.support.v4.widget.SlidingPaneLayout$SlidingPanelLayoutImplJBMR1: SlidingPaneLayout$SlidingPanelLayoutImplJBMR1()
 android.support.v4.widget.ViewDragHelper$1: ViewDragHelper$1()
 android.support.v4.widget.ViewDragHelper$Callback: ViewDragHelper$Callback()
+com.achep.header2actionbar.HeaderFragment: HeaderFragment()
+com.achep.header2actionbar.NotifyingScrollView: NotifyingScrollView(android.content.Context)
+com.achep.header2actionbar.NotifyingScrollView: NotifyingScrollView(android.content.Context,android.util.AttributeSet)
+com.achep.header2actionbar.NotifyingScrollView: NotifyingScrollView(android.content.Context,android.util.AttributeSet,int)
+com.achep.header2actionbar.NotifyingScrollView: void setOnScrollChangedListener(com.achep.header2actionbar.NotifyingScrollView$OnScrollChangedListener)
 com.bokwas.BuildConfig: BuildConfig()
+com.bokwas.FullScreenImage
+com.bokwas.FullScreenImage: FullScreenImage()
 com.bokwas.HomescreenActivity
 com.bokwas.HomescreenActivity: HomescreenActivity()
 com.bokwas.HomescreenActivity: void onClick(android.view.View)
@@ -2776,6 +2783,9 @@ com.bokwas.PostActivity: void onClick(android.view.View)
 com.bokwas.ProfileActivity
 com.bokwas.ProfileActivity: ProfileActivity()
 com.bokwas.ProfileActivity: void onClick(android.view.View)
+com.bokwas.ProfileActivityExperimental
+com.bokwas.ProfileActivityExperimental: ProfileActivityExperimental()
+com.bokwas.ProfileActivityExperimental: void onClick(android.view.View)
 com.bokwas.ProfileChooserActivity
 com.bokwas.ProfileChooserActivity: ProfileChooserActivity()
 com.bokwas.ProfileChooserActivity: void onClick(android.view.View)
@@ -2844,6 +2854,7 @@ com.bokwas.R$attr: int uiZoomGestures
 com.bokwas.R$attr: int useViewLifecycle
 com.bokwas.R$attr: int zOrderOnTop
 com.bokwas.R$attr: R$attr()
+com.bokwas.R$color: int actionbar_bg
 com.bokwas.R$color: int black
 com.bokwas.R$color: int com_facebook_blue
 com.bokwas.R$color: int com_facebook_loginview_text_color
@@ -2896,6 +2907,10 @@ com.bokwas.R$dimen: int indicator_internal_padding
 com.bokwas.R$dimen: int indicator_right_padding
 com.bokwas.R$dimen: int toast_hover
 com.bokwas.R$dimen: R$dimen()
+com.bokwas.R$drawable: int actionbar_bg
+com.bokwas.R$drawable: int add_post_icon
+com.bokwas.R$drawable: int add_post_icon1
+com.bokwas.R$drawable: int add_post_icon2
 com.bokwas.R$drawable: int avatar_1
 com.bokwas.R$drawable: int avatar_10
 com.bokwas.R$drawable: int avatar_11
@@ -3021,12 +3036,15 @@ com.bokwas.R$drawable: int fb_login_main_button
 com.bokwas.R$drawable: int fconnect_login
 com.bokwas.R$drawable: int fconnect_login_feedback
 com.bokwas.R$drawable: int generic_button
+com.bokwas.R$drawable: int header_ab_shadow
+com.bokwas.R$drawable: int header_bg
 com.bokwas.R$drawable: int header_button
 com.bokwas.R$drawable: int header_button_clicked
 com.bokwas.R$drawable: int header_button_default
 com.bokwas.R$drawable: int ic_launcher
 com.bokwas.R$drawable: int ic_menu_moreoverflow_normal_holo_dark
 com.bokwas.R$drawable: int ic_menu_moreoverflow_normal_holo_light
+com.bokwas.R$drawable: int ic_menu_refresh
 com.bokwas.R$drawable: int ic_plusone_medium_off_client
 com.bokwas.R$drawable: int ic_plusone_small_off_client
 com.bokwas.R$drawable: int ic_plusone_standard_off_client
@@ -3055,8 +3073,10 @@ com.bokwas.R$drawable: int new_posticon_active
 com.bokwas.R$drawable: int new_posticon_inactive
 com.bokwas.R$drawable: int notification_template
 com.bokwas.R$drawable: int overflow_icon
+com.bokwas.R$drawable: int placeholder
 com.bokwas.R$drawable: int plus_icon
 com.bokwas.R$drawable: int post_bg
+com.bokwas.R$drawable: int rectangle_grey
 com.bokwas.R$drawable: int rectangle_grey_topcorner
 com.bokwas.R$drawable: int rectangle_lightgrey_bottomcorner
 com.bokwas.R$drawable: int rectangle_orange
@@ -3115,6 +3135,7 @@ com.bokwas.R$id: int comment_line_seperator
 com.bokwas.R$id: int comment_list
 com.bokwas.R$id: int comment_popupmenu
 com.bokwas.R$id: int comment_show_like
+com.bokwas.R$id: int container
 com.bokwas.R$id: int dialog_button_ok
 com.bokwas.R$id: int dialog_description
 com.bokwas.R$id: int dialog_title
@@ -3124,6 +3145,7 @@ com.bokwas.R$id: int facebookButton
 com.bokwas.R$id: int feed_list
 com.bokwas.R$id: int fl_inner
 com.bokwas.R$id: int flip
+com.bokwas.R$id: int fullscreen_imageview
 com.bokwas.R$id: int gridview
 com.bokwas.R$id: int header
 com.bokwas.R$id: int header_layout
@@ -3143,12 +3165,14 @@ com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int login_text
 com.bokwas.R$id: int manualOnly
 com.bokwas.R$id: int message_textview
+com.bokwas.R$id: int name
 com.bokwas.R$id: int nameText
 com.bokwas.R$id: int newPostButton
 com.bokwas.R$id: int nextButton
 com.bokwas.R$id: int none
 com.bokwas.R$id: int normal
 com.bokwas.R$id: int notificationButton
+com.bokwas.R$id: int oveflow_home
 com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
 com.bokwas.R$id: int overflow_popupmenu
@@ -3172,12 +3196,15 @@ com.bokwas.R$id: int post_like_button
 com.bokwas.R$id: int post_like_number
 com.bokwas.R$id: int post_line_separator
 com.bokwas.R$id: int post_name
+com.bokwas.R$id: int post_picture
 com.bokwas.R$id: int post_popupmenu
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_relative_view
 com.bokwas.R$id: int post_share
 com.bokwas.R$id: int post_show_like
+com.bokwas.R$id: int post_show_refresh
 com.bokwas.R$id: int post_time
+com.bokwas.R$id: int profile_pic
 com.bokwas.R$id: int progress_bar
 com.bokwas.R$id: int pullDownFromTop
 com.bokwas.R$id: int pullFromEnd
@@ -3222,6 +3249,9 @@ com.bokwas.R$layout: int comment_dialog
 com.bokwas.R$layout: int comment_list_item
 com.bokwas.R$layout: int dialog_generic_singlebutton
 com.bokwas.R$layout: int dummy_layout
+com.bokwas.R$layout: int fragment_header
+com.bokwas.R$layout: int fragment_listview
+com.bokwas.R$layout: int fullscreen_image
 com.bokwas.R$layout: int header_main
 com.bokwas.R$layout: int home_screen
 com.bokwas.R$layout: int home_screen_experimental
@@ -3232,10 +3262,11 @@ com.bokwas.R$layout: int login_page
 com.bokwas.R$layout: int newpost_dialog
 com.bokwas.R$layout: int notification_list_item
 com.bokwas.R$layout: int post_activity
-com.bokwas.R$layout: int post_list_item
 com.bokwas.R$layout: int post_list_item_bokwas
 com.bokwas.R$layout: int post_list_item_new
+com.bokwas.R$layout: int post_list_item_picture
 com.bokwas.R$layout: int post_screen
+com.bokwas.R$layout: int profile_activity
 com.bokwas.R$layout: int pull_to_refresh_header
 com.bokwas.R$layout: int pull_to_refresh_header_horizontal
 com.bokwas.R$layout: int pull_to_refresh_header_vertical
@@ -3253,6 +3284,7 @@ com.bokwas.R$menu: int comment_menu
 com.bokwas.R$menu: int overflow_menu
 com.bokwas.R$menu: int post_activity_menu
 com.bokwas.R$menu: int post_menu
+com.bokwas.R$menu: int profile_overflow
 com.bokwas.R$menu: int splash_screen
 com.bokwas.R$menu: R$menu()
 com.bokwas.R$string: int action_settings
@@ -3324,6 +3356,8 @@ com.bokwas.R$style: int AppBaseTheme
 com.bokwas.R$style: int AppTheme
 com.bokwas.R$style: int DefaultRootLayout
 com.bokwas.R$style: int DefaultText
+com.bokwas.R$style: int OverFlow
+com.bokwas.R$style: int ProfileTheme
 com.bokwas.R$style: int SuperActivityToast_Button_Button
 com.bokwas.R$style: int SuperActivityToast_Button_Divider
 com.bokwas.R$style: int SuperActivityToast_Button_RootLayout
@@ -3337,6 +3371,9 @@ com.bokwas.R$style: int SuperCardToast_Button_RootLayout
 com.bokwas.R$style: int TransparentTheme
 com.bokwas.R$style: int com_facebook_loginview_default_style
 com.bokwas.R$style: int com_facebook_loginview_silver_style
+com.bokwas.R$style: int myTheme
+com.bokwas.R$style: int myTheme_ActionBar
+com.bokwas.R$style: int myTheme_ActionBar_Text
 com.bokwas.R$style: R$style()
 com.bokwas.R$styleable: int[] AdsAttrs
 com.bokwas.R$styleable: int AdsAttrs_adSize
@@ -3416,12 +3453,14 @@ com.bokwas.response.AddCommentResponse: AddCommentResponse()
 com.bokwas.response.AddPostResponse: AddPostResponse()
 com.bokwas.response.ApiResponse: ApiResponse()
 com.bokwas.response.BokwasUser: BokwasUser()
+com.bokwas.response.GetFriendsResponse: GetFriendsResponse()
 com.bokwas.response.GetNotificationResponse: GetNotificationResponse()
 com.bokwas.response.GetPostsResponse: GetPostsResponse()
 com.bokwas.ui.CommentsDialogListAdapter$ViewHolder: CommentsDialogListAdapter$ViewHolder()
 com.bokwas.ui.HomescreenPostsListAdapter$ViewHolder: HomescreenPostsListAdapter$ViewHolder()
 com.bokwas.ui.LikesDialogListAdapter$ViewHolder: LikesDialogListAdapter$ViewHolder()
 com.bokwas.ui.NotificationDialogListAdapter$ViewHolder: NotificationDialogListAdapter$ViewHolder()
+com.bokwas.ui.ProfilePageFragment: ProfilePageFragment()
 com.bokwas.util.BokwasHttpClient: BokwasHttpClient()
 com.bokwas.util.DateUtil: DateUtil()
 com.bokwas.util.GCMIntentService
@@ -4747,6 +4786,18 @@ com.koushikdutta.urlimageviewhelper.FileUrlDownloader: FileUrlDownloader()
 com.koushikdutta.urlimageviewhelper.HttpUrlDownloader: HttpUrlDownloader()
 com.koushikdutta.urlimageviewhelper.SoftReferenceHashTable: SoftReferenceHashTable()
 com.koushikdutta.urlimageviewhelper.UrlImageViewHelper: UrlImageViewHelper()
+com.squareup.picasso.BitmapHunter$1: BitmapHunter$1()
+com.squareup.picasso.Cache$1: Cache$1()
+com.squareup.picasso.Callback$EmptyCallback: Callback$EmptyCallback()
+com.squareup.picasso.Dispatcher$DispatcherThread: Dispatcher$DispatcherThread()
+com.squareup.picasso.MediaStoreBitmapHunter$PicassoKind: com.squareup.picasso.MediaStoreBitmapHunter$PicassoKind[] values()
+com.squareup.picasso.MediaStoreBitmapHunter$PicassoKind: com.squareup.picasso.MediaStoreBitmapHunter$PicassoKind valueOf(java.lang.String)
+com.squareup.picasso.Picasso$LoadedFrom: com.squareup.picasso.Picasso$LoadedFrom[] values()
+com.squareup.picasso.Picasso$LoadedFrom: com.squareup.picasso.Picasso$LoadedFrom valueOf(java.lang.String)
+com.squareup.picasso.Picasso$RequestTransformer$1: Picasso$RequestTransformer$1()
+com.squareup.picasso.PicassoExecutorService: PicassoExecutorService()
+com.squareup.picasso.RequestCreator: RequestCreator()
+com.squareup.picasso.Utils$PicassoThreadFactory: Utils$PicassoThreadFactory()
 com.sromku.simple.fb.Permission: com.sromku.simple.fb.Permission[] values()
 com.sromku.simple.fb.Permission: com.sromku.simple.fb.Permission valueOf(java.lang.String)
 com.sromku.simple.fb.Permission$Page: com.sromku.simple.fb.Permission$Page[] values()

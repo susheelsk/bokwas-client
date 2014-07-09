@@ -17,26 +17,18 @@ import com.bokwas.util.AppData;
 import com.bokwas.util.BokwasHttpClient;
 import com.google.gson.Gson;
 
-public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
+public class GetSinglePostApi extends AsyncTask<String, Void, Boolean> {
 	private Context context;
 	private String accessKey;
 	private String personId;
-	private String since;
-	private String isbokwaspost;
-	private String postPersonId;
+	private String postId;
 	private APIListener postsListener;
 
-	public GetPostsOfPersonApi(Context context, String accessKey, String since, boolean isBokwasPost, String personId, String postPersonId, APIListener postsListener) {
+	public GetSinglePostApi(Context context, String accessKey, String postId, String personId, APIListener postsListener) {
 		this.context = context;
 		this.accessKey = accessKey;
 		this.personId = personId;
-		this.postPersonId = postPersonId;
-		this.since = since;
-		if (isBokwasPost) {
-			this.isbokwaspost = "true";
-		} else {
-			this.isbokwaspost = "false";
-		}
+		this.postId = postId;
 
 		this.postsListener = postsListener;
 	}
@@ -45,12 +37,10 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/getpostsperson";
+		apiUrl = AppData.baseURL + "/postinfo";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
-		apiParams.add(new BasicNameValuePair("since", since));
-		apiParams.add(new BasicNameValuePair("isbokwaspost", isbokwaspost));
-		apiParams.add(new BasicNameValuePair("post_person_id", postPersonId));
+		apiParams.add(new BasicNameValuePair("post_id", postId));
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
 			if (response != null) {

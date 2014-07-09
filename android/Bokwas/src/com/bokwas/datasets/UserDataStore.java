@@ -69,7 +69,8 @@ public class UserDataStore {
 				return;
 			}
 			if (notif.getNotification_data().get("postId").equals(newNotification.getNotification_data().get("postId")) && diffInDays < 2) {
-				//one notification for this post alreay exists and it came within 2 days
+				// one notification for this post alreay exists and it came
+				// within 2 days
 				return;
 			}
 		}
@@ -82,6 +83,16 @@ public class UserDataStore {
 
 	public List<Notification> getNotifications() {
 		return notificationList;
+	}
+	
+	public List<Notification> getUnseenNotifications() {
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (Notification notif : notificationList) {
+			if (!notif.isViewed()) {
+				notifications.add(notif);
+			}
+		}
+		return notifications;
 	}
 
 	public Notification getNotification(String notificationId) {
@@ -112,7 +123,8 @@ public class UserDataStore {
 		}
 		if (removeIds.size() > 0) {
 			for (Integer removalId : removeIds) {
-				notificationList.remove(removalId);
+				Log.d("BokwasNotifications","Removing notification");
+				notificationList.remove((int)removalId);
 			}
 		}
 	}
@@ -132,18 +144,26 @@ public class UserDataStore {
 
 	public List<Post> getBokwasPostsOfPerson(String personId) {
 		List<Post> userPosts = new ArrayList<Post>();
+		String postId;
 		for (Post post : getPosts()) {
-			if (post.getPostedBy().equals(personId) && post.isBokwasPost()) {
+			Log.d("BokwasPosts", "post.getPostedBy : " + post.getPostedBy() + " , userId : " + personId + " , isBokwasPost : " + post.isBokwasPost());
+			postId = post.getPostedBy();
+			if (postId.trim().equals(personId.trim()) && post.isBokwasPost()) {
+				Log.d("BokwasPosts", "Found user's post");
 				userPosts.add(post);
 			}
 		}
 		return userPosts;
 	}
 
-	public List<Post> getPostsOfPerson(String personId) {
+	public List<Post> getFbPostsOfPerson(String personId) {
 		List<Post> userPosts = new ArrayList<Post>();
+		String postId;
 		for (Post post : getPosts()) {
-			if (post.getPostedBy().equals(personId)) {
+			postId = post.getPostedBy();
+			Log.d("BokwasPosts", "post.getPostedBy : " + post.getPostedBy() + " , userId : " + personId + " , isBokwasPost : " + post.isBokwasPost());
+			if (postId.trim().equals(personId.trim()) && !post.isBokwasPost()) {
+				Log.d("BokwasPosts", "Found user's post");
 				userPosts.add(post);
 			}
 		}
@@ -237,6 +257,17 @@ public class UserDataStore {
 
 	public List<Friends> getFriends() {
 		return friends;
+	}
+	
+	public boolean isPostFromFriendOrMe(Post post) {
+		for(Friends friend : getFriends()) {
+			if(post.getPostedBy().equals(friend.getId())) {
+				return true;
+			}else if(post.getPostedBy().equals(getUserId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setFriends(List<Friends> friends) {

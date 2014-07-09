@@ -16,7 +16,6 @@ import com.bokwas.response.Notification;
 import com.bokwas.util.AppData;
 import com.bokwas.util.BokwasHttpClient;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 public class GetNotificationsApi extends AsyncTask<String, Void, Boolean>{
@@ -50,6 +49,7 @@ public class GetNotificationsApi extends AsyncTask<String, Void, Boolean>{
 					notif.setTimestamp(System.currentTimeMillis());
 					Log.d("BokwasNotification", "Notification Data : "+notif.getNotification_data().get("postId"));
 					UserDataStore.getStore().addNotification(notif);
+					UserDataStore.getStore().removeOldNotifications();
 				}
 			}
 		} catch (JsonSyntaxException e) {

@@ -4,9 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.sax.StartElementListener;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +23,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bokwas.FullScreenImage;
 import com.bokwas.PostActivity;
+import com.bokwas.ProfileActivityExperimental;
 import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.DeleteApi;
@@ -34,6 +46,7 @@ import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+import com.squareup.picasso.Picasso;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -55,7 +68,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 	}
 
 	public HomescreenPostsListAdapter(Activity activity, List<Post> posts, PostShare postShare) {
-		super(activity, R.layout.post_list_item, posts);
+		super(activity, R.layout.post_list_item_new, posts);
 		this.activity = activity;
 		this.posts = posts;
 		this.postShare = postShare;
@@ -67,6 +80,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		public TextView time;
 		public TextView commentSize;
 		public TextView likeSize;
+		public ImageView profilePicture;
 		public ImageView picture;
 		public ImageView optionsButton;
 		public RelativeLayout commentButton;
@@ -80,16 +94,22 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 	@Override
 	public int getItemViewType(int position) {
-		if (posts.get(position).isBokwasPost()) {
+		Post post = posts.get(position);
+		if (post.isBokwasPost()) {
 			return 0;
-		} else {
+		} else if (post.getType().equals("status")) {
+			if (post.isBokwasPost() && !UserDataStore.getStore().isPostFromFriendOrMe(post)) {
+				return 3;
+			}
 			return 1;
+		} else {
+			return 2;
 		}
 	}
 
 	@Override
 	public int getViewTypeCount() {
-		return 2;
+		return 4;
 	}
 
 	@Override
@@ -101,6 +121,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 	public long getItemId(int position) {
 		return position;
 	}
+	
+	public static float convertDpToPixel(float dp, Context context){
+	    Resources resources = context.getResources();
+	    DisplayMetrics metrics = resources.getDisplayMetrics();
+	    float px = dp * (metrics.densityDpi / 160f);
+	    return px;
+	}
 
 	@Override
 	public View getView(final int position, final View convertView, ViewGroup parent) {
@@ -110,8 +137,14 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			LayoutInflater inflater = activity.getLayoutInflater();
 			if (getItemViewType(position) == 0) {
 				rowView = inflater.inflate(R.layout.post_list_item_bokwas, null);
-			} else {
+			} else if (getItemViewType(position) == 1) {
 				rowView = inflater.inflate(R.layout.post_list_item_new, null);
+			} else if (getItemViewType(position) == 2) {
+				rowView = inflater.inflate(R.layout.post_list_item_picture, null);
+			} else if (getItemViewType(position) == 3) {
+				rowView = inflater.inflate(R.layout.post_list_item_picture, null);
+				rowView.findViewById(R.id.post_like_button).setVisibility(View.GONE);
+				rowView.findViewById(R.id.post_comment_button).setVisibility(View.GONE);
 			}
 
 			ViewHolder viewHolder = new ViewHolder();
@@ -120,10 +153,11 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			viewHolder.time = (TextView) rowView.findViewById(R.id.post_time);
 			viewHolder.commentSize = (TextView) rowView.findViewById(R.id.post_comment_number);
 			viewHolder.likeSize = (TextView) rowView.findViewById(R.id.post_like_number);
-			viewHolder.picture = (ImageView) rowView.findViewById(R.id.post_profile_pic);
+			viewHolder.profilePicture = (ImageView) rowView.findViewById(R.id.post_profile_pic);
 			viewHolder.optionsButton = (ImageView) rowView.findViewById(R.id.overflowButton);
 			viewHolder.commentButton = (RelativeLayout) rowView.findViewById(R.id.post_comment_button);
 			viewHolder.likeButton = (RelativeLayout) rowView.findViewById(R.id.post_like_button);
+			viewHolder.picture = (ImageView) rowView.findViewById(R.id.post_picture);
 			rowView.setTag(viewHolder);
 		}
 		ViewHolder holder = (ViewHolder) rowView.getTag();
@@ -134,6 +168,30 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		} else {
 			holder.postText.setText(postText);
 		}
+
+		if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
+//			UrlImageViewHelper.setUrlDrawable(holder.picture, post.getPicture(), R.drawable.placeholder, 60000 * 100);
+			Picasso.with(activity).load(post.getPicture()).resize((int)convertDpToPixel(250, activity),(int) convertDpToPixel(250, activity)).centerCrop().placeholder(R.drawable.placeholder).into(holder.picture);
+		}
+		
+		holder.picture.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, FullScreenImage.class);
+				intent.putExtra("url", post.getPicture());
+				intent.putExtra("activity", activity.getClass().getSimpleName());
+				intent.putExtra("profileId", post.getPostedBy());
+				intent.putExtra("name", post.getName());
+				if (post.isBokwasPost()) {
+					intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
+				} else {
+					intent.putExtra("fbProfilePic", post.getProfilePicture());
+				}
+				activity.startActivity(intent);
+				activity.finish();
+			}
+		});
 
 		Date date = new Date(post.getTimestamp());
 		String dateString = DateUtil.getSimpleTime(date);
@@ -146,21 +204,65 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			holder.likeSize.setText(String.valueOf(0));
 		}
 
-		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-			holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
-		} else {
-			holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
+		try {
+			if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+				holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
+			} else {
+				holder.likeButton.findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 
 		if (post.isBokwasPost()) {
 			holder.name.setText(post.getName());
 			String avatarId = post.getAvatarId();
-			holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), activity));
+			holder.profilePicture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), activity));
 		} else {
 			String url = post.getProfilePicture();
 			holder.name.setText(post.getName());
-			UrlImageViewHelper.setUrlDrawable(holder.picture, url, null, 60000 * 100);
+			UrlImageViewHelper.setUrlDrawable(holder.profilePicture, url, null, 60000 * 100);
 		}
+
+		holder.name.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, ProfileActivityExperimental.class);
+				intent.putExtra("profileId", post.getPostedBy());
+				intent.putExtra("name", post.getName());
+				if (post.isBokwasPost()) {
+					intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
+				} else {
+					intent.putExtra("fbProfilePic", post.getProfilePicture());
+				}
+
+				activity.startActivity(intent);
+				activity.finish();
+				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+
+			}
+		});
+
+		holder.profilePicture.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(activity, ProfileActivityExperimental.class);
+				intent.putExtra("profileId", post.getPostedBy());
+				intent.putExtra("name", post.getName());
+				if (post.isBokwasPost()) {
+					intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
+				} else {
+					intent.putExtra("fbProfilePic", post.getProfilePicture());
+				}
+
+				activity.startActivity(intent);
+				activity.finish();
+				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+
+			}
+		});
 
 		holder.optionsButton.setOnClickListener(new OnClickListener() {
 
@@ -169,7 +271,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				PopupMenu popup = new PopupMenu(activity, view);
 				popup.getMenuInflater().inflate(R.menu.post_menu, popup.getMenu());
 				MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
+				MenuItem commentItem = popup.getMenu().findItem(R.id.post_comment);
+				MenuItem likeItem = popup.getMenu().findItem(R.id.post_like);
+				commentItem.setVisible(false);
 				MenuItem showLikesItem = popup.getMenu().findItem(R.id.post_show_like);
+				if (!UserDataStore.getStore().isPostFromFriendOrMe(post)) {
+					likeItem.setVisible(false);
+				}
 				if (post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 					deleteItem.setVisible(true);
 				} else {
@@ -240,6 +348,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				// commentsDialog.show();
 				Intent intent = new Intent(activity, PostActivity.class);
 				intent.putExtra("postId", post.getPostId());
+				intent.putExtra("activity", activity.getClass().getSimpleName());
 				activity.startActivity(intent);
 				activity.finish();
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
@@ -259,6 +368,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			public void onClick(View v) {
 				Intent intent = new Intent(activity, PostActivity.class);
 				intent.putExtra("postId", post.getPostId());
+				intent.putExtra("activity", activity.getClass().getSimpleName());
 				activity.startActivity(intent);
 				activity.finish();
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
@@ -273,25 +383,80 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		likesDialog.show();
 	}
 
-	private void deletePost(Post post) {
+	@SuppressWarnings({ "deprecation", "unused" })
+	private void scaleImage(ImageView view, int boundBoxInDp) {
+		// Get the ImageView and its bitmap
+		Drawable drawing = view.getDrawable();
+		Bitmap bitmap = ((BitmapDrawable) drawing).getBitmap();
+
+		// Get current dimensions
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+
+		// Determine how much to scale: the dimension requiring less scaling is
+		// closer to the its side. This way the image always stays inside your
+		// bounding box AND either x/y axis touches it.
+		float xScale = ((float) boundBoxInDp) / width;
+		float yScale = ((float) boundBoxInDp) / height;
+		float scale = (xScale <= yScale) ? xScale : yScale;
+
+		// Create a matrix for the scaling and add the scaling data
+		Matrix matrix = new Matrix();
+		matrix.postScale(scale, scale);
+
+		// Create a new bitmap and convert it to a format understood by the
+		// ImageView
+		Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+		BitmapDrawable result = new BitmapDrawable(scaledBitmap);
+		width = scaledBitmap.getWidth();
+		height = scaledBitmap.getHeight();
+
+		// Apply the scaled bitmap
+		view.setImageDrawable(result);
+
+		// Now change ImageView's dimensions to match the scaled image
+		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+		params.width = width;
+		params.height = height;
+		view.setLayoutParams(params);
+	}
+
+	private void deletePost(final Post post) {
 
 		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
 		NotificationProgress.showNotificationProgress(activity, "Deleting the post", GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
-		new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), null, activity, new APIListener() {
-
+		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
-			public void onAPIStatus(boolean status) {
-				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
-				if (status) {
-					Crouton.makeText(activity, "Post deleted!", Style.INFO).show();
-					notifyDataSetChanged();
-				} else {
-					Crouton.makeText(activity, "Post couldn't be deleted. Try again", Style.ALERT).show();
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), null, activity, new APIListener() {
+
+						@Override
+						public void onAPIStatus(boolean status) {
+							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+							if (status) {
+								Crouton.makeText(activity, "Post deleted!", Style.INFO).show();
+								notifyDataSetChanged();
+							} else {
+								Crouton.makeText(activity, "Post couldn't be deleted. Try again", Style.ALERT).show();
+							}
+						}
+					}).execute("");
+					// Yes button clicked
+					break;
+
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
 				}
 			}
-		}).execute("");
+		};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setMessage("Delete the post?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
 
 	}
 

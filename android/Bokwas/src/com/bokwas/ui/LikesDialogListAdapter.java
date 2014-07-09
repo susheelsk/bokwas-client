@@ -63,7 +63,7 @@ public class LikesDialogListAdapter extends ArrayAdapter<Likes>{
 		
 		holder.name.setText(like.getName());
 		holder.picture.setImageBitmap(GeneralUtil.getImageBitmap(
-				GeneralUtil.getAvatarResourceId(like.getId()),
+				GeneralUtil.getAvatarResourceId(like.getAvatarId()),
 				activity));
 		return rowView;
 	}

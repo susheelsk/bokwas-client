@@ -30,5 +30,16 @@ public class NotificationProgress {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void clearNotification(Context context, int newTask) {
+		mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		try {
+			if (mNotifyManager != null) {
+				mNotifyManager.cancel(newTask);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

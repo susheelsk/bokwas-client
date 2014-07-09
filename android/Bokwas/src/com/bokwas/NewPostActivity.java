@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.bokwas.apirequests.AddPostsApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
-import com.bokwas.response.Notification;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
 
@@ -38,16 +37,7 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	}
 
 	private void setupUI() {
-		setupNotificationBar();
 		String shareableText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-
-		editText = (EditText) findViewById(R.id.post_content);
-		ImageView profilePic = (ImageView) findViewById(R.id.post_profile_pic);
-		TextView nameTextView = (TextView) findViewById(R.id.post_name);
-		nameTextView.setText(UserDataStore.getStore().getBokwasName());
-		String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
-		profilePic.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
-
 		if (shareableText != null && !shareableText.equals("")) {
 			editText.setText(shareableText);
 			isShareIntent = true;
@@ -57,6 +47,16 @@ public class NewPostActivity extends Activity implements OnClickListener {
 			}
 			UserDataStore.initData(this);
 		}
+		findViewById(R.id.overflowButton).setVisibility(View.GONE);
+		
+		findViewById(R.id.notificationButton).setVisibility(View.GONE);
+		editText = (EditText) findViewById(R.id.post_content);
+		ImageView profilePic = (ImageView) findViewById(R.id.post_profile_pic);
+		TextView nameTextView = (TextView) findViewById(R.id.post_name);
+		nameTextView.setText(UserDataStore.getStore().getBokwasName());
+		String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
+		profilePic.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
+
 	}
 
 	private void setOnClickListeners() {
@@ -66,17 +66,12 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	protected void setupNotificationBar() {
 		try {
 			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
-			notificationButton.setText(String.valueOf(UserDataStore.getStore().getNotifications().size()));
-			boolean isNotifNotSeen = false;
-			for(Notification notif : UserDataStore.getStore().getNotifications()) {
-				if(notif.isViewed()==false) {
-					isNotifNotSeen = true;
-				}
-			}
-			
-			if (isNotifNotSeen) {
+			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
+
+			if (UserDataStore.getStore().getNotifications().size() >= 1) {
 				notificationButton.setBackgroundResource(R.drawable.circle_red);
 			} else {
+				notificationButton.setOnClickListener(null);
 				notificationButton.setBackgroundResource(R.drawable.circle_grey);
 			}
 		} catch (Exception e) {

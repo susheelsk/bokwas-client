@@ -54,7 +54,7 @@ public class AddPostsApi extends AsyncTask<String, Void, Boolean> {
 				Post post = new Post(apiResponse.postId,
 						System.currentTimeMillis(), System.currentTimeMillis(),
 						postText, likes, personId, true, comments,
-						UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()),"");
+						UserDataStore.getStore().getBokwasName(),String.valueOf(UserDataStore.getStore().getAvatarId()),"","","status");
 				UserDataStore.getStore().addNewPost(post);
 				UserDataStore.getStore().save(activity);
 				return true;

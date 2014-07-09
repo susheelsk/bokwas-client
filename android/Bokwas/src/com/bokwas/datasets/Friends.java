@@ -1,13 +1,20 @@
 package com.bokwas.datasets;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Friends {
 	
-	private String fbName;
-	private String id;
-	private String fbPicLink;
-	private String bokwasName;
-	private String bokwasAvatarId;
+	@SerializedName("fbname")
+	public String fbName;
+	@SerializedName("fbid")
+	public String id;
+	@SerializedName("bokwas_name")
+	public String bokwasName;
+	@SerializedName("avatar_id")
+	public String bokwasAvatarId;
 	
+	private String fbPicLink;
+
 	public String getFbName() {
 		return fbName;
 	}
@@ -48,8 +55,7 @@ public class Friends {
 		this.bokwasAvatarId = bokwasAvatarId;
 	}
 
-	public Friends(String fbName, String id, String fbPicLink,
-			String bokwasName, String bokwasAvatarId) {
+	public Friends(String fbName, String id, String fbPicLink, String bokwasName, String bokwasAvatarId) {
 		super();
 		this.fbName = fbName;
 		this.id = id;
@@ -57,5 +63,5 @@ public class Friends {
 		this.bokwasName = bokwasName;
 		this.bokwasAvatarId = bokwasAvatarId;
 	}
-	
+
 }

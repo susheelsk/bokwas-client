@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetFriendsApi;
 import com.bokwas.apirequests.GetNewPosts;
 import com.bokwas.apirequests.GetNotificationsApi;
 import com.bokwas.apirequests.GetPosts;
@@ -60,8 +61,10 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		setOnClickListeners();
 
 		setupUI();
-		
+
 		setupNotificationBar();
+		
+		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 
 	}
 
@@ -72,6 +75,8 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	}
 
 	private void setupUI() {
+		findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
+		
 		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore().getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
@@ -86,12 +91,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 					setupNotificationBar();
 				}
 			}).execute("");
-			listView.setRefreshing(true);
+//			listView.setRefreshing(true);
 			isRefreshed = true;
 		}
 
-		if (GeneralUtil.listSavedInstance != null) {
-			listView.getRefreshableView().onRestoreInstanceState(GeneralUtil.listSavedInstance);
+		if (GeneralUtil.listSavedInstanceHomeScreen != null) {
+			listView.getRefreshableView().onRestoreInstanceState(GeneralUtil.listSavedInstanceHomeScreen);
 		}
 	}
 
@@ -119,7 +124,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				GeneralUtil.listSavedInstance = listView.getRefreshableView().onSaveInstanceState();
+				GeneralUtil.listSavedInstanceHomeScreen = listView.getRefreshableView().onSaveInstanceState();
 			}
 		});
 
@@ -170,17 +175,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	protected void setupNotificationBar() {
 		try {
 			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
-			notificationButton.setText(String.valueOf(UserDataStore.getStore().getNotifications().size()));
-			boolean isNotifNotSeen = false;
-			for(Notification notif : UserDataStore.getStore().getNotifications()) {
-				if(notif.isViewed()==false) {
-					isNotifNotSeen = true;
-				}
-			}
-			
-			if (isNotifNotSeen) {
+			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
+
+			if (UserDataStore.getStore().getNotifications().size() >= 1) {
 				notificationButton.setBackgroundResource(R.drawable.circle_red);
 			} else {
+				notificationButton.setOnClickListener(null);
 				notificationButton.setBackgroundResource(R.drawable.circle_grey);
 			}
 		} catch (Exception e) {
@@ -191,6 +191,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	private void setOnClickListeners() {
 		findViewById(R.id.overflowButton).setOnClickListener(this);
 		findViewById(R.id.notificationButton).setOnClickListener(this);
+		findViewById(R.id.newPostButton).setOnClickListener(this);
 	}
 
 	@Override
@@ -212,6 +213,13 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 						listView.setRefreshing(true);
 						break;
 					case R.id.overflow_profile:
+						Intent intent3 = new Intent(HomescreenActivity.this, ProfileActivityExperimental.class);
+						intent3.putExtra("profileId", UserDataStore.getStore().getUserId());
+						intent3.putExtra("name", UserDataStore.getStore().getBokwasName());
+						intent3.putExtra("avatarId", UserDataStore.getStore().getAvatarId());
+						startActivity(intent3);
+						overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+						finish();
 						break;
 					case R.id.overflow_settings:
 						Intent intent2 = new Intent(HomescreenActivity.this, SettingsActivity.class);

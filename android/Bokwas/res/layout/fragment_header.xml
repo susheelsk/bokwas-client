@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="220dp">
+
+    <ImageView
+        android:id="@android:id/background"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop" />
+    
+    <ImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="8dp"
+        android:layout_gravity="center"
+        android:src="@drawable/avatar_15"
+        android:background="@drawable/rectangle_white_stroke" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Evil Philanthropist"
+            android:textSize="32dp"
+            android:shadowColor="#8000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:textColor="#777777" />
+
+        <!-- <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_subtitle"
+            style="@style/Header.SubTitleText" /> -->
+
+    </LinearLayout>
+
+    <View
+        android:id="@android:id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="?android:actionBarSize"
+        android:background="@drawable/header_ab_shadow" />
+
+
+</FrameLayout>

@@ -55,6 +55,7 @@ public class DeleteApi extends AsyncTask<String, Void, Boolean>{
 				if (commentId == null) {
 					Post post = UserDataStore.getStore().getPost(postId);
 					UserDataStore.getStore().deletePost(post);
+					UserDataStore.getStore().removeOldNotifications();
 					UserDataStore.getStore().save(activity);
 				}else {
 					Comment comment = UserDataStore.getStore().getPost(postId).getComment(commentId);

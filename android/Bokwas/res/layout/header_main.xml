@@ -34,17 +34,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true" >
-
+            
             <TextView
-                    android:id="@+id/notificationButton"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/circle_grey"
-                    android:padding="4dp"
-                    android:textColor="#ffffff"
-                    android:text="10" />
+                android:id="@+id/notificationButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/circle_grey"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="10"
+                android:textColor="#ffffff" />
 
             <ImageView
                 android:id="@+id/newPostButton"
@@ -52,9 +52,10 @@
                 android:layout_height="48dp"
                 android:layout_marginRight="4dp"
                 android:background="@drawable/header_button"
-                android:padding="8dp"
-                android:src="@drawable/new_posticon_active"
+                android:padding="14dp"
+                android:src="@drawable/plus_icon"
                 android:visibility="gone" />
+
 
             <ImageView
                 android:id="@+id/overflowButton"

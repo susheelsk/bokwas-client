@@ -26,6 +26,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetFriendsApi;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
@@ -35,11 +36,11 @@ import com.bokwas.util.GeneralUtil;
 public class ProfileChooserActivity extends Activity implements OnClickListener {
 
 	private Integer[] imageIds;
-	
-	private Integer[] maleImageIds = {R.drawable.avatar_16, R.drawable.avatar_17, R.drawable.avatar_18, R.drawable.avatar_19, R.drawable.avatar_20, R.drawable.avatar_21, R.drawable.avatar_22, R.drawable.avatar_23,
-			R.drawable.avatar_24, R.drawable.avatar_25, R.drawable.avatar_26, R.drawable.avatar_27, R.drawable.avatar_28, R.drawable.avatar_29, R.drawable.avatar_30 };
-	private Integer[] femaleImageIds = {R.drawable.avatar_1, R.drawable.avatar_2, R.drawable.avatar_3, R.drawable.avatar_4, R.drawable.avatar_5, R.drawable.avatar_6, R.drawable.avatar_7,
-			R.drawable.avatar_8, R.drawable.avatar_9, R.drawable.avatar_10, R.drawable.avatar_11, R.drawable.avatar_12, R.drawable.avatar_13, R.drawable.avatar_14, R.drawable.avatar_15};
+
+	private Integer[] maleImageIds = { R.drawable.avatar_16, R.drawable.avatar_17, R.drawable.avatar_18, R.drawable.avatar_19, R.drawable.avatar_20, R.drawable.avatar_21, R.drawable.avatar_22,
+			R.drawable.avatar_23, R.drawable.avatar_24, R.drawable.avatar_25, R.drawable.avatar_26, R.drawable.avatar_27, R.drawable.avatar_28, R.drawable.avatar_29, R.drawable.avatar_30 };
+	private Integer[] femaleImageIds = { R.drawable.avatar_1, R.drawable.avatar_2, R.drawable.avatar_3, R.drawable.avatar_4, R.drawable.avatar_5, R.drawable.avatar_6, R.drawable.avatar_7,
+			R.drawable.avatar_8, R.drawable.avatar_9, R.drawable.avatar_10, R.drawable.avatar_11, R.drawable.avatar_12, R.drawable.avatar_13, R.drawable.avatar_14, R.drawable.avatar_15 };
 	private Gallery avatarChooserList;
 	private AvatarChooser avatarChooser;
 	private EditText nameText;
@@ -47,23 +48,25 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 	private int MAX_NUM_BATCHES = 15;
 	private String gender;
 
+	private ProgressDialog pdia;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.choose_avatar_page);
 		gender = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, "male");
-		if(gender.equals("male")) {
+		if (gender.equals("male")) {
 			imageIds = maleImageIds;
-		}else {
+		} else {
 			imageIds = femaleImageIds;
 		}
-		
+
 		setupAvatarChooser();
 
 		setupNicknameTextbox();
-		
-		Log.d("ProfileChooser","Gender : "+getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, ""));
-		
+
+		Log.d("ProfileChooser", "Gender : " + getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, ""));
+
 		setOnClickListeners();
 
 	}
@@ -166,11 +169,11 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 					}
 					view.setLayoutParams(new Gallery.LayoutParams(avatarChooserList.getHeight(), avatarChooserList.getHeight()));
 					view.setBackgroundResource(imageIds[position]);
-					
-					if(gender.equals("male")) {
+
+					if (gender.equals("male")) {
 						position = 15 + position;
-					}else {
-						
+					} else {
+
 					}
 					UserDataStore.getStore().setAvatarId(position + 1);
 				} catch (Exception e) {
@@ -206,12 +209,14 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 
 		public View getView(int index, View view, ViewGroup viewGroup) {
 			ImageView i = new ImageView(mContext);
-//			if (getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, "male").equals("male")) {
-//				startIndex = 14;
-//			} else {
-//				startIndex = 0;
-//			}
-//			index = startIndex + index;
+			// if (getSharedPreferences(GeneralUtil.sharedPreferences,
+			// MODE_PRIVATE).getString(GeneralUtil.userGender,
+			// "male").equals("male")) {
+			// startIndex = 14;
+			// } else {
+			// startIndex = 0;
+			// }
+			// index = startIndex + index;
 			i.setImageResource(imageIds[index]);
 			i.setLayoutParams(new Gallery.LayoutParams(avatarChooserList.getHeight() / 2, avatarChooserList.getHeight() / 2));
 
@@ -226,7 +231,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			UserDataStore.getStore().setBokwasName(nicknameText);
 			Log.d("LocalStorage", "bokwasName: " + UserDataStore.getStore().getBokwasName());
 			UserDataStore.getStore().save(this);
-			final ProgressDialog pdia = new ProgressDialog(this);
+			pdia = new ProgressDialog(this);
 			pdia.setMessage("Syncing..");
 			pdia.setCancelable(false);
 			pdia.show();
@@ -237,7 +242,6 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 				@Override
 				public void onAPIStatus(boolean status) {
 					if (status) {
-						pdia.dismiss();
 						moveToNextScreen();
 					} else {
 						pdia.dismiss();
@@ -249,12 +253,21 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 	}
 
 	protected void moveToNextScreen() {
-		SharedPreferences.Editor editor = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit();
-		editor.putBoolean(GeneralUtil.isLoggedInKey, true);
-		editor.commit();
-		Intent intent = new Intent(this, HomescreenActivity.class);
-		startActivity(intent);
-		finish();
-		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+
+			@Override
+			public void onAPIStatus(boolean status) {
+				if (pdia != null && pdia.isShowing()) {
+					pdia.dismiss();
+				}
+				SharedPreferences.Editor editor = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit();
+				editor.putBoolean(GeneralUtil.isLoggedInKey, true);
+				editor.commit();
+				Intent intent = new Intent(ProfileChooserActivity.this, HomescreenActivity.class);
+				startActivity(intent);
+				finish();
+				overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+			}
+		}).execute("");
 	}
 }
