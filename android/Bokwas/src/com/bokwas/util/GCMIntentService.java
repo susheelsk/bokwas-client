@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ActivityManager;
-import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,9 +21,12 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.bokwas.HomescreenActivity;
+import com.bokwas.MessageActivity;
 import com.bokwas.PostActivity;
 import com.bokwas.R;
 import com.bokwas.SplashScreen;
+import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
@@ -48,9 +51,9 @@ public class GCMIntentService extends IntentService {
 		String messageType = gcm.getMessageType(intent);
 		Log.d(TAG, "MessageType : " + messageType);
 
-		sendNotification(extras);
-
 		logReceivedNotification(extras);
+
+		sendNotification(extras);
 
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
@@ -65,7 +68,7 @@ public class GCMIntentService extends IntentService {
 				// Handle exception here
 			}
 		}
-		Log.d("BokwasNotification","NotificationData : "+json.toString());
+		Log.d("BokwasNotification", "NotificationData : " + json.toString());
 	}
 
 	private void addLikes(Bundle extras) {
@@ -104,12 +107,21 @@ public class GCMIntentService extends IntentService {
 	}
 
 	private boolean isAppRunning() {
-		ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-		List<RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
-		for (int i = 0; i < procInfos.size(); i++) {
-			if (procInfos.get(i).processName.equals(getPackageName())) {
-				return true;
-			}
+		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+
+		if (services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(getPackageName().toString())) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isActivityRunning(String className) {
+		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+
+		if (services.get(0).topActivity.getPackageName().toString().contains(className)) {
+			return true;
 		}
 		return false;
 	}
@@ -120,20 +132,16 @@ public class GCMIntentService extends IntentService {
 	private void sendNotification(Bundle bundle) {
 		try {
 			mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
 			Intent intent = new Intent(this, SplashScreen.class);
 			String notificationId = bundle.getString("notificationId");
 			if (bundle.getString("type").equals("ADDLIKES_NOTI")) {
 				addLikes(bundle);
 				intent = new Intent(this, PostActivity.class);
 				intent.putExtra("postId", bundle.getString("postId"));
-				intent.putExtra("fromNoti", true);
 			} else if (bundle.getString("type").equals("ADDCOMMENT_NOTI")) {
 				addCommentToPost(bundle);
 				intent = new Intent(this, PostActivity.class);
 				intent.putExtra("postId", bundle.getString("postId"));
-				intent.putExtra("fromNoti", true);
-
 				// If comment
 				if (UserDataStore.getStore().getPost(bundle.getString("postId")).getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -146,6 +154,11 @@ public class GCMIntentService extends IntentService {
 					mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 					return;
 				}
+			} else if (bundle.getString("type").equals("PRIVATE_MESSAGE_NOTI")) {
+				addMessage(bundle);
+				return;
+			} else {
+				intent = new Intent(this, HomescreenActivity.class);
 			}
 			Map<String, String> map = new HashMap<String, String>();
 			for (String key : bundle.keySet()) {
@@ -155,16 +168,56 @@ public class GCMIntentService extends IntentService {
 			Notification notification = new Notification(notificationId, new Gson().toJson(map), System.currentTimeMillis());
 			UserDataStore.getStore().addNotification(notification);
 			intent.putExtra("fromNoti", true);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.bokwas_icon).setContentTitle(bundle.getString("title"))
-					.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)).setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")))
-					.setContentText(bundle.getString("message"));
-
-			mBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+			buildNotification(intent, bundle);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void addMessage(Bundle bundle) {
+		String fromId = bundle.getString("fromId");
+		String time = bundle.getString("time");
+		String message = bundle.getString("message");
+
+		boolean isAppRunning = false;
+		if (!isAppRunning()) {
+			Log.d("BokwasNotification", "App is not running");
+			UserDataStore.initData(this);
+		} else {
+			Log.d("BokwasNotification", "App is running");
+			isAppRunning = true;
+		}
+		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message);
+		UserDataStore.getStore().addMessageToPerson(fromId, messageData);
+		UserDataStore.getStore().save(this);
+		Intent intent = new Intent(this, MessageActivity.class);
+		intent.putExtra("receiverId", fromId);
+		intent.putExtra("fromNoti", true);
+		if (!isAppRunning) {
+			buildNotification(intent, bundle);
+		} else if (isActivityRunning("MessageActivity")) {
+			buildNotification(intent, bundle);
+		} else {
+			intent = new Intent("NEW_MESSAGE");
+			intent.setAction("NEW_MESSAGE");
+			sendBroadcast(intent);
+		}
+	}
+
+	private void buildNotification(Intent intent, Bundle bundle) {
+		int requestID = (int) System.currentTimeMillis();
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		String title = bundle.getString("title");
+		if (title == null || title.equals("")) {
+			title = "Bokwas";
+		}
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.bokwas_icon).setContentTitle(title)
+				.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)).setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")))
+				.setContentText(bundle.getString("message"));
+
+		mBuilder.setContentIntent(contentIntent);
+		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 }

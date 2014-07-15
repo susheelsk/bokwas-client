@@ -2774,6 +2774,11 @@ com.bokwas.LoginActivity: LoginActivity()
 com.bokwas.LoginActivity: void onClick(android.view.View)
 com.bokwas.Manifest: Manifest()
 com.bokwas.Manifest$permission: Manifest$permission()
+com.bokwas.MessageActivity
+com.bokwas.MessageActivity: MessageActivity()
+com.bokwas.MessageActivity: void onClick(android.view.View)
+com.bokwas.MessageFriendsActivity
+com.bokwas.MessageFriendsActivity: MessageFriendsActivity()
 com.bokwas.NewPostActivity
 com.bokwas.NewPostActivity: NewPostActivity()
 com.bokwas.NewPostActivity: void onClick(android.view.View)
@@ -3069,6 +3074,8 @@ com.bokwas.R$drawable: int indicator_arrow
 com.bokwas.R$drawable: int indicator_bg_bottom
 com.bokwas.R$drawable: int indicator_bg_top
 com.bokwas.R$drawable: int like_icon
+com.bokwas.R$drawable: int message_icon
+com.bokwas.R$drawable: int message_icon_active
 com.bokwas.R$drawable: int new_posticon_active
 com.bokwas.R$drawable: int new_posticon_inactive
 com.bokwas.R$drawable: int notification_template
@@ -3135,6 +3142,7 @@ com.bokwas.R$id: int comment_line_seperator
 com.bokwas.R$id: int comment_list
 com.bokwas.R$id: int comment_popupmenu
 com.bokwas.R$id: int comment_show_like
+com.bokwas.R$id: int comment_submit
 com.bokwas.R$id: int container
 com.bokwas.R$id: int dialog_button_ok
 com.bokwas.R$id: int dialog_description
@@ -3145,6 +3153,7 @@ com.bokwas.R$id: int facebookButton
 com.bokwas.R$id: int feed_list
 com.bokwas.R$id: int fl_inner
 com.bokwas.R$id: int flip
+com.bokwas.R$id: int friend_list
 com.bokwas.R$id: int fullscreen_imageview
 com.bokwas.R$id: int gridview
 com.bokwas.R$id: int header
@@ -3164,6 +3173,11 @@ com.bokwas.R$id: int load_more_progressBar
 com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int login_text
 com.bokwas.R$id: int manualOnly
+com.bokwas.R$id: int messageButton
+com.bokwas.R$id: int messageHeaderButton
+com.bokwas.R$id: int message_edittext
+com.bokwas.R$id: int message_list
+com.bokwas.R$id: int message_submit
 com.bokwas.R$id: int message_textview
 com.bokwas.R$id: int name
 com.bokwas.R$id: int nameText
@@ -3171,10 +3185,11 @@ com.bokwas.R$id: int newPostButton
 com.bokwas.R$id: int nextButton
 com.bokwas.R$id: int none
 com.bokwas.R$id: int normal
-com.bokwas.R$id: int notificationButton
 com.bokwas.R$id: int oveflow_home
 com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
+com.bokwas.R$id: int overflow_feedback
+com.bokwas.R$id: int overflow_notifications
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
 com.bokwas.R$id: int overflow_refresh
@@ -3259,6 +3274,10 @@ com.bokwas.R$layout: int like_list_item
 com.bokwas.R$layout: int likes_dialog
 com.bokwas.R$layout: int load_more_footer
 com.bokwas.R$layout: int login_page
+com.bokwas.R$layout: int message_friends_page
+com.bokwas.R$layout: int message_list_item_ours
+com.bokwas.R$layout: int message_list_item_theirs
+com.bokwas.R$layout: int message_page
 com.bokwas.R$layout: int newpost_dialog
 com.bokwas.R$layout: int notification_list_item
 com.bokwas.R$layout: int post_activity
@@ -3459,6 +3478,8 @@ com.bokwas.response.GetPostsResponse: GetPostsResponse()
 com.bokwas.ui.CommentsDialogListAdapter$ViewHolder: CommentsDialogListAdapter$ViewHolder()
 com.bokwas.ui.HomescreenPostsListAdapter$ViewHolder: HomescreenPostsListAdapter$ViewHolder()
 com.bokwas.ui.LikesDialogListAdapter$ViewHolder: LikesDialogListAdapter$ViewHolder()
+com.bokwas.ui.MessageFriendsListAdapter$ViewHolder: MessageFriendsListAdapter$ViewHolder()
+com.bokwas.ui.MessageListAdapter$ViewHolder: MessageListAdapter$ViewHolder()
 com.bokwas.ui.NotificationDialogListAdapter$ViewHolder: NotificationDialogListAdapter$ViewHolder()
 com.bokwas.ui.ProfilePageFragment: ProfilePageFragment()
 com.bokwas.util.BokwasHttpClient: BokwasHttpClient()

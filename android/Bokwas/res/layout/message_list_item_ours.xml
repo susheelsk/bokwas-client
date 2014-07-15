@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rectangle_orange_stroke"
+    android:orientation="vertical" >
+
+    <!--
+         <View
+        android:id="@+id/post_name_line" 
+        android:layout_height="1dp"
+        android:layout_width="wrap_content"
+        android:background="#bbbbbb"
+        android:layout_above="@+id/post_profile_pic"
+        android:layout_marginBottom="8dp"
+        android:layout_alignLeft="@+id/post_profile_pic"
+        android:layout_alignRight="@+id/post_profile_pic"/>
+    -->
+
+    <View
+        android:visibility="invisible"
+        android:id="@+id/post_content_line"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignLeft="@+id/post_name"
+        android:layout_alignRight="@+id/post_name"
+        android:layout_below="@+id/post_name"
+        android:layout_marginTop="4dp"
+        android:background="#bbbbbb" />
+
+    <TextView
+        android:id="@+id/post_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/post_content_line"
+        android:layout_marginRight="60dp"
+        android:layout_marginLeft="8dp"
+        android:gravity="right"
+        android:layout_marginTop="4dp"
+        android:text="Hey! sup?"
+        android:textColor="#777777"
+        android:autoLink="web"
+        android:linksClickable="true"
+        android:textSize="14sp"
+        android:textStyle="normal" />
+
+    <View
+        android:id="@+id/post_line_separator"
+        android:layout_width="match_parent"
+        android:visibility="invisible"
+        android:layout_height="2dp"
+        android:layout_below="@+id/post_content"
+        android:layout_marginTop="4dp"
+        android:background="#bbbbbb" />
+
+    <RelativeLayout
+        android:id="@+id/post_footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_below="@+id/post_line_separator"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp" >
+
+        <TextView
+            android:id="@+id/post_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="March 7, 4:02pm"
+            android:textColor="#777777"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
+        <View
+            android:id="@+id/comment_line_seperator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:background="#bbbbbb" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/post_profile_pic"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="6dp"
+        android:padding="1dp"
+        android:src="@drawable/avatar_15" />
+
+</RelativeLayout>

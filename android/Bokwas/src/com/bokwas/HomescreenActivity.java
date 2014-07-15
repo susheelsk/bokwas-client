@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,7 +31,6 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.NotificationDialog;
 import com.bokwas.response.Likes;
-import com.bokwas.response.Notification;
 import com.bokwas.response.Post;
 import com.bokwas.ui.HomescreenPostsListAdapter;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
@@ -62,7 +62,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 		setupUI();
 
-		setupNotificationBar();
+//		setupNotificationBar();
 		
 		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 
@@ -73,9 +73,18 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		super.onResume();
 		setupUI();
 	}
+	
+	private int getPixelsInDp(int sizeInDp) {
+		float scale = getResources().getDisplayMetrics().density;
+		int dpAsPixels = (int) (sizeInDp * scale + 0.5f);
+		return dpAsPixels;
+	}
 
 	private void setupUI() {
 		findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
+		
+		int pixelsInDp = getPixelsInDp(8);
+		findViewById(R.id.newPostButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
 		
 		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore().getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
@@ -88,7 +97,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 				@Override
 				public void onAPIStatus(boolean status) {
-					setupNotificationBar();
+//					setupNotificationBar();
 				}
 			}).execute("");
 //			listView.setRefreshing(true);
@@ -174,7 +183,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 	protected void setupNotificationBar() {
 		try {
-			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+			TextView notificationButton = (TextView) findViewById(R.id.messageHeaderButton);
 			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
 
 			if (UserDataStore.getStore().getNotifications().size() >= 1) {
@@ -190,8 +199,9 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 	private void setOnClickListeners() {
 		findViewById(R.id.overflowButton).setOnClickListener(this);
-		findViewById(R.id.notificationButton).setOnClickListener(this);
+		findViewById(R.id.messageHeaderButton).setOnClickListener(this);
 		findViewById(R.id.newPostButton).setOnClickListener(this);
+		findViewById(R.id.titlebar).setOnClickListener(this);
 	}
 
 	@Override
@@ -233,17 +243,35 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 						overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 						finish();
 						break;
+					case R.id.overflow_feedback:
+						sendEmail("susheel@bokwas.com", "Feedback");
+						break;
+					case R.id.overflow_notifications:
+						if (UserDataStore.getStore().getNotifications().size() > 0) {
+							NotificationDialog dialog = new NotificationDialog(HomescreenActivity.this, UserDataStore.getStore().getNotifications());
+							dialog.show();
+						}else {
+							Crouton.makeText(HomescreenActivity.this, "No new notifications to show!", Style.INFO).show();
+						}
 					}
 					return true;
 				}
 			});
 			popup.show();
-		} else if (view.getId() == R.id.notificationButton) {
-			if (UserDataStore.getStore().getNotifications().size() > 0) {
-				NotificationDialog dialog = new NotificationDialog(this, UserDataStore.getStore().getNotifications());
-				dialog.show();
-			}
+		} else if (view.getId() == R.id.messageHeaderButton) {
+			Intent intent4 = new Intent(HomescreenActivity.this, MessageFriendsActivity.class);
+			startActivity(intent4);
+			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+			finish();
+		}else if(view.getId() == R.id.titlebar) {
+			listView.getRefreshableView().smoothScrollToPosition(0);
 		}
+	}
+	
+	public void sendEmail(String emailAddress, String subject) {
+		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", emailAddress, null));
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		startActivity(Intent.createChooser(emailIntent, "Send email..."));
 	}
 
 	@Override

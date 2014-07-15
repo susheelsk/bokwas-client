@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DDDDDD" >
+    
+    <RelativeLayout
+        android:id="@+id/hidden_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" >
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/header_layout"
+        layout="@layout/header_main" />
+    
+    <ListView
+        android:id="@+id/friend_list"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="48dp"
+        android:saveEnabled="true"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="4dp" />
+
+</RelativeLayout>

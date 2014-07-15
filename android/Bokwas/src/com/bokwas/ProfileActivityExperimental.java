@@ -39,7 +39,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		setContentView(R.layout.profile_activity);
 		this.savedInstanceState = savedInstanceState;
 		pdia = new ProgressDialog(this);
-		
+
 		profileId = getIntent().getStringExtra("profileId");
 		name = getIntent().getStringExtra("name");
 		avatarId = getIntent().getIntExtra("avatarId", -1);
@@ -49,22 +49,22 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 			onBackPressed();
 			return;
 		}
-		
-		if(fbProfilePic == null || fbProfilePic.equals("")) {
+
+		if (fbProfilePic == null || fbProfilePic.equals("")) {
 			isBokwasPost = true;
-		}else {
+		} else {
 			isBokwasPost = false;
 		}
-		
-		if(isBokwasPost) {
-			if(UserDataStore.getStore().getBokwasPostsOfPerson(profileId).size()<0) {
+
+		if (isBokwasPost) {
+			if (UserDataStore.getStore().getBokwasPostsOfPerson(profileId).size() < 0) {
 				pdia.setCancelable(false);
 				pdia.setMessage("Loading");
 				pdia.show();
 				refreshPosts();
 			}
-		}else {
-			if(UserDataStore.getStore().getFbPostsOfPerson(profileId).size()<0) {
+		} else {
+			if (UserDataStore.getStore().getFbPostsOfPerson(profileId).size() < 0) {
 				pdia.setCancelable(false);
 				pdia.setMessage("Loading");
 				pdia.show();
@@ -114,7 +114,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		if (id == R.id.overflow_refresh) { // open repo at GitHub
 			refreshPosts();
 			return true;
-		}else if(id == R.id.oveflow_home) {
+		} else if (id == R.id.oveflow_home) {
 			onBackPressed();
 			return true;
 		}
@@ -125,20 +125,25 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		Toast.makeText(this, "Loading more posts", Toast.LENGTH_SHORT).show();
 		long since;
 		List<Post> posts = new ArrayList<Post>();
-		if(isBokwasPost) {
-			posts = UserDataStore.getStore().getBokwasPostsOfPerson(profileId);
-			since = posts.get(posts.size()-1).getTimestamp();
+		if (posts.size() > 0) {
+			if (isBokwasPost) {
+				posts = UserDataStore.getStore().getBokwasPostsOfPerson(profileId);
+				since = posts.get(posts.size() - 1).getTimestamp();
+			} else {
+				posts = UserDataStore.getStore().getFbPostsOfPerson(profileId);
+				since = posts.get(posts.size() - 1).getTimestamp();
+			}
 		}else {
-			posts = UserDataStore.getStore().getFbPostsOfPerson(profileId);
-			since = posts.get(posts.size()-1).getTimestamp();
+			since = System.currentTimeMillis();
 		}
-		new GetPostsOfPersonApi(this, UserDataStore.getStore().getAccessKey(), String.valueOf(since), isBokwasPost, UserDataStore.getStore().getUserId(),profileId, new APIListener() {
-			
+		
+		new GetPostsOfPersonApi(this, UserDataStore.getStore().getAccessKey(), String.valueOf(since), isBokwasPost, UserDataStore.getStore().getUserId(), profileId, new APIListener() {
+
 			@Override
 			public void onAPIStatus(boolean status) {
-				if(status) {
-//					setupUI();
-					if(pdia!=null && pdia.isShowing()) {
+				if (status) {
+					// setupUI();
+					if (pdia != null && pdia.isShowing()) {
 						pdia.dismiss();
 					}
 					getFragmentManager().findFragmentById(R.id.container).onAttach(ProfileActivityExperimental.this);
@@ -153,7 +158,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 
 	@Override
 	public void onClick(View view) {
-		
+
 	}
 
 }

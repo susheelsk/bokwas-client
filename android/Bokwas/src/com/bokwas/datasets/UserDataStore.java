@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +46,36 @@ public class UserDataStore {
 	private List<Notification> notificationList = new ArrayList<Notification>();
 	private String gcmRegId;
 	private boolean gcmUpdated = false;
+	private HashMap<String, List<Message>> messageMap = new HashMap<String, List<Message>>();
+	
+	public List<Message> getMessagesForPerson(String personId) {
+		List<Message>messages = messageMap.get(personId);
+		if(messages!=null) {
+			Collections.sort(messages,new MessageComparator());
+		}else {
+			messages = new ArrayList<Message>();
+		}
+		return messages;
+	}
+	
+	public void addMessageToPerson(String personId,Message message) {
+		List<Message> messages = messageMap.get(personId);
+		if(messages==null) {
+			messages = new ArrayList<Message>();
+		}
+		messages.add(message);
+		messageMap.put(personId, messages);
+	}
+	
+	public void removeOldMessages() {
+		for(Friends friend : getFriends()) {
+			if(getMessagesForPerson(friend.getId())!=null) {
+				if(getMessagesForPerson(friend.getId()).size()>200) {
+					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
+				}
+			}
+		}
+	}
 
 	public boolean isGcmUpdated() {
 		return gcmUpdated;
@@ -360,6 +391,14 @@ public class UserDataStore {
 			Date dateA = new Date(a.getUpdatedTime());
 			Date dateB = new Date(b.getUpdatedTime());
 			return dateB.compareTo(dateA);
+		}
+	}
+	
+	private class MessageComparator implements Comparator<Message> {
+		public int compare(Message a, Message b) {
+			Date dateA = new Date(a.getTimestamp());
+			Date dateB = new Date(b.getTimestamp());
+			return dateA.compareTo(dateB);
 		}
 	}
 

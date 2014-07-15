@@ -18,6 +18,14 @@
             android:id="@+id/overflow_profile"
             android:showAsAction="never"
             android:title="Profile"/>
+        <item
+            android:id="@+id/overflow_feedback"
+            android:showAsAction="never"
+            android:title="Feedback"/>
+        <item
+            android:id="@+id/overflow_notifications"
+            android:showAsAction="never"
+            android:title="Notifications"/>
     </group>
 
 </menu>

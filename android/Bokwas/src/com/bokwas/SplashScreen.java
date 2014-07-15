@@ -38,6 +38,7 @@ public class SplashScreen extends Activity {
 		logKeyHash();
 		initAppData();
 		init();
+		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 	}
 
 	private void init() {

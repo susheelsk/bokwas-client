@@ -32,14 +32,9 @@ public class NotificationProgress {
 	}
 	
 	public static void clearNotification(Context context, int newTask) {
-		mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		try {
-			if (mNotifyManager != null) {
-				mNotifyManager.cancel(newTask);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		String ns = Context.NOTIFICATION_SERVICE;
+	    NotificationManager nMgr = (NotificationManager) context.getSystemService(ns);
+	    nMgr.cancel(newTask);
 	}
 
 }

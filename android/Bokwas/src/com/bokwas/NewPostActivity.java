@@ -49,7 +49,7 @@ public class NewPostActivity extends Activity implements OnClickListener {
 		}
 		findViewById(R.id.overflowButton).setVisibility(View.GONE);
 		
-		findViewById(R.id.notificationButton).setVisibility(View.GONE);
+		findViewById(R.id.messageHeaderButton).setVisibility(View.GONE);
 		editText = (EditText) findViewById(R.id.post_content);
 		ImageView profilePic = (ImageView) findViewById(R.id.post_profile_pic);
 		TextView nameTextView = (TextView) findViewById(R.id.post_name);
@@ -65,7 +65,7 @@ public class NewPostActivity extends Activity implements OnClickListener {
 	
 	protected void setupNotificationBar() {
 		try {
-			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+			TextView notificationButton = (TextView) findViewById(R.id.messageHeaderButton);
 			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
 
 			if (UserDataStore.getStore().getNotifications().size() >= 1) {

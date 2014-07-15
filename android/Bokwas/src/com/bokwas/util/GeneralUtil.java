@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
@@ -95,12 +96,15 @@ public class GeneralUtil {
 	
 	public static void sharePhotoIntent(Activity activity, Bitmap img, String text) {
 		String path = saveImageLocally(activity,img);
+		Log.d("SharePhoto","path : "+path);
 		img = BitmapFactory.decodeFile(path);
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/png");
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		img.compress(Bitmap.CompressFormat.PNG, 100, bytes);
 		java.io.File f = new java.io.File(path);
+		
+		img.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+		
 		try {
 			f.createNewFile();
 			FileOutputStream fo = new FileOutputStream(f);
@@ -202,14 +206,24 @@ public class GeneralUtil {
 	
 	private static String saveImageLocally(Activity activity, Bitmap _bitmap) {
 		java.io.File outputFile = null;
-		outputFile = new java.io.File(activity.getExternalFilesDir(null),
+		String state = Environment.getExternalStorageState();
+		java.io.File filesDir;
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+		    // We can read and write the media
+		    filesDir = activity.getExternalFilesDir(null);
+		} else {
+		    // Load another directory, probably local memory
+		    filesDir = activity.getFilesDir();
+		}
+		outputFile = new java.io.File(filesDir,
 				"temp.png");
 		try {
 			FileOutputStream out = new FileOutputStream(outputFile);
-			_bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			_bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 			out.close();
 		} catch (Exception e) {
 			// handle exception
+			e.printStackTrace();
 		}
 		return outputFile.getAbsolutePath();
 	}
