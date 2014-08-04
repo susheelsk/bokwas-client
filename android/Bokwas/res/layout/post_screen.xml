@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="#DDDDDD" >
 
     <RelativeLayout
@@ -14,61 +16,7 @@
     <include
         android:id="@+id/header_layout"
         layout="@layout/header_main" />
-
-    <ListView
-        android:id="@+id/comment_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/comment_submit"
-        android:layout_below="@+id/post_relative_view"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="2dp"
-        android:background="@drawable/rectangle_white_stroke"
-        android:dividerHeight="12dp"
-        android:padding="4dp" >
-    </ListView>
-
-    <RelativeLayout
-        android:id="@+id/comment_submit"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp" >
-
-        <EditText
-            android:id="@+id/comment_edittext"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toLeftOf="@+id/commentButton"
-            android:adjustViewBounds="true"
-            android:background="@drawable/rectangle_white"
-            android:hint="Comment on this post"
-            android:padding="4dp"
-            android:textColor="#777777"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/commentButton"
-            android:layout_width="36dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/comment_edittext"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/comment_edittext"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/generic_button"
-            android:text=">"
-            android:textColor="#777777"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
-
+    
     <RelativeLayout
         android:id="@+id/post_relative_view"
         android:layout_width="match_parent"
@@ -117,7 +65,7 @@
             android:layout_marginTop="4dp"
             android:background="#bbbbbb" />
 
-        <TextView
+        <com.rockerhieu.emojicon.EmojiconTextView
             android:id="@+id/post_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -177,7 +125,7 @@
                 android:text=""
                 android:textColor="#777777"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
             <View
                 android:id="@+id/comment_line_seperator"
@@ -288,8 +236,93 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="6dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/placeholder" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/comment_submit"
+        android:layout_below="@+id/post_relative_view"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/rectangle_white_stroke"
+        android:dividerHeight="12dp"
+        android:padding="4dp" >
+    </ListView>
+
+    <RelativeLayout
+        android:id="@+id/comment_submit"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_above="@+id/emojiconsLayout"
+        android:background="#dddddd"
+        android:layout_marginBottom="4dp" >
+
+        <ImageView
+            android:id="@+id/emojiButton"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/comment_edittext"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/comment_edittext"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:padding="4dp"
+            android:src="@drawable/emoji_1f600"
+            android:textColor="#777777"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.rockerhieu.emojicon.EmojiconEditText
+            android:id="@+id/comment_edittext"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/commentButton"
+            android:layout_toRightOf="@+id/emojiButton"
+            emojicon:emojiconSize="28sp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/rectangle_white"
+            android:hint="Comment on this post"
+            android:padding="4dp"
+            android:textColor="#777777"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/commentButton"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/comment_edittext"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/comment_edittext"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/generic_button"
+            android:text=">"
+            android:textColor="#777777"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    
+
+    <RelativeLayout android:id="@+id/emojiconsLayout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <fragment
+            android:id="@+id/emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            class="com.rockerhieu.emojicon.EmojiconsFragment"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -54,13 +54,13 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 		String apiUrl = null;
 		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
 		if(isLogin) {
-			apiUrl = AppData.baseURL + "/login";
+			apiUrl = AppData.getBaseURL() + "/login";
 			apiParams.add(new BasicNameValuePair("access_token", accessToken));
 			apiParams.add(new BasicNameValuePair("bokwas_name", bokwasName));
 			apiParams.add(new BasicNameValuePair("bokwas_avatar_id", avatarId));
 			apiParams.add(new BasicNameValuePair("gcmregid", gcmRegId));
 		}else {
-			apiUrl = AppData.baseURL + "/getposts";
+			apiUrl = AppData.getBaseURL() + "/getposts";
 			apiParams.add(new BasicNameValuePair("access_token", accessToken));
 			apiParams.add(new BasicNameValuePair("person_id", id));
 		}
@@ -85,6 +85,8 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 				for (Post post : posts) {
 					UserDataStore.getStore().addNewPost(post);
 				}
+				long sinceLocal = posts.get(posts.size()-1).getUpdatedTime();
+				context.getSharedPreferences("bokwas", Context.MODE_PRIVATE).edit().putLong("since", sinceLocal).commit();
 				if(gcmRegId!=null && !gcmRegId.trim().equals("")) {
 					UserDataStore.getStore().setGcmUpdated(true);
 				}

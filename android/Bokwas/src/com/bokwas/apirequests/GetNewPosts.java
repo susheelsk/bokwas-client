@@ -41,11 +41,12 @@ public class GetNewPosts extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/getnewposts";
+		apiUrl = AppData.getBaseURL() + "/getnewposts";
 		apiParams.add(new BasicNameValuePair("access_token", accessToken));
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
-		apiParams.add(new BasicNameValuePair("since", String.valueOf(since)));
+		apiParams.add(new BasicNameValuePair("since", String.valueOf(context.getSharedPreferences("bokwas", Context.MODE_PRIVATE).getLong("since", since))));
+//		apiParams.add(new BasicNameValuePair("since", String.valueOf(since)));
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
 			if (response != null) {
@@ -62,7 +63,9 @@ public class GetNewPosts extends AsyncTask<String, Void, Boolean> {
 				for (Post post : posts) {
 					UserDataStore.getStore().addPost(post);
 				}
-
+				long sinceLocal = posts.get(posts.size()-1).getUpdatedTime();
+				context.getSharedPreferences("bokwas", Context.MODE_PRIVATE).edit().putLong("since", sinceLocal).commit();
+				
 				UserDataStore.getStore().save(context);
 			}
 		} catch (Exception e) {

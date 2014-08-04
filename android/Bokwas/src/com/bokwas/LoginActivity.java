@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetPersonInfo;
+import com.bokwas.apirequests.GetPosts;
+import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
@@ -47,7 +50,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		findViewById(R.id.whyFacebookLoginButton).setOnClickListener(this);
 	}
 
-	private void moveToNextScreen() {
+	private void moveToProfileScreen() {
 		Intent intent = new Intent(this, ProfileChooserActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
@@ -70,7 +73,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				}
 				UserDataStore.getStore().save(LoginActivity.this);
 				pdia.dismiss();
-				moveToNextScreen();
+				moveToProfileScreen();
 			}
 		});
 	}
@@ -80,6 +83,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		pdia.setMessage("Fetching details...");
 		pdia.setCancelable(false);
 		pdia.setCanceledOnTouchOutside(false);
+		pdia.show();
 		Log.d("LoginActivity", "AccessToken : " + mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().setUserAccessToken(mSimpleFacebook.getSession().getAccessToken());
 		UserDataStore.getStore().save(this);
@@ -99,7 +103,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 				UserDataStore.getStore().setFbName(profile.getName());
 				UserDataStore.getStore().setFbPicLink(profile.getPicture());
 				UserDataStore.getStore().save(LoginActivity.this);
-				moveToNextScreen();
+				checkIfReturningUser();
 			}
 
 			@Override
@@ -117,10 +121,47 @@ public class LoginActivity extends Activity implements OnClickListener {
 		});
 	}
 
+	protected void checkIfReturningUser() {
+		new GetPersonInfo(this, UserDataStore.getStore().getUserId(), new APIListener() {
+			
+			@Override
+			public void onAPIStatus(boolean status) {
+				if(pdia!=null && pdia.isShowing()) {
+					pdia.cancel();
+				}
+				if(status) {
+					new GetPosts(LoginActivity.this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getBokwasName(), String.valueOf(UserDataStore.getStore().getAvatarId()), UserDataStore
+							.getStore().getGcmRegId(), true, new APIListener() {
+
+						@Override
+						public void onAPIStatus(boolean status) {
+							if (status) {
+								moveToHomePage();
+							} else {
+								moveToProfileScreen();
+								Toast.makeText(LoginActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
+							}
+						}
+
+					}).execute("");
+				}else {
+					moveToProfileScreen();
+				}
+			}
+		}).execute("");
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		mSimpleFacebook = SimpleFacebook.getInstance(this);
+	}
+	
+	private void moveToHomePage() {
+		Intent intent = new Intent(this, HomescreenActivity.class);
+		startActivity(intent);
+		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+		finish();
 	}
 
 	//

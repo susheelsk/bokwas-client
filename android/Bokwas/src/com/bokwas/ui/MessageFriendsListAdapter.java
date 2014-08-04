@@ -41,6 +41,7 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 		public TextView time;
 		public TextView message;
 		public ImageView picture;
+		public TextView messageCount;
 	}
 
 	@Override
@@ -70,6 +71,7 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.post_profile_pic);
 			viewHolder.time = (TextView) rowView.findViewById(R.id.post_time);
 			viewHolder.message = (TextView) rowView.findViewById(R.id.post_content);
+			viewHolder.messageCount = (TextView) rowView.findViewById(R.id.messageCount);
 			rowView.setTag(viewHolder);
 		}
 
@@ -79,24 +81,40 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 
 		name = friend.getBokwasName();
 		avatarId = friend.getBokwasAvatarId();
-		
+
 		List<Message> messages = UserDataStore.getStore().getMessagesForPerson(friend.getId());
-		
-		if(messages!=null && messages.size()>0) {
-			time = messages.get(messages.size()-1).getTimestamp();
-			message = messages.get(messages.size()-1).getMessage();
+
+		if (messages != null && messages.size() > 0) {
+			time = messages.get(messages.size() - 1).getTimestamp();
+			message = messages.get(messages.size() - 1).getMessage();
 		}
 		
+		if(messages.size()>0) {
+			holder.time.setText(DateUtil.getSimpleTime(new Date(time)));
+		}else {
+			holder.time.setText("");
+		}
+
+		int unSeenMessageSize = 0;
+		for (Message unseenMessage : messages) {
+			if (!unseenMessage.isSeen()) {
+				unSeenMessageSize++;
+			}
+		}
+
+		if (unSeenMessageSize > 0) {
+			holder.messageCount.setVisibility(View.VISIBLE);
+			holder.messageCount.setText(String.valueOf(unSeenMessageSize));
+		}
 		holder.message.setText(message);
 		holder.name.setText(name);
-		holder.time.setText(DateUtil.getSimpleTime(new Date(time)));
 		holder.picture.setImageResource(GeneralUtil.getAvatarResourceId(avatarId));
 
 		rowView.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(activity,MessageActivity.class);
+				Intent intent = new Intent(activity, MessageActivity.class);
 				intent.putExtra("receiverId", friend.id);
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 				activity.startActivity(intent);

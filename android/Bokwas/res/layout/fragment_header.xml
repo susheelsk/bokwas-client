@@ -17,6 +17,7 @@
         android:padding="8dp"
         android:layout_gravity="center"
         android:src="@drawable/avatar_15"
+        android:scaleType="centerCrop"
         android:background="@drawable/rectangle_white_stroke" />
 
     <LinearLayout

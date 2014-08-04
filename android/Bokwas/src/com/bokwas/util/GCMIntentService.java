@@ -188,7 +188,7 @@ public class GCMIntentService extends IntentService {
 			Log.d("BokwasNotification", "App is running");
 			isAppRunning = true;
 		}
-		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message);
+		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message,false);
 		UserDataStore.getStore().addMessageToPerson(fromId, messageData);
 		UserDataStore.getStore().save(this);
 		Intent intent = new Intent(this, MessageActivity.class);

@@ -39,7 +39,7 @@ public class AddLikesApi extends AsyncTask<String, Void, Boolean>{
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair>  apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/addlikes";
+		apiUrl = AppData.getBaseURL() + "/addlikes";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("person_id", personId));

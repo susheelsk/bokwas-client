@@ -4,19 +4,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -42,12 +49,15 @@ import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.squareup.picasso.Picasso;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class PostActivity extends Activity implements OnClickListener {
+public class PostActivity extends FragmentActivity implements OnClickListener,EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
 	private Post post;
 	private EditText editText;
@@ -57,12 +67,20 @@ public class PostActivity extends Activity implements OnClickListener {
 	private boolean isLike = true;
 	private ProgressDialog pdia;
 	private boolean isOutsidePost = false;
+	private FragmentManager manager;
+	private FragmentTransaction transaction;
+	private EmojiconsFragment emojiFragment;
+	private boolean isEmojiShown = false;
 
+	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.post_screen);
+
+		manager = getSupportFragmentManager();
+		transaction = manager.beginTransaction();
 
 		String postId = getIntent().getStringExtra("postId");
 		if (postId == null) {
@@ -70,8 +88,11 @@ public class PostActivity extends Activity implements OnClickListener {
 			onBackPressed();
 			return;
 		}
+		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
+		transaction.hide(emojiFragment);
+		transaction.commit();
 		boolean isFromNoti = getIntent().getBooleanExtra("fromNoti", false);
-		if (isFromNoti) {
+		if (!UserDataStore.isInitialized()) {
 			try {
 				UserDataStore.initData(this);
 				NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
@@ -82,7 +103,6 @@ public class PostActivity extends Activity implements OnClickListener {
 		}
 
 		post = UserDataStore.getStore().getPost(postId);
-		comments = post.getComments();
 
 		setOnClickListeners();
 		pdia = new ProgressDialog(this);
@@ -94,7 +114,7 @@ public class PostActivity extends Activity implements OnClickListener {
 			refreshPost(postId);
 			return;
 		}
-
+		comments = post.getComments();
 		setupUI();
 		if (post.isBokwasPost() && !UserDataStore.getStore().isPostFromFriendOrMe(post)) {
 			isOutsidePost = true;
@@ -104,6 +124,7 @@ public class PostActivity extends Activity implements OnClickListener {
 		}
 		ArrayList<Post> postList = new ArrayList<Post>();
 		postList.add(post);
+		
 	}
 
 	private void setupUI() {
@@ -117,6 +138,8 @@ public class PostActivity extends Activity implements OnClickListener {
 			Picasso.with(this).load(post.getPicture()).resize(250, 250).centerCrop().placeholder(R.drawable.placeholder).into(postPicture);
 			findViewById(R.id.comment_list).setVisibility(View.GONE);
 			findViewById(R.id.post_comment_button).setVisibility(View.VISIBLE);
+			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+			
 		} else {
 			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
 			listView = (ListView) findViewById(R.id.comment_list);
@@ -129,9 +152,9 @@ public class PostActivity extends Activity implements OnClickListener {
 		}
 
 		// setupNotificationBar();
-		int pixelsInDp = getPixelsInDp(8);
+		int pixelsInDp = getPixelsInDp(12);
 		findViewById(R.id.messageHeaderButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
-		((ImageView) findViewById(R.id.messageHeaderButton)).setImageResource(android.R.drawable.ic_menu_share);
+		((ImageView) findViewById(R.id.messageHeaderButton)).setImageResource(R.drawable.share_icon);
 		// findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
 		// ((ImageView)findViewById(R.id.newPostButton)).setImageResource(R.drawable.ic_menu_refresh);
 		// ((TextView) findViewById(R.id.messageHeaderButton)).setText("");
@@ -173,6 +196,16 @@ public class PostActivity extends Activity implements OnClickListener {
 			UrlImageViewHelper.setUrlDrawable(picture, post.getProfilePicture(), null, 60000 * 100);
 		}
 
+		editText.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (isEmojiShown) {
+					hideEmojis();
+				}
+				return false;
+			}
+		});
 	}
 
 	private int getPixelsInDp(int sizeInDp) {
@@ -197,6 +230,33 @@ public class PostActivity extends Activity implements OnClickListener {
 		}
 	}
 
+	private void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+		isEmojiShown = true;
+		findViewById(R.id.overflowButton).postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				manager = getSupportFragmentManager();
+				transaction = manager.beginTransaction();
+				transaction.show(emojiFragment);
+				transaction.commit();
+			}
+		}, 250);
+		
+	}
+
+	private void hideEmojis() {
+		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+		imm.showSoftInput(editText, 0);
+		isEmojiShown = false;
+		manager = getSupportFragmentManager();
+		transaction = manager.beginTransaction();
+		transaction.hide(emojiFragment);
+		transaction.commit();
+	}
+
 	private void setOnClickListeners() {
 		findViewById(R.id.overflowButton).setOnClickListener(this);
 		findViewById(R.id.messageHeaderButton).setOnClickListener(this);
@@ -204,6 +264,7 @@ public class PostActivity extends Activity implements OnClickListener {
 		findViewById(R.id.post_comment_button).setOnClickListener(this);
 		findViewById(R.id.titlebar).setOnClickListener(this);
 		findViewById(R.id.post_profile_pic).setOnClickListener(this);
+		findViewById(R.id.emojiButton).setOnClickListener(this);
 		findViewById(R.id.commentButton).setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -277,7 +338,10 @@ public class PostActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
+		if(isEmojiShown) {
+			hideEmojis();
+			return;
+		}
 		Intent intent;
 		if (getIntent().getStringExtra("activity") != null && getIntent().getStringExtra("activity").contains("ProfileActivityExperimental")) {
 			intent = new Intent(this, ProfileActivityExperimental.class);
@@ -373,6 +437,8 @@ public class PostActivity extends Activity implements OnClickListener {
 			startActivity(intent);
 			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
+		}else if(view.getId() == R.id.emojiButton) {
+			hideKeyboard();
 		}
 	}
 
@@ -384,6 +450,9 @@ public class PostActivity extends Activity implements OnClickListener {
 			public void onAPIStatus(boolean status) {
 				if (status) {
 					setupUI();
+				}else {
+					Toast.makeText(PostActivity.this, "Can't find post", Toast.LENGTH_SHORT).show();
+					onBackPressed();
 				}
 			}
 		}).execute("");
@@ -459,6 +528,9 @@ public class PostActivity extends Activity implements OnClickListener {
 		final View view = getWindow().getDecorView().findViewById(android.R.id.content);
 		view.findViewById(R.id.comment_edittext).setVisibility(View.INVISIBLE);
 		view.findViewById(R.id.commentButton).setVisibility(View.INVISIBLE);
+		view.findViewById(R.id.emojiButton).setVisibility(View.INVISIBLE);
+		view.findViewById(R.id.overflowButton).setVisibility(View.INVISIBLE);
+		view.findViewById(R.id.messageHeaderButton).setVisibility(View.INVISIBLE);
 		view.layout(0, 0, getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
 		try {
 			Bitmap bitmap = GeneralUtil.loadBitmapFromView(view);
@@ -470,7 +542,20 @@ public class PostActivity extends Activity implements OnClickListener {
 		}
 		view.findViewById(R.id.comment_edittext).setVisibility(View.VISIBLE);
 		view.findViewById(R.id.commentButton).setVisibility(View.VISIBLE);
+		view.findViewById(R.id.emojiButton).setVisibility(View.VISIBLE);
+		view.findViewById(R.id.overflowButton).setVisibility(View.VISIBLE);
+		view.findViewById(R.id.messageHeaderButton).setVisibility(View.VISIBLE);
 		setupUI();
+	}
+
+	@Override
+	public void onEmojiconBackspaceClicked(View v) {
+		EmojiconsFragment.backspace(editText);
+	}
+
+	@Override
+	public void onEmojiconClicked(Emojicon emojicon) {
+		EmojiconsFragment.input(editText, emojicon);
 	}
 
 }

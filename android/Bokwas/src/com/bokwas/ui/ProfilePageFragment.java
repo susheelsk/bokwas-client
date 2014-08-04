@@ -97,6 +97,7 @@ public class ProfilePageFragment extends HeaderFragment {
 			((ImageView) view.findViewById(R.id.profile_pic)).setImageResource(GeneralUtil.getAvatarResourceId(String.valueOf(avatarId)));
 		} else {
 			ImageView profPic = ((ImageView) view.findViewById(R.id.profile_pic));
+			profPic.setBackgroundResource(android.R.color.transparent);
 			UrlImageViewHelper.setUrlDrawable(profPic, fbProfilePic, null, 60000 * 100);
 		}
 		return view;

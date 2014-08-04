@@ -93,6 +93,7 @@
             android:name="com.bokwas.NewPostActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -106,6 +107,7 @@
             android:name="com.bokwas.PostActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.SettingsActivity"
@@ -116,6 +118,7 @@
             android:name="com.bokwas.MessageActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.MessageFriendsActivity"

@@ -1,10 +1,20 @@
 package com.bokwas;
 
-import android.app.Activity;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+
+import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,14 +25,21 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class NewPostActivity extends Activity implements OnClickListener {
+public class NewPostActivity extends FragmentActivity implements OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
 	private EditText editText;
 	private boolean isShareIntent = false;
+	private FragmentManager manager;
+	private FragmentTransaction transaction;
+	private EmojiconsFragment emojiFragment;
+	private boolean isEmojiShown = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +48,9 @@ public class NewPostActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.newpost_dialog);
 
 		setOnClickListeners();
+
+		manager = getSupportFragmentManager();
+		transaction = manager.beginTransaction();
 
 		setupUI();
 
@@ -48,7 +68,7 @@ public class NewPostActivity extends Activity implements OnClickListener {
 			UserDataStore.initData(this);
 		}
 		findViewById(R.id.overflowButton).setVisibility(View.GONE);
-		
+
 		findViewById(R.id.messageHeaderButton).setVisibility(View.GONE);
 		editText = (EditText) findViewById(R.id.post_content);
 		ImageView profilePic = (ImageView) findViewById(R.id.post_profile_pic);
@@ -57,12 +77,29 @@ public class NewPostActivity extends Activity implements OnClickListener {
 		String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
 		profilePic.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
 
+		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
+		transaction.hide(emojiFragment);
+		transaction.commit();
+
+		editText.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if (isEmojiShown) {
+					hideEmojis();
+				}
+				return false;
+			}
+		});
+
 	}
 
 	private void setOnClickListeners() {
 		findViewById(R.id.post_like_button).setOnClickListener(this);
+		findViewById(R.id.post_emoji_button).setOnClickListener(this);
+		findViewById(R.id.titlebar).setOnClickListener(this);
 	}
-	
+
 	protected void setupNotificationBar() {
 		try {
 			TextView notificationButton = (TextView) findViewById(R.id.messageHeaderButton);
@@ -81,7 +118,10 @@ public class NewPostActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
+		if (isEmojiShown) {
+			hideEmojis();
+			return;
+		}
 		if (!isShareIntent) {
 			Intent intent = new Intent(this, HomescreenActivity.class);
 			startActivity(intent);
@@ -92,7 +132,7 @@ public class NewPostActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View view) {
-		if (editText.getText().toString().trim() != null && !editText.getText().toString().trim().equals("")) {
+		if (view.getId() == R.id.post_like_button && editText.getText().toString().trim() != null && !editText.getText().toString().trim().equals("")) {
 			// final SuperActivityToast superActivityToast = new
 			// SuperActivityToast(NewPostActivity.this,
 			// SuperToast.Type.PROGRESS);
@@ -113,17 +153,77 @@ public class NewPostActivity extends Activity implements OnClickListener {
 					NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 					if (status) {
 						Crouton.makeText(NewPostActivity.this, "Post added!", Style.INFO).show();
-						moveToHomescreen();
+						Intent intent = new Intent(NewPostActivity.this, HomescreenActivity.class);
+						startActivity(intent);
+						overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
+						finish();
 					} else {
 						Crouton.makeText(NewPostActivity.this, "Couldn't add post. Try again", Style.ALERT).show();
 					}
 				}
 			}).execute("");
+		} else if (view.getId() == R.id.post_emoji_button) {
+			hideKeyboard();
+		} else if (view.getId() == R.id.titlebar) {
+			// Intent intent;
+			// intent = new Intent(this, HomescreenActivity.class);
+			// startActivity(intent);
+			// overridePendingTransition(R.anim.activity_slide_in_right,
+			// R.anim.activity_slide_out_right);
+			// finish();
+
+			Toast.makeText(this, editText.getEditableText().toString(), Toast.LENGTH_SHORT).show();
+
+			try {
+				Log.d("Emoticon", "Text : " + decodeUTF8(editText.getEditableText().toString().getBytes("US-ASCII")));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 		}
+	}
+
+	private String decodeUTF8(byte[] bytes) {
+		return new String(bytes, Charset.forName("UTF-8"));
+	}
+
+	private void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+		isEmojiShown = true;
+		findViewById(R.id.overflowButton).postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				manager = getSupportFragmentManager();
+				transaction = manager.beginTransaction();
+				transaction.show(emojiFragment);
+				transaction.commit();
+			}
+		}, 250);
+	}
+
+	private void hideEmojis() {
+		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+		imm.showSoftInput(editText, 0);
+		isEmojiShown = false;
+		manager = getSupportFragmentManager();
+		transaction = manager.beginTransaction();
+		transaction.hide(emojiFragment);
+		transaction.commit();
 	}
 
 	protected void moveToHomescreen() {
 		onBackPressed();
+	}
+
+	@Override
+	public void onEmojiconBackspaceClicked(View v) {
+		EmojiconsFragment.backspace(editText);
+	}
+
+	@Override
+	public void onEmojiconClicked(Emojicon emojicon) {
+		EmojiconsFragment.input(editText, emojicon);
 	}
 
 }

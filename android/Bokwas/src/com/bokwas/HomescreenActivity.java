@@ -62,8 +62,8 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 		setupUI();
 
-//		setupNotificationBar();
-		
+		setupNotificationBar();
+
 		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 
 	}
@@ -73,7 +73,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		super.onResume();
 		setupUI();
 	}
-	
+
 	private int getPixelsInDp(int sizeInDp) {
 		float scale = getResources().getDisplayMetrics().density;
 		int dpAsPixels = (int) (sizeInDp * scale + 0.5f);
@@ -81,11 +81,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	}
 
 	private void setupUI() {
-		findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
-		
-		int pixelsInDp = getPixelsInDp(8);
+		findViewById(R.id.newPostButton).setVisibility(View.GONE);
+		findViewById(R.id.newPostFloat).setVisibility(View.VISIBLE);
+
+		int pixelsInDp = getPixelsInDp(12);
 		findViewById(R.id.newPostButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
-		
+
 		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore().getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
@@ -97,10 +98,10 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 				@Override
 				public void onAPIStatus(boolean status) {
-//					setupNotificationBar();
+					 setupNotificationBar();
 				}
 			}).execute("");
-//			listView.setRefreshing(true);
+			// listView.setRefreshing();
 			isRefreshed = true;
 		}
 
@@ -112,6 +113,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	private void setupListViewListeners() {
 
 		listView.setOnScrollListener(new OnScrollListener() {
+			private int mLastFirstVisibleItem;
 
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -120,19 +122,13 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-			}
-		});
-
-		listView.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if (mLastFirstVisibleItem < firstVisibleItem) {
+					findViewById(R.id.newPostFloat).setVisibility(View.GONE);
+				}
+				if (mLastFirstVisibleItem > firstVisibleItem) {
+					findViewById(R.id.newPostFloat).setVisibility(View.VISIBLE);
+				}
+				mLastFirstVisibleItem = firstVisibleItem;
 				GeneralUtil.listSavedInstanceHomeScreen = listView.getRefreshableView().onSaveInstanceState();
 			}
 		});
@@ -183,14 +179,10 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 	protected void setupNotificationBar() {
 		try {
-			TextView notificationButton = (TextView) findViewById(R.id.messageHeaderButton);
-			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
-
-			if (UserDataStore.getStore().getNotifications().size() >= 1) {
-				notificationButton.setBackgroundResource(R.drawable.circle_red);
-			} else {
-				notificationButton.setOnClickListener(null);
-				notificationButton.setBackgroundResource(R.drawable.circle_grey);
+			if (UserDataStore.getStore().getUnseenNotifications().size() > 0) {
+				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
+				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+				notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,7 +193,9 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		findViewById(R.id.overflowButton).setOnClickListener(this);
 		findViewById(R.id.messageHeaderButton).setOnClickListener(this);
 		findViewById(R.id.newPostButton).setOnClickListener(this);
+		findViewById(R.id.newPostFloat).setOnClickListener(this);
 		findViewById(R.id.titlebar).setOnClickListener(this);
+		findViewById(R.id.notificationButtonLayout).setOnClickListener(this);
 	}
 
 	@Override
@@ -211,7 +205,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			startActivity(intent);
 			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
-		} else if (view.getId() == R.id.overflowButton) {
+		} else if (view.getId() == R.id.newPostFloat) {
+			Intent intent = new Intent(this, NewPostActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+			finish();
+		}else if (view.getId() == R.id.overflowButton) {
 			PopupMenu popup = new PopupMenu(HomescreenActivity.this, view);
 			popup.getMenuInflater().inflate(R.menu.overflow_menu, popup.getMenu());
 			MenuItem settingsItem = popup.getMenu().findItem(R.id.overflow_settings);
@@ -250,7 +249,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 						if (UserDataStore.getStore().getNotifications().size() > 0) {
 							NotificationDialog dialog = new NotificationDialog(HomescreenActivity.this, UserDataStore.getStore().getNotifications());
 							dialog.show();
-						}else {
+						} else {
 							Crouton.makeText(HomescreenActivity.this, "No new notifications to show!", Style.INFO).show();
 						}
 					}
@@ -263,11 +262,14 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			startActivity(intent4);
 			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
-		}else if(view.getId() == R.id.titlebar) {
+		} else if (view.getId() == R.id.titlebar) {
 			listView.getRefreshableView().smoothScrollToPosition(0);
+		} else if (view.getId() == R.id.notificationButtonLayout) {
+			NotificationDialog dialog = new NotificationDialog(HomescreenActivity.this, UserDataStore.getStore().getNotifications());
+			dialog.show();
 		}
 	}
-	
+
 	public void sendEmail(String emailAddress, String subject) {
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", emailAddress, null));
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);

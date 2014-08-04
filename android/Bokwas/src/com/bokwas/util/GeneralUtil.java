@@ -1,8 +1,6 @@
 package com.bokwas.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,29 +35,30 @@ public class GeneralUtil {
 	public static final String sharedPreferences = "bokwasSharePreferences";
 	public static final String isLoggedInKey = "isLoggedIn";
 	public static final String userGender = "userGender";
-	
+
 	public static Parcelable listSavedInstanceHomeScreen = null;
-	
-	public static Bitmap loadBitmapFromView(View view) throws Exception{
+
+	public static Bitmap loadBitmapFromView(View view) throws Exception {
 		try {
 			int width = view.getWidth();
-		    int height = view.getHeight();
+			int height = view.getHeight();
 
-		    int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
-		    int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+			int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+			int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
 
-		    //Cause the view to re-layout
-		    view.measure(measuredWidth, measuredHeight);
-		    view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+			// Cause the view to re-layout
+			view.measure(measuredWidth, measuredHeight);
+			view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 
-		    //Create a bitmap backed Canvas to draw the view into
-		    Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		    Canvas c = new Canvas(b);
+			// Create a bitmap backed Canvas to draw the view into
+			Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			Canvas c = new Canvas(b);
 
-		    //Now that the view is laid out and we have a canvas, ask the view to draw itself into the canvas
-		    view.draw(c);
+			// Now that the view is laid out and we have a canvas, ask the view
+			// to draw itself into the canvas
+			view.draw(c);
 
-		    return b;
+			return b;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -68,57 +66,37 @@ public class GeneralUtil {
 	}
 
 	public static Bitmap getImageBitmap(int id, Context context) {
-		Bitmap srcBmp = BitmapFactory
-				.decodeResource(context.getResources(), id);
-		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(),
-				  srcBmp.getHeight() );
+		Bitmap srcBmp = BitmapFactory.decodeResource(context.getResources(), id);
+		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(), srcBmp.getHeight());
 		return modBmp;
 	}
 
-	public static void showPopupMenu(final Activity activity, View v,int menuId) {
+	public static void showPopupMenu(final Activity activity, View v, int menuId) {
 		PopupMenu popupMenu = new PopupMenu(activity, v);
-		popupMenu.getMenuInflater().inflate(menuId,
-				popupMenu.getMenu());
+		popupMenu.getMenuInflater().inflate(menuId, popupMenu.getMenu());
 
-		popupMenu
-				.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+		popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
-						Toast.makeText(activity, item.toString(),
-								Toast.LENGTH_LONG).show();
-						return true;
-					}
-				});
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				Toast.makeText(activity, item.toString(), Toast.LENGTH_LONG).show();
+				return true;
+			}
+		});
 
 		popupMenu.show();
 	}
-	
+
 	public static void sharePhotoIntent(Activity activity, Bitmap img, String text) {
-		String path = saveImageLocally(activity,img);
-		Log.d("SharePhoto","path : "+path);
-		img = BitmapFactory.decodeFile(path);
+		String path = saveImageLocally(activity, img);
+		
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/png");
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		java.io.File f = new java.io.File(path);
-		
-		img.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-		
-		try {
-			f.createNewFile();
-			FileOutputStream fo = new FileOutputStream(f);
-			fo.write(bytes.toByteArray());
-			fo.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		// Native email client doesn't currently support HTML, but it doesn't
 		// hurt to try in case they fix it
 		share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
-		share.putExtra(Intent.EXTRA_SUBJECT, activity.getResources()
-				.getString(R.string.app_name));
+		share.putExtra(Intent.EXTRA_SUBJECT, activity.getResources().getString(R.string.app_name));
 		share.setType("message/rfc822");
 
 		PackageManager pm = activity.getPackageManager();
@@ -136,98 +114,76 @@ public class GeneralUtil {
 			Log.d("Share", "PackageName : " + packageName);
 			if (packageName.contains("gm")) {
 				share.setPackage(packageName);
-			} else if (packageName.contains("twitter")
-					|| packageName.contains("facebook")
-					|| packageName.contains("whatsapp")
-					|| packageName.contains("hike")
-					|| packageName.contains("plus")
-					|| packageName.contains("naver")
-					|| packageName.contains("tencent")) {
+			} else if (packageName.contains("twitter") || packageName.contains("facebook") || packageName.contains("whatsapp") || packageName.contains("hike") || packageName.contains("plus")
+					|| packageName.contains("naver") || packageName.contains("tencent")) {
 				Intent intent = new Intent();
-				intent.setComponent(new ComponentName(packageName,
-						ri.activityInfo.name));
+				intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
 				intent.setAction(Intent.ACTION_SEND);
 				intent.setType("text/plain");
 				if (packageName.contains("twitter")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("facebook")) {
+					// Warning: Facebook IGNORES our text. They say
+					// "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
+					// One workaround is to use the Facebook SDK to post, but
+					// that doesn't allow the user to choose how they want to
+					// share. We can also make a custom landing page, and the
+					// link
+					// will show the <meta content ="..."> text from that page
+					// with our link in Facebook.
 					intent.setType("image/*");
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("mms")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 				} else if (packageName.contains("android.gm")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
-					intent.putExtra(Intent.EXTRA_SUBJECT, activity
-							.getResources().getString(R.string.app_name));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_SUBJECT, activity.getResources().getString(R.string.app_name));
 					intent.setType("message/rfc822");
 				} else if (packageName.contains("whatsapp")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
-//					intent.putExtra(Intent.EXTRA_TEXT, text);
-					intent.setType("message/rfc822");
+					intent.setType("image/*");
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("hike")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("plus")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("naver")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				} else if (packageName.contains("tencent")) {
-					intent.putExtra(Intent.EXTRA_STREAM,
-							Uri.parse("file:///" + path));
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
 					intent.putExtra(Intent.EXTRA_TEXT, text);
 				}
 
-				intentList.add(new LabeledIntent(intent, packageName, ri
-						.loadLabel(pm), ri.icon));
+				intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
 			}
 		}
 
 		// convert intentList to array
-		LabeledIntent[] extraIntents = intentList
-				.toArray(new LabeledIntent[intentList.size()]);
+		LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
 
 		openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
 
-		activity.startActivity(Intent.createChooser(openInChooser,
-				"Share Image"));
+		activity.startActivity(Intent.createChooser(openInChooser, "Share Image"));
 	}
-	
+
 	private static String saveImageLocally(Activity activity, Bitmap _bitmap) {
 		java.io.File outputFile = null;
-		String state = Environment.getExternalStorageState();
-		java.io.File filesDir;
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-		    // We can read and write the media
-		    filesDir = activity.getExternalFilesDir(null);
-		} else {
-		    // Load another directory, probably local memory
-		    filesDir = activity.getFilesDir();
-		}
-		outputFile = new java.io.File(filesDir,
-				"temp.png");
+		outputFile = new java.io.File(activity.getExternalFilesDir(null), "temp.png");
 		try {
 			FileOutputStream out = new FileOutputStream(outputFile);
 			_bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 			out.close();
 		} catch (Exception e) {
 			// handle exception
-			e.printStackTrace();
 		}
 		return outputFile.getAbsolutePath();
 	}
-	
+
 	public static int getAvatarResourceId(String avatarId) {
 		try {
 			int id = Integer.parseInt(avatarId);

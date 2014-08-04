@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="#dddddd"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#dddddd" >
 
     <include
         android:id="@+id/header_layout"
@@ -22,7 +23,17 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:padding="2.5dp" />
+            android:padding="2.5dp"
+            android:src="@drawable/avatar_11" />
+
+        <ImageView
+            android:id="@+id/post_emoji_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_below="@+id/post_profile_pic"
+            android:layout_alignRight="@+id/post_profile_pic"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/emoji_1f600" />
 
         <TextView
             android:id="@+id/post_name"
@@ -40,7 +51,7 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <EditText
+        <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/post_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,22 +59,23 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/post_name"
             android:layout_marginRight="16dp"
-            android:gravity="top"
-            android:paddingLeft="4dp"
             android:layout_marginTop="6dp"
+            android:autoLink="web"
             android:background="@drawable/rectangle_transparent"
+            android:gravity="top"
             android:hint="Add a post here"
             android:inputType="textMultiLine"
             android:lines="8"
+            android:linksClickable="true"
             android:maxLines="12"
             android:minHeight="100dp"
             android:minLines="6"
             android:padding="4dp"
-            android:autoLink="web"
-            android:linksClickable="true"
+            android:paddingLeft="4dp"
             android:textColor="#777777"
             android:textSize="16sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            emojicon:emojiconSize="28sp" />
 
         <View
             android:id="@+id/post_line_separator"
@@ -127,9 +139,9 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginLeft="1dp"
                     android:layout_marginRight="3dp"
-                    android:padding="4dp"
                     android:background="@drawable/selector_rectangle_grey"
-                    android:gravity="center" >
+                    android:gravity="center"
+                    android:padding="4dp" >
 
                     <ImageView
                         android:id="@+id/like_image"
@@ -152,5 +164,13 @@
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
+
+    <fragment
+        android:id="@+id/emojicons"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_alignParentBottom="true"
+        class="com.rockerhieu.emojicon.EmojiconsFragment"
+        android:visibility="gone" />
 
 </RelativeLayout>

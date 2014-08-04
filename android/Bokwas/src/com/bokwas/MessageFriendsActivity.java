@@ -56,9 +56,13 @@ public class MessageFriendsActivity extends Activity{
 			Date dateB = new Date();
 			if(messageA!= null && messageA.size()>0) {
 				dateA = new Date(messageA.get(messageA.size()-1).getTimestamp());
+			}else {
+				dateA = new Date(0);
 			}
 			if(messageB!= null && messageB.size()>0) {
 				dateB = new Date(messageB.get(messageB.size()-1).getTimestamp());
+			}else {
+				dateB = new Date(0);
 			}
 			
 			return dateB.compareTo(dateA);

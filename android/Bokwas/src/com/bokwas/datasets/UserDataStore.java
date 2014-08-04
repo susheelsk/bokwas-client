@@ -88,7 +88,19 @@ public class UserDataStore {
 	public String getGcmRegId() {
 		return gcmRegId;
 	}
-
+	
+	public int getUnSeenMessagesSize() {
+		int unseenMessagesSize = 0;
+		for(Friends friend : getFriends()) {
+			for(Message message : getMessagesForPerson(friend.getId())) {
+				if(!message.isSeen()) {
+					unseenMessagesSize++;
+				}
+			}
+		}
+		return unseenMessagesSize;
+	}
+	
 	public void addNotification(Notification newNotification) {
 		Post post = getPost(newNotification.getNotification_data().get("postId"));
 		Date today = new Date();
@@ -113,6 +125,7 @@ public class UserDataStore {
 	}
 
 	public List<Notification> getNotifications() {
+		Collections.sort(notificationList, new NotificationComparator());
 		return notificationList;
 	}
 	
@@ -378,6 +391,13 @@ public class UserDataStore {
 		}
 		getStore().removeOldNotifications();
 	}
+	
+	public static synchronized boolean isInitialized() {
+		if(instance == null) {
+			return false;
+		}
+		return true;
+	}
 
 	public static synchronized UserDataStore getStore() {
 		if (instance == null) {
@@ -399,6 +419,14 @@ public class UserDataStore {
 			Date dateA = new Date(a.getTimestamp());
 			Date dateB = new Date(b.getTimestamp());
 			return dateA.compareTo(dateB);
+		}
+	}
+	
+	private class NotificationComparator implements Comparator<Notification> {
+		public int compare(Notification a, Notification b) {
+			Date dateA = new Date(a.getTimestamp());
+			Date dateB = new Date(b.getTimestamp());
+			return dateB.compareTo(dateA);
 		}
 	}
 

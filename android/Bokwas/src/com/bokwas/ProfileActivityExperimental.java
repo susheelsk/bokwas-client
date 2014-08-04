@@ -90,7 +90,6 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);

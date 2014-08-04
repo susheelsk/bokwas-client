@@ -40,7 +40,7 @@ public class SendMessageApi extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/sendgcm";
+		apiUrl = AppData.getBaseURL() + "/sendgcm";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("receiver_id", receiverId));
@@ -50,7 +50,7 @@ public class SendMessageApi extends AsyncTask<String, Void, Boolean> {
 			Log.d("SendMessageApi","Response : "+response);			
 			ApiResponse apiResponse = new Gson().fromJson(response, ApiResponse.class);
 			if (apiResponse.statusCode == 200) {
-				Message messageData = new Message(personId, receiverId, System.currentTimeMillis(), message);
+				Message messageData = new Message(personId, receiverId, System.currentTimeMillis(), message,true);
 				UserDataStore.getStore().addMessageToPerson(receiverId, messageData);
 				UserDataStore.getStore().save(activity);
 				return true;

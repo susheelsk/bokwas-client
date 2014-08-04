@@ -33,7 +33,8 @@
         android:layout_marginTop="48dp"
         android:layout_marginBottom="4dp"
         android:cacheColorHint="@android:color/transparent"
-        android:dividerHeight="4dp" >
+        android:dividerHeight="4dp"
+        android:divider="@android:color/transparent" >
     </ListView>
     
 </RelativeLayout>

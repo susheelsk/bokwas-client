@@ -45,7 +45,7 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/getpostsperson";
+		apiUrl = AppData.getBaseURL() + "/getpostsperson";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		apiParams.add(new BasicNameValuePair("since", since));

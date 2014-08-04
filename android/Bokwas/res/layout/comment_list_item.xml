@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -54,7 +55,7 @@
         android:layout_marginTop="4dp"
         android:background="#bbbbbb" />
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/post_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,7 +70,8 @@
         android:autoLink="web"
         android:linksClickable="true"
         android:textSize="12sp"
-        android:textStyle="normal" />
+        android:textStyle="normal"
+        emojicon:emojiconSize="22sp" />
 
     <View
         android:id="@+id/post_line_separator"

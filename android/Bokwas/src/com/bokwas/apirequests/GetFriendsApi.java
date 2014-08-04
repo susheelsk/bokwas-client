@@ -35,7 +35,7 @@ public class GetFriendsApi extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(String... params) {
 		String apiUrl = null;
 		List<BasicNameValuePair> apiParams = new ArrayList<BasicNameValuePair>();
-		apiUrl = AppData.baseURL + "/getfriends";
+		apiUrl = AppData.getBaseURL() + "/getfriends";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
 		try {
