@@ -6,7 +6,16 @@ public class Message {
 	private String toId;
 	private long timestamp;
 	private String message;
+	private String messageId;
 	private boolean isSeen;
+	
+	public String getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
 	
 	public boolean isSeen() {
 		return isSeen;
@@ -48,12 +57,13 @@ public class Message {
 		this.message = message;
 	}
 
-	public Message(String fromId, String toId, long timestamp, String message,boolean isSeen) {
+	public Message(String fromId, String toId, long timestamp, String message,String messageId,boolean isSeen) {
 		super();
 		this.fromId = fromId;
 		this.toId = toId;
 		this.timestamp = timestamp;
 		this.message = message;
+		this.messageId = messageId;
 		this.isSeen = isSeen;
 	}
 

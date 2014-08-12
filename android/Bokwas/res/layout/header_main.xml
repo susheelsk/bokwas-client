@@ -67,12 +67,25 @@
                 android:id="@+id/messageHeaderButton"
                 android:layout_width="48dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center_vertical|right"
                 android:background="@drawable/header_button"
                 android:gravity="center"
-                android:padding="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:src="@drawable/message_icon"
                 android:textColor="#ffffff" />
+            
+            <TextView android:id="@+id/messageHeaderCount"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="left|center_vertical"
+                android:gravity="left|center_vertical"
+                android:text="99"
+                android:textColor="#454545"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:textSize="18sp"/>
 
             <ImageView
                 android:id="@+id/newPostButton"

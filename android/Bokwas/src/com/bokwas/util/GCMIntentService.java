@@ -26,6 +26,7 @@ import com.bokwas.MessageActivity;
 import com.bokwas.PostActivity;
 import com.bokwas.R;
 import com.bokwas.SplashScreen;
+import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Comment;
@@ -120,7 +121,7 @@ public class GCMIntentService extends IntentService {
 		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 		List<RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
 
-		if (services.get(0).topActivity.getPackageName().toString().contains(className)) {
+		if (services.get(0).topActivity.getClassName().toString().contains(className)) {
 			return true;
 		}
 		return false;
@@ -179,6 +180,11 @@ public class GCMIntentService extends IntentService {
 		String fromId = bundle.getString("fromId");
 		String time = bundle.getString("time");
 		String message = bundle.getString("message");
+		String messageId = bundle.getString("messageId");
+		Friends friend = UserDataStore.getStore().getFriend(fromId);
+		if (friend == null) {
+			return;
+		}
 
 		boolean isAppRunning = false;
 		if (!isAppRunning()) {
@@ -188,16 +194,17 @@ public class GCMIntentService extends IntentService {
 			Log.d("BokwasNotification", "App is running");
 			isAppRunning = true;
 		}
-		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message,false);
+		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message, messageId, false);
 		UserDataStore.getStore().addMessageToPerson(fromId, messageData);
 		UserDataStore.getStore().save(this);
 		Intent intent = new Intent(this, MessageActivity.class);
 		intent.putExtra("receiverId", fromId);
 		intent.putExtra("fromNoti", true);
 		if (!isAppRunning) {
-			buildNotification(intent, bundle);
-		} else if (isActivityRunning("MessageActivity")) {
-			buildNotification(intent, bundle);
+			// buildNotification(intent, bundle);
+			buildMessageNotification(friend, intent, bundle);
+		} else if (!isActivityRunning("MessageActivity")) {
+			buildMessageNotification(friend, intent, bundle);
 		} else {
 			intent = new Intent("NEW_MESSAGE");
 			intent.setAction("NEW_MESSAGE");
@@ -216,6 +223,18 @@ public class GCMIntentService extends IntentService {
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.bokwas_icon).setContentTitle(title)
 				.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)).setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message")))
 				.setContentText(bundle.getString("message"));
+
+		mBuilder.setContentIntent(contentIntent);
+		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	}
+
+	private void buildMessageNotification(Friends friend, Intent intent, Bundle bundle) {
+		int requestID = (int) System.currentTimeMillis();
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, requestID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.bokwas_icon).setContentTitle(friend.getBokwasName())
+				.setLargeIcon(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(friend.getBokwasAvatarId()), this)).setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(bundle.getString("message"))).setContentText(bundle.getString("message"));
 
 		mBuilder.setContentIntent(contentIntent);
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

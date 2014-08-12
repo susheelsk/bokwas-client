@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
@@ -30,12 +31,20 @@ public class BokwasHttpClient {
 		for (BasicNameValuePair pair : params) {
 			nameValuePairs.add(pair);
 		}
-		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
+		httppost.addHeader("charset", "UTF-8");
+		Header[] headers = httppost.getHeaders("charset");
+		for(Header header : headers) {
+			Log.d("BokwasHttpClient","charset : "+header.getValue());
+		}
+		
+		Log.d("BokwasHttpClient","Request Data : "+EntityUtils.toString(httppost.getEntity(),
+				"UTF-8"));
 
 		HttpResponse response = httpclient.execute(httppost);
 		String responseString = EntityUtils.toString(response.getEntity(),
 				"UTF-8");
-		Log.d("doPost : " + url, "Response : " + responseString);
+		Log.d("BokwasHttpClient","doPost : " + url + "Response : " + responseString);
 		return responseString;
 	}
 

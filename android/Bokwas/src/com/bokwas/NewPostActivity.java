@@ -25,6 +25,8 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.Tracker;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
@@ -53,7 +55,14 @@ public class NewPostActivity extends FragmentActivity implements OnClickListener
 		transaction = manager.beginTransaction();
 
 		setupUI();
+		
+		setupGoogleAnalytics();
 
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
 	}
 
 	private void setupUI() {

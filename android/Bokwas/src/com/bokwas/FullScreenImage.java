@@ -21,8 +21,7 @@ public class FullScreenImage extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		Intent intent;
+		Intent intent = new Intent();
 		if(getIntent().getStringExtra("activity")!=null && getIntent().getStringExtra("activity").contains("ProfileActivityExperimental")) {
 			intent = new Intent(this, ProfileActivityExperimental.class);
 			intent.putExtra("profileId", getIntent().getStringExtra("profileId"));
@@ -32,6 +31,9 @@ public class FullScreenImage extends Activity {
 			} else {
 				intent.putExtra("fbProfilePic", getIntent().getStringExtra("fbProfilePic"));
 			}
+		}else if(getIntent().getStringExtra("activity")!=null && getIntent().getStringExtra("activity").contains("PostActivity")){
+			super.onBackPressed();
+			return;
 		}else {
 			intent = new Intent(this, HomescreenActivity.class);
 		}

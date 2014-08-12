@@ -2,6 +2,7 @@ package com.bokwas.util;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -23,6 +24,8 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.bokwas.R;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 public class GeneralUtil {
 
@@ -37,6 +40,18 @@ public class GeneralUtil {
 	public static final String userGender = "userGender";
 
 	public static Parcelable listSavedInstanceHomeScreen = null;
+
+	private static HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+	private static String PROPERTY_ID = "UA-53522708-1";
+
+	public synchronized static Tracker getTracker(TrackerName trackerId, Context context) {
+		if (!mTrackers.containsKey(TrackerName.APP_TRACKER)) {
+			GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
+			Tracker t = analytics.newTracker(PROPERTY_ID );
+			mTrackers.put(trackerId, t);
+		}
+		return mTrackers.get(trackerId);
+	}
 
 	public static Bitmap loadBitmapFromView(View view) throws Exception {
 		try {
@@ -89,7 +104,7 @@ public class GeneralUtil {
 
 	public static void sharePhotoIntent(Activity activity, Bitmap img, String text) {
 		String path = saveImageLocally(activity, img);
-		
+
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/png");
 

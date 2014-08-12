@@ -47,30 +47,49 @@ public class UserDataStore {
 	private String gcmRegId;
 	private boolean gcmUpdated = false;
 	private HashMap<String, List<Message>> messageMap = new HashMap<String, List<Message>>();
-	
+
 	public List<Message> getMessagesForPerson(String personId) {
-		List<Message>messages = messageMap.get(personId);
-		if(messages!=null) {
-			Collections.sort(messages,new MessageComparator());
-		}else {
+		List<Message> messages = messageMap.get(personId);
+		if (messages != null) {
+			Collections.sort(messages, new MessageComparator());
+		} else {
 			messages = new ArrayList<Message>();
 		}
 		return messages;
 	}
-	
-	public void addMessageToPerson(String personId,Message message) {
+
+	public void addMessageToPerson(String personId, Message message) {
+		if (personId != null) {
+			List<Message> messages = messageMap.get(personId);
+			if (messages == null) {
+				messages = new ArrayList<Message>();
+			}
+			if (getMessage(personId, message.getMessageId()) == null) {
+				messages.add(message);
+			}
+			messageMap.put(personId, messages);
+		}
+	}
+
+	private Message getMessage(String personId, String messageId) {
 		List<Message> messages = messageMap.get(personId);
-		if(messages==null) {
+		if (messages != null) {
+			Collections.sort(messages, new MessageComparator());
+		} else {
 			messages = new ArrayList<Message>();
 		}
-		messages.add(message);
-		messageMap.put(personId, messages);
+		for (Message message : messages) {
+			if (message.getMessageId().equals(messageId)) {
+				return message;
+			}
+		}
+		return null;
 	}
-	
+
 	public void removeOldMessages() {
-		for(Friends friend : getFriends()) {
-			if(getMessagesForPerson(friend.getId())!=null) {
-				if(getMessagesForPerson(friend.getId()).size()>200) {
+		for (Friends friend : getFriends()) {
+			if (getMessagesForPerson(friend.getId()) != null) {
+				if (getMessagesForPerson(friend.getId()).size() > 200) {
 					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
 				}
 			}
@@ -88,19 +107,19 @@ public class UserDataStore {
 	public String getGcmRegId() {
 		return gcmRegId;
 	}
-	
+
 	public int getUnSeenMessagesSize() {
 		int unseenMessagesSize = 0;
-		for(Friends friend : getFriends()) {
-			for(Message message : getMessagesForPerson(friend.getId())) {
-				if(!message.isSeen()) {
+		for (Friends friend : getFriends()) {
+			for (Message message : getMessagesForPerson(friend.getId())) {
+				if (!message.isSeen()) {
 					unseenMessagesSize++;
 				}
 			}
 		}
 		return unseenMessagesSize;
 	}
-	
+
 	public void addNotification(Notification newNotification) {
 		Post post = getPost(newNotification.getNotification_data().get("postId"));
 		Date today = new Date();
@@ -128,7 +147,7 @@ public class UserDataStore {
 		Collections.sort(notificationList, new NotificationComparator());
 		return notificationList;
 	}
-	
+
 	public List<Notification> getUnseenNotifications() {
 		List<Notification> notifications = new ArrayList<Notification>();
 		for (Notification notif : notificationList) {
@@ -167,8 +186,8 @@ public class UserDataStore {
 		}
 		if (removeIds.size() > 0) {
 			for (Integer removalId : removeIds) {
-				Log.d("BokwasNotifications","Removing notification");
-				notificationList.remove((int)removalId);
+				Log.d("BokwasNotifications", "Removing notification");
+				notificationList.remove((int) removalId);
 			}
 		}
 	}
@@ -302,12 +321,13 @@ public class UserDataStore {
 	public List<Friends> getFriends() {
 		return friends;
 	}
-	
+
 	public boolean isPostFromFriendOrMe(Post post) {
-		for(Friends friend : getFriends()) {
-			if(post.getPostedBy().equals(friend.getId())) {
-				return true;
-			}else if(post.getPostedBy().equals(getUserId())) {
+		if (post.getPostedBy().equals(getUserId())) {
+			return true;
+		}
+		for (Friends friend : getFriends()) {
+			if (post.getPostedBy().equals(friend.getId())) {
 				return true;
 			}
 		}
@@ -376,6 +396,14 @@ public class UserDataStore {
 		LocalStorage.storeObj(context, instance);
 	}
 
+	public void resetData(Context context) {
+		LocalStorage.storeObj(context, new UserDataStore());
+	}
+
+	public void resetPosts() {
+		posts = new ArrayList<Post>();
+	}
+
 	public static synchronized void setInstance(UserDataStore userDataStore) {
 		instance = userDataStore;
 	}
@@ -391,9 +419,9 @@ public class UserDataStore {
 		}
 		getStore().removeOldNotifications();
 	}
-	
+
 	public static synchronized boolean isInitialized() {
-		if(instance == null) {
+		if (instance == null) {
 			return false;
 		}
 		return true;
@@ -413,7 +441,7 @@ public class UserDataStore {
 			return dateB.compareTo(dateA);
 		}
 	}
-	
+
 	private class MessageComparator implements Comparator<Message> {
 		public int compare(Message a, Message b) {
 			Date dateA = new Date(a.getTimestamp());
@@ -421,7 +449,7 @@ public class UserDataStore {
 			return dateA.compareTo(dateB);
 		}
 	}
-	
+
 	private class NotificationComparator implements Comparator<Notification> {
 		public int compare(Notification a, Notification b) {
 			Date dateA = new Date(a.getTimestamp());

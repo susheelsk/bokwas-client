@@ -50,6 +50,7 @@ public class AddCommentsApi extends AsyncTask<String, Void, Boolean> {
 		apiParams.add(new BasicNameValuePair("post_id", postId));
 		apiParams.add(new BasicNameValuePair("comment_text", commentText));
 		apiParams.add(new BasicNameValuePair("post_person_id", postPersonId));
+		
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
 			AddCommentResponse apiResponse = new Gson().fromJson(response,

@@ -75,7 +75,7 @@
             android:textColor="#777777"
             android:textSize="16sp"
             android:textStyle="normal"
-            emojicon:emojiconSize="28sp" />
+            emojicon:emojiconSize="22sp" />
 
         <View
             android:id="@+id/post_line_separator"

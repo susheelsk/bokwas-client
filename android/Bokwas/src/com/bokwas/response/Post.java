@@ -35,7 +35,7 @@ public class Post {
 	private String profilePicture;
 	@SerializedName("comments")
 	private List<Comment> comments = new ArrayList<Comment>();
-	
+
 	public String getType() {
 		return type;
 	}
@@ -51,7 +51,7 @@ public class Post {
 	public void setPicture(String picture) {
 		this.picture = picture;
 	}
-	
+
 	public String getProfilePicture() {
 		return profilePicture;
 	}
@@ -75,7 +75,7 @@ public class Post {
 	public void setAvatarId(String avatarId) {
 		this.avatarId = avatarId;
 	}
-	
+
 	public long getUpdatedTime() {
 		return updatedTime;
 	}
@@ -83,7 +83,7 @@ public class Post {
 	public void setUpdatedTime(long updatedTime) {
 		this.updatedTime = updatedTime;
 	}
-	
+
 	public String getPostId() {
 		return postId;
 	}
@@ -131,10 +131,10 @@ public class Post {
 	public void setBokwasPost(boolean isBokwasPost) {
 		this.isBokwasPost = isBokwasPost;
 	}
-	
+
 	public Comment getComment(String commentId) {
-		for(Comment comment : comments) {
-			if(comment.getCommentId().equals(commentId)) {
+		for (Comment comment : comments) {
+			if (comment.getCommentId().equals(commentId)) {
 				return comment;
 			}
 		}
@@ -149,42 +149,43 @@ public class Post {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	
+
 	public void addComment(Comment comment) {
-		comments.add(comment);
+		if (getComment(comment.getCommentId()) == null) {
+			comments.add(comment);
+		}
 	}
-	
+
 	public boolean isAlreadyLiked(String id) {
-		for(Likes like : getLikes()) {
-			if(like.getId().equals(id)) {
+		for (Likes like : getLikes()) {
+			if (like.getId().equals(id)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public Likes getLikes(String id) {
-		for(Likes like : getLikes()) {
-			if(like.getId().equals(id)) {
+		for (Likes like : getLikes()) {
+			if (like.getId().equals(id)) {
 				return like;
 			}
 		}
 		return null;
 	}
-	
-	public void addLikes(String personId,String name,String avatarId) {
-		if(isAlreadyLiked(personId)) {
+
+	public void addLikes(String personId, String name, String avatarId) {
+		if (isAlreadyLiked(personId)) {
 			getLikes().remove(getLikes(personId));
 			return;
 		}
-		List<Likes>likes = getLikes();
-		likes.add(new Likes(personId, name,avatarId));
+		List<Likes> likes = getLikes();
+		likes.add(new Likes(personId, name, avatarId));
 		setLikes(likes);
 	}
 
-	public Post(String postId, long timestamp,long updatedTime, String postText,
-			List<Likes> likes, String postedBy, boolean isBokwasPost,
-			List<Comment> comments,String name, String avatarId,String profilePic,String picture,String type) {
+	public Post(String postId, long timestamp, long updatedTime, String postText, List<Likes> likes, String postedBy, boolean isBokwasPost, List<Comment> comments, String name, String avatarId,
+			String profilePic, String picture, String type) {
 		super();
 		this.postId = postId;
 		this.timestamp = timestamp;
@@ -200,7 +201,7 @@ public class Post {
 		this.picture = picture;
 		this.type = type;
 	}
-	
+
 	private class CommentComparator implements Comparator<Comment> {
 		public int compare(Comment a, Comment b) {
 			Date dateA = new Date(a.getTimestamp());

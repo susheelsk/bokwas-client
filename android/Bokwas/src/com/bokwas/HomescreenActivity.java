@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
@@ -28,6 +31,9 @@ import com.bokwas.apirequests.GetNewPosts;
 import com.bokwas.apirequests.GetNotificationsApi;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
+import com.bokwas.apirequests.GetPrivateMessagesApi;
+import com.bokwas.datasets.Friends;
+import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.NotificationDialog;
 import com.bokwas.response.Likes;
@@ -36,6 +42,10 @@ import com.bokwas.ui.HomescreenPostsListAdapter;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.NotificationProgress;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -51,6 +61,8 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	private HomescreenPostsListAdapter adapter;
 	protected boolean isLoadingLastItems = false;
 	private boolean isRefreshed = false;
+	private ImageView floatButton;
+	private boolean isAnimRunning = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +76,53 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 		setupNotificationBar();
 
-		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
+		setupGoogleAnalytics();
 
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+				NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
+
+	}
+
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
+		t.enableAutoActivityTracking(true);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		setupUI();
 	}
 
@@ -81,8 +133,10 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	}
 
 	private void setupUI() {
+		floatButton = (ImageView) findViewById(R.id.newPostFloat);
+
 		findViewById(R.id.newPostButton).setVisibility(View.GONE);
-		findViewById(R.id.newPostFloat).setVisibility(View.VISIBLE);
+		floatButton.setVisibility(View.VISIBLE);
 
 		int pixelsInDp = getPixelsInDp(12);
 		findViewById(R.id.newPostButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
@@ -90,18 +144,53 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		adapter = new HomescreenPostsListAdapter(this, UserDataStore.getStore().getPosts(), this);
 		listView = (PullToRefreshListView) findViewById(R.id.feed_list);
 		listView.setAdapter(adapter);
+		int unSeenMessageSize = 0;
+		for (Friends friend : UserDataStore.getStore().getFriends()) {
+			for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
+				if (!message.isSeen()) {
+					unSeenMessageSize++;
+				}
+			}
+		}
+		if (unSeenMessageSize > 0) {
+			findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
+		}
 
 		setupListViewListeners();
 
 		if (getIntent().getBooleanExtra("fromSplashscreen", false) && isRefreshed == false) {
+
+			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
+
 			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
 
 				@Override
 				public void onAPIStatus(boolean status) {
-					 setupNotificationBar();
+					setupNotificationBar();
 				}
 			}).execute("");
-			// listView.setRefreshing();
+
+			new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new APIListener() {
+
+				@Override
+				public void onAPIStatus(boolean status) {
+					int unSeenMessageSize = 0;
+					for (Friends friend : UserDataStore.getStore().getFriends()) {
+						for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
+							if (!message.isSeen()) {
+								unSeenMessageSize++;
+							}
+						}
+					}
+					if (unSeenMessageSize > 0) {
+						findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
+						((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
+					}
+				}
+			}).execute("");
+
+			listView.setRefreshing();
 			isRefreshed = true;
 		}
 
@@ -123,10 +212,10 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 				if (mLastFirstVisibleItem < firstVisibleItem) {
-					findViewById(R.id.newPostFloat).setVisibility(View.GONE);
+					hideFloatButton();
 				}
 				if (mLastFirstVisibleItem > firstVisibleItem) {
-					findViewById(R.id.newPostFloat).setVisibility(View.VISIBLE);
+					showFloatButton();
 				}
 				mLastFirstVisibleItem = firstVisibleItem;
 				GeneralUtil.listSavedInstanceHomeScreen = listView.getRefreshableView().onSaveInstanceState();
@@ -189,6 +278,58 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		}
 	}
 
+	private void showFloatButton() {
+		if (floatButton.getVisibility() == View.GONE && !isAnimRunning) {
+			floatButton.setVisibility(View.VISIBLE);
+			Animation.AnimationListener animListener = new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+					isAnimRunning = true;
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					isAnimRunning = false;
+				}
+			};
+			Animation animation = AnimationUtils.loadAnimation(this, R.anim.activity_slide_in_bottom);
+			animation.setAnimationListener(animListener);
+			floatButton.startAnimation(animation);
+		}
+	}
+
+	private void hideFloatButton() {
+		if (floatButton.getVisibility() == View.VISIBLE && !isAnimRunning) {
+			Animation.AnimationListener animListener = new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+					isAnimRunning = true;
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					floatButton.setVisibility(View.GONE);
+					isAnimRunning = false;
+				}
+			};
+			Animation animation = AnimationUtils.loadAnimation(this, R.anim.activity_slide_out_top);
+			animation.setAnimationListener(animListener);
+			floatButton.startAnimation(animation);
+		}
+	}
+
 	private void setOnClickListeners() {
 		findViewById(R.id.overflowButton).setOnClickListener(this);
 		findViewById(R.id.messageHeaderButton).setOnClickListener(this);
@@ -210,11 +351,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			startActivity(intent);
 			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
-		}else if (view.getId() == R.id.overflowButton) {
+		} else if (view.getId() == R.id.overflowButton) {
 			PopupMenu popup = new PopupMenu(HomescreenActivity.this, view);
 			popup.getMenuInflater().inflate(R.menu.overflow_menu, popup.getMenu());
-			MenuItem settingsItem = popup.getMenu().findItem(R.id.overflow_settings);
-			settingsItem.setVisible(false);
+			// MenuItem settingsItem =
+			// popup.getMenu().findItem(R.id.overflow_settings);
+			// settingsItem.setVisible(false);
 			popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
@@ -245,13 +387,6 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 					case R.id.overflow_feedback:
 						sendEmail("susheel@bokwas.com", "Feedback");
 						break;
-					case R.id.overflow_notifications:
-						if (UserDataStore.getStore().getNotifications().size() > 0) {
-							NotificationDialog dialog = new NotificationDialog(HomescreenActivity.this, UserDataStore.getStore().getNotifications());
-							dialog.show();
-						} else {
-							Crouton.makeText(HomescreenActivity.this, "No new notifications to show!", Style.INFO).show();
-						}
 					}
 					return true;
 				}
@@ -302,6 +437,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		});
 	}
 
+	@SuppressWarnings("unused")
 	private View getViewToShare(int position) {
 		final View view = LayoutInflater.from(this).inflate(R.layout.post_list_item_new, null);
 		// Do some stuff to the view, like add an ImageView, etc.

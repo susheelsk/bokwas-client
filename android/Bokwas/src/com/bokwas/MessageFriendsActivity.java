@@ -15,6 +15,10 @@ import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.ui.MessageFriendsListAdapter;
+import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 public class MessageFriendsActivity extends Activity{
 	
@@ -27,6 +31,38 @@ public class MessageFriendsActivity extends Activity{
 		setContentView(R.layout.message_friends_page);
 		
 		setupUI();
+		
+		setupGoogleAnalytics();
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		setupUI();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
 	private void setupUI() {

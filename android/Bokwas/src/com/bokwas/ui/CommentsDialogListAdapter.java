@@ -225,15 +225,12 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 
 		if (comment.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 			isLike = false;
-			NotificationProgress.showNotificationProgress(activity, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		} else {
-			NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		}
 		new AddLikesApi(activity, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), comment.getCommentId(), new APIListener() {
 
 			@Override
 			public void onAPIStatus(boolean status) {
-				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				if (status) {
 					if (isLike) {
 						Crouton.makeText(activity, "Comment liked!", Style.INFO).show();

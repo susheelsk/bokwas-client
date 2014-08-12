@@ -46,8 +46,11 @@ import com.bokwas.ui.CommentsDialogListAdapter;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
+import com.bokwas.util.TrackerName;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
@@ -101,6 +104,13 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 				e.printStackTrace();
 			}
 		}
+		
+		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
+		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 
 		post = UserDataStore.getStore().getPost(postId);
 
@@ -121,10 +131,45 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			findViewById(R.id.post_like_button).setVisibility(View.GONE);
 			findViewById(R.id.comment_edittext).setVisibility(View.GONE);
 			findViewById(R.id.commentButton).setVisibility(View.GONE);
+			findViewById(R.id.emojiButton).setVisibility(View.GONE);
 		}
 		ArrayList<Post> postList = new ArrayList<Post>();
 		postList.add(post);
 		
+		setupGoogleAnalytics();
+		
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+				onBackPressed();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		setupUI();
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
 	private void setupUI() {
@@ -134,6 +179,24 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 
 		if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
 			ImageView postPicture = (ImageView) findViewById(R.id.post_picture);
+			postPicture.setBackgroundResource(android.R.color.transparent);
+			postPicture.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(PostActivity.this, FullScreenImage.class);
+					intent.putExtra("url", post.getPicture());
+					intent.putExtra("activity", PostActivity.this.getClass().getSimpleName());
+					intent.putExtra("postId", post.getPostId());
+					intent.putExtra("name", post.getName());
+					if (post.isBokwasPost()) {
+						intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
+					} else {
+						intent.putExtra("fbProfilePic", post.getProfilePicture());
+					}
+					PostActivity.this.startActivity(intent);
+				}
+			});
 			postPicture.setVisibility(View.VISIBLE);
 			Picasso.with(this).load(post.getPicture()).resize(250, 250).centerCrop().placeholder(R.drawable.placeholder).into(postPicture);
 			findViewById(R.id.comment_list).setVisibility(View.GONE);
@@ -286,6 +349,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 										if (adapter != null) {
 											adapter.notifyDataSetChanged();
 										}
+										comments = post.getComments();
 										setupUI();
 									} else {
 										Toast.makeText(PostActivity.this, "Comment couldn't be added!", Toast.LENGTH_SHORT).show();
@@ -312,15 +376,12 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		superActivityToast.setProgressIndeterminate(true);
 		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 			isLike = false;
-			NotificationProgress.showNotificationProgress(PostActivity.this, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		} else {
-			NotificationProgress.showNotificationProgress(PostActivity.this, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		}
 		new AddLikesApi(PostActivity.this, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), null, new APIListener() {
 
 			@Override
 			public void onAPIStatus(boolean status) {
-				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				if (status) {
 					if (isLike) {
 						Crouton.makeText(PostActivity.this, "Post liked!", Style.INFO).show();
@@ -449,6 +510,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			@Override
 			public void onAPIStatus(boolean status) {
 				if (status) {
+					comments = post.getComments();
 					setupUI();
 				}else {
 					Toast.makeText(PostActivity.this, "Can't find post", Toast.LENGTH_SHORT).show();

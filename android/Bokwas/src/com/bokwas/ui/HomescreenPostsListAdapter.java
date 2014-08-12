@@ -466,10 +466,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
 			isLike = false;
 			// superActivityToast.setText("Unliking the post");
-			NotificationProgress.showNotificationProgress(activity, "Unliking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		} else {
 			// superActivityToast.setText("Liking the post");
-			NotificationProgress.showNotificationProgress(activity, "Liking the post", GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		}
 		// superActivityToast.show();
 		new AddLikesApi(activity, UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), post.getPostedBy(), null, new APIListener() {
@@ -479,7 +477,6 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				// if (superActivityToast.isShowing()) {
 				// superActivityToast.dismiss();
 				// }
-				NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 				if (status) {
 					if (isLike) {
 						Crouton.makeText(activity, "Post liked!", Style.INFO).show();

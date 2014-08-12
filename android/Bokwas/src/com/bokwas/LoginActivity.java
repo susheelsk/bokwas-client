@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetFriendsApi;
 import com.bokwas.apirequests.GetPersonInfo;
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
@@ -19,6 +20,8 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
 import com.bokwas.util.GCMUtils;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.Tracker;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -42,7 +45,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.login_page);
 
 		setOnClickListeners();
+		
+		setupGoogleAnalytics();
 
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
 	}
 
 	private void setOnClickListeners() {
@@ -136,7 +146,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 						@Override
 						public void onAPIStatus(boolean status) {
 							if (status) {
-								moveToHomePage();
+//								moveToHomePage();
+								new GetFriendsApi(LoginActivity.this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+									
+									@Override
+									public void onAPIStatus(boolean status) {
+										moveToHomePage();
+									}
+								}).execute("");
 							} else {
 								moveToProfileScreen();
 								Toast.makeText(LoginActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
@@ -159,6 +176,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	
 	private void moveToHomePage() {
 		Intent intent = new Intent(this, HomescreenActivity.class);
+		intent.putExtra("fromSplashscreen", true);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 		finish();

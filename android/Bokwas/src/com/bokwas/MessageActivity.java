@@ -28,8 +28,11 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.ui.MessageListAdapter;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
+import com.bokwas.util.TrackerName;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
@@ -98,7 +101,41 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
 		transaction.hide(emojiFragment);
 		transaction.commit();
+		
+		setupGoogleAnalytics();
 
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+				onBackPressed();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		setupUI();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
 	@Override

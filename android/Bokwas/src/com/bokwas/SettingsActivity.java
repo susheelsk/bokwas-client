@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,8 +25,16 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bokwas.apirequests.GetPosts;
+import com.bokwas.apirequests.GetPosts.APIListener;
+import com.bokwas.apirequests.UpdateProfileInfoApi;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.Tracker;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends Activity implements OnClickListener {
@@ -42,6 +51,8 @@ public class SettingsActivity extends Activity implements OnClickListener {
 	protected String nicknameText;
 	private int MAX_NUM_BATCHES = 15;
 	private String gender;
+	private ProgressDialog pdia;
+	protected int newAvatarId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,23 +66,48 @@ public class SettingsActivity extends Activity implements OnClickListener {
 			imageIds = femaleImageIds;
 		}
 
+		setupUI();
+		
+		setupGoogleAnalytics();
+
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!UserDataStore.isInitialized()) {
+			try {
+				UserDataStore.initData(this);
+				onBackPressed();
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		setupUI();
+	}
+
+	private void setupUI() {
+		
 		setupAvatarChooser();
 
 		setupNicknameTextbox();
 
 		setOnClickListeners();
-
-		setupUI();
-
-	}
-
-	private void setupUI() {
+		
+		pdia = new ProgressDialog(this);
 		int position = UserDataStore.getStore().getAvatarId() - 1;
 		if (gender.equals("male")) {
 			position = position % 15;
 		}
 
 		avatarChooserList.setSelection(position);
+		showNextButton();
 	}
 
 	private void setOnClickListeners() {
@@ -106,7 +142,7 @@ public class SettingsActivity extends Activity implements OnClickListener {
 					} else {
 
 					}
-					UserDataStore.getStore().setAvatarId(position + 1);
+					newAvatarId = position + 1;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -240,6 +276,38 @@ public class SettingsActivity extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if (view.getId() == R.id.nextButton) {
 			// make api call to update the users chosen avatar id and username
+			if (nameText.getText().toString().length() > 1) {
+				pdia.setMessage("Loading");
+				pdia.setCancelable(false);
+				pdia.setCanceledOnTouchOutside(false);
+				pdia.show();
+				new UpdateProfileInfoApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), nameText.getEditableText().toString(), String.valueOf(newAvatarId),
+						new APIListener() {
+
+							@Override
+							public void onAPIStatus(boolean status) {
+								if(status) {
+									UserDataStore.getStore().resetPosts();
+									UserDataStore.getStore().save(SettingsActivity.this);
+									new GetPosts(SettingsActivity.this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getUserId(), new APIListener() {
+
+										@Override
+										public void onAPIStatus(boolean status) {
+											if (status) {
+												Crouton.makeText(SettingsActivity.this, "Profile information updated", Style.INFO).show();
+												pdia.cancel();
+											}
+										}
+									}).execute("");
+								}else {
+									pdia.cancel();
+								}
+								
+							}
+						}).execute("");
+			} else {
+				Toast.makeText(SettingsActivity.this, "Please enter an appropriate username.", Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 

@@ -20,6 +20,8 @@ import com.bokwas.util.GCMUtils;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.LocalStorage;
 import com.bokwas.util.NotificationProgress;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.Tracker;
 import com.sromku.simple.fb.Permission.Type;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.listeners.OnLoginListener;
@@ -39,6 +41,12 @@ public class SplashScreen extends Activity {
 		initAppData();
 		init();
 		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
+		setupGoogleAnalytics();
+	}
+
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
+		t.enableAutoActivityTracking(true);
 	}
 
 	private void init() {
@@ -47,8 +55,7 @@ public class SplashScreen extends Activity {
 
 				@Override
 				public void onFail(String reason) {
-					Toast.makeText(getParent(), "Can't login to facebook",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(getParent(), "Can't login to facebook", Toast.LENGTH_SHORT).show();
 					SplashScreen.this.finish();
 				}
 
@@ -69,11 +76,9 @@ public class SplashScreen extends Activity {
 
 				@Override
 				public void onLogin() {
-					UserDataStore.getStore().setUserAccessToken(
-							mSimpleFacebook.getSession().getAccessToken());
+					UserDataStore.getStore().setUserAccessToken(mSimpleFacebook.getSession().getAccessToken());
 					UserDataStore.getStore().save(SplashScreen.this);
-					Log.d("SplashScreen", "AccessToken : "
-							+ mSimpleFacebook.getSession().getAccessToken());
+					Log.d("SplashScreen", "AccessToken : " + mSimpleFacebook.getSession().getAccessToken());
 					// new GetPosts(SplashScreen.this,
 					// mSimpleFacebook.getSession()
 					// .getAccessToken(), UserDataStore.getStore()
@@ -104,13 +109,10 @@ public class SplashScreen extends Activity {
 	private void initAppData() {
 		NotificationProgress.clearNotificationProgress(GeneralUtil.GENERAL_NOTIFICATIONS);
 		if (LocalStorage.getObj(this, UserDataStore.class) != null) {
-			UserDataStore.setInstance(LocalStorage.getObj(this,
-					UserDataStore.class));
+			UserDataStore.setInstance(LocalStorage.getObj(this, UserDataStore.class));
 			Log.d(TAG, "UserId: " + UserDataStore.getStore().getUserId());
-			Log.d(TAG, "BokwasName: "
-					+ UserDataStore.getStore().getBokwasName());
-			Log.d(TAG, "accessToken: "
-					+ UserDataStore.getStore().getUserAccessToken());
+			Log.d(TAG, "BokwasName: " + UserDataStore.getStore().getBokwasName());
+			Log.d(TAG, "accessToken: " + UserDataStore.getStore().getUserAccessToken());
 			UserDataStore.getStore().sortPosts();
 			UserDataStore.getStore().removeOldNotifications();
 			if (UserDataStore.getStore().isGcmUpdated() == false) {
@@ -121,14 +123,11 @@ public class SplashScreen extends Activity {
 
 	private void logKeyHash() {
 		try {
-			PackageInfo info = getPackageManager().getPackageInfo(
-					"com.facebook.samples.loginhowto",
-					PackageManager.GET_SIGNATURES);
+			PackageInfo info = getPackageManager().getPackageInfo("com.bokwas", PackageManager.GET_SIGNATURES);
 			for (Signature signature : info.signatures) {
 				MessageDigest md = MessageDigest.getInstance("SHA");
 				md.update(signature.toByteArray());
-				Log.d("KeyHash:",
-						Base64.encodeToString(md.digest(), Base64.DEFAULT));
+				Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
 			}
 		} catch (NameNotFoundException e) {
 
@@ -143,16 +142,13 @@ public class SplashScreen extends Activity {
 			public void run() {
 
 				if (UserDataStore.getStore().getPosts().size() > 0) {
-					Intent i = new Intent(SplashScreen.this,
-							HomescreenActivity.class);
+					Intent i = new Intent(SplashScreen.this, HomescreenActivity.class);
 					i.putExtra("fromSplashscreen", true);
 					startActivity(i);
 				} else {
-					Intent i = new Intent(SplashScreen.this,
-							LoginActivity.class);
+					Intent i = new Intent(SplashScreen.this, LoginActivity.class);
 					startActivity(i);
-					overridePendingTransition(R.anim.activity_slide_in_left,
-							R.anim.activity_slide_out_left);
+					overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 				}
 				finish();
 			}

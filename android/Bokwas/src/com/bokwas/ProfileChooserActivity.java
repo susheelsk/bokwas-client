@@ -31,6 +31,8 @@ import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.util.GeneralUtil;
+import com.bokwas.util.TrackerName;
+import com.google.android.gms.analytics.Tracker;
 
 @SuppressWarnings("deprecation")
 public class ProfileChooserActivity extends Activity implements OnClickListener {
@@ -68,7 +70,14 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 		Log.d("ProfileChooser", "Gender : " + getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, ""));
 
 		setOnClickListeners();
+		
+		setupGoogleAnalytics();
 
+	}
+	
+	private void setupGoogleAnalytics() {
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		t.enableAutoActivityTracking(true);
 	}
 
 	private void setOnClickListeners() {
@@ -242,7 +251,14 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 				@Override
 				public void onAPIStatus(boolean status) {
 					if (status) {
-						moveToNextScreen();
+//						moveToNextScreen();
+						new GetFriendsApi(ProfileChooserActivity.this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(),new APIListener() {
+							
+							@Override
+							public void onAPIStatus(boolean status) {
+								moveToNextScreen();
+							}
+						}).execute("");
 					} else {
 						pdia.dismiss();
 						Toast.makeText(ProfileChooserActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
@@ -264,6 +280,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 				editor.putBoolean(GeneralUtil.isLoggedInKey, true);
 				editor.commit();
 				Intent intent = new Intent(ProfileChooserActivity.this, HomescreenActivity.class);
+				intent.putExtra("fromSplashscreen", true);
 				startActivity(intent);
 				finish();
 				overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
