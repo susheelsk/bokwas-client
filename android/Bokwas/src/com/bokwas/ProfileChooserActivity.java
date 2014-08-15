@@ -34,6 +34,9 @@ import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.Tracker;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 @SuppressWarnings("deprecation")
 public class ProfileChooserActivity extends Activity implements OnClickListener {
 
@@ -70,13 +73,13 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 		Log.d("ProfileChooser", "Gender : " + getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, ""));
 
 		setOnClickListeners();
-		
+
 		setupGoogleAnalytics();
 
 	}
-	
+
 	private void setupGoogleAnalytics() {
-		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
 		t.enableAutoActivityTracking(true);
 	}
 
@@ -245,15 +248,18 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			pdia.setCancelable(false);
 			pdia.show();
 			Log.d("ProfileChooserActivity", "AccessToken : " + UserDataStore.getStore().getUserAccessToken());
+			if (UserDataStore.getStore().getGcmRegId() == null || UserDataStore.getStore().getGcmRegId().equals("")) {
+				Crouton.makeText(this, "Can't retrieve push notification id. Clear data and try again to support notifications", Style.ALERT).show();
+			}
 			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getBokwasName(), String.valueOf(UserDataStore.getStore().getAvatarId()), UserDataStore
 					.getStore().getGcmRegId(), true, new APIListener() {
 
 				@Override
 				public void onAPIStatus(boolean status) {
 					if (status) {
-//						moveToNextScreen();
-						new GetFriendsApi(ProfileChooserActivity.this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(),new APIListener() {
-							
+						// moveToNextScreen();
+						new GetFriendsApi(ProfileChooserActivity.this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+
 							@Override
 							public void onAPIStatus(boolean status) {
 								moveToNextScreen();
@@ -279,8 +285,12 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 				SharedPreferences.Editor editor = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit();
 				editor.putBoolean(GeneralUtil.isLoggedInKey, true);
 				editor.commit();
+				GeneralUtil.setRecurringAlarm(ProfileChooserActivity.this);
+				UserDataStore.getStore().setInit(true);
+				UserDataStore.getStore().save(ProfileChooserActivity.this);
 				Intent intent = new Intent(ProfileChooserActivity.this, HomescreenActivity.class);
 				intent.putExtra("fromSplashscreen", true);
+				UserDataStore.getStore().sortPosts();
 				startActivity(intent);
 				finish();
 				overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);

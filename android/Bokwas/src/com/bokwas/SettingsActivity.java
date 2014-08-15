@@ -29,6 +29,7 @@ import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.apirequests.UpdateProfileInfoApi;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.Tracker;
@@ -58,6 +59,11 @@ public class SettingsActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.choose_avatar_page);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		gender = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getString(GeneralUtil.userGender, "male");
 		if (gender.equals("male")) {

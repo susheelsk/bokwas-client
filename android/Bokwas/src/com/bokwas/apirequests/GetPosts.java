@@ -80,6 +80,7 @@ public class GetPosts extends AsyncTask<String, Void, Boolean> {
 //						UserDataStore.getStore().getFriend(bokwasUser.userId).setBokwasAvatarId(bokwasUser.userBokwasAvatarId);
 //					}
 //				}
+				
 				List<Post> posts = getPostsResponse.getPosts();
 				Log.d("GetPosts","Posts size : "+posts.size());
 				for (Post post : posts) {

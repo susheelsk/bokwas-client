@@ -1,5 +1,6 @@
 package com.bokwas.datasets;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +48,15 @@ public class UserDataStore {
 	private String gcmRegId;
 	private boolean gcmUpdated = false;
 	private HashMap<String, List<Message>> messageMap = new HashMap<String, List<Message>>();
+	private boolean isInit = false;
+
+	public boolean isInit() {
+		return isInit;
+	}
+
+	public void setInit(boolean isInit) {
+		this.isInit = isInit;
+	}
 
 	public List<Message> getMessagesForPerson(String personId) {
 		List<Message> messages = messageMap.get(personId);
@@ -386,7 +396,7 @@ public class UserDataStore {
 		this.avatarId = avatarId;
 	}
 
-	protected UserDataStore() {
+	private UserDataStore() {
 
 	}
 
@@ -397,7 +407,9 @@ public class UserDataStore {
 	}
 
 	public void resetData(Context context) {
-		LocalStorage.storeObj(context, new UserDataStore());
+		setInstance(null);
+		save(context);
+		AppData.isReset = true;
 	}
 
 	public void resetPosts() {
@@ -421,7 +433,8 @@ public class UserDataStore {
 	}
 
 	public static synchronized boolean isInitialized() {
-		if (instance == null) {
+		if (instance == null || !instance.isInit()) {
+			Log.d("Bokwas","UserDataStore : null");
 			return false;
 		}
 		return true;

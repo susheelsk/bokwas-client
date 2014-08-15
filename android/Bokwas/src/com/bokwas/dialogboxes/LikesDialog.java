@@ -52,7 +52,7 @@ public class LikesDialog extends Dialog{
 		superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
-
+		this.setCanceledOnTouchOutside(true);
 		adapter = new LikesDialogListAdapter(activity, likes);
 		listView = (ListView) findViewById(R.id.like_list);
 		listView.setAdapter(adapter);

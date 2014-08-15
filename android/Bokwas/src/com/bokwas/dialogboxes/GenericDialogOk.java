@@ -42,7 +42,7 @@ public class GenericDialogOk extends Dialog implements android.view.View.OnClick
 		wlp.width = width;
 		window.setAttributes(wlp);
 		getWindow().setLayout(width,height);
-		
+		this.setCanceledOnTouchOutside(true);
 		((TextView)findViewById(R.id.dialog_title)).setText(title);
 		((TextView)findViewById(R.id.dialog_description)).setText(description);
 		findViewById(R.id.dialog_button_ok).setOnClickListener(this);

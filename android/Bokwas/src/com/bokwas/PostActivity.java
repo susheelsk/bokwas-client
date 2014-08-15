@@ -43,6 +43,7 @@ import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.ui.CommentsDialogListAdapter;
+import com.bokwas.util.AppData;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
@@ -81,6 +82,11 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.post_screen);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		manager = getSupportFragmentManager();
 		transaction = manager.beginTransaction();

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.bokwas.apirequests.AddPostsApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
 import com.bokwas.util.TrackerName;
@@ -48,6 +49,11 @@ public class NewPostActivity extends FragmentActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.newpost_dialog);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		setOnClickListeners();
 

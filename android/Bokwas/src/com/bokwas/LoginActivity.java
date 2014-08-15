@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -151,6 +152,10 @@ public class LoginActivity extends Activity implements OnClickListener {
 									
 									@Override
 									public void onAPIStatus(boolean status) {
+										SharedPreferences.Editor editor = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit();
+										editor.putBoolean(GeneralUtil.isLoggedInKey, true);
+										editor.commit();
+										GeneralUtil.setRecurringAlarm(LoginActivity.this);
 										moveToHomePage();
 									}
 								}).execute("");
@@ -177,6 +182,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private void moveToHomePage() {
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		intent.putExtra("fromSplashscreen", true);
+		UserDataStore.getStore().setInit(true);
+		UserDataStore.getStore().save(this);
+		UserDataStore.getStore().sortPosts();
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 		finish();

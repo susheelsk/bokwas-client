@@ -92,6 +92,9 @@ public class ProfilePageFragment extends HeaderFragment {
 	@Override
 	public View onCreateHeaderView(LayoutInflater inflater, ViewGroup container) {
 		View view = inflater.inflate(R.layout.fragment_header, container, false);
+		if(name!=null && name.length()>18) {
+			name = name.split(" ")[0];
+		}
 		((TextView) view.findViewById(R.id.name)).setText(name);
 		if (avatarId != -1) {
 			((ImageView) view.findViewById(R.id.profile_pic)).setImageResource(GeneralUtil.getAvatarResourceId(String.valueOf(avatarId)));

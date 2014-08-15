@@ -16,6 +16,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
@@ -23,6 +24,7 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Post;
 import com.bokwas.ui.HomescreenPostsListAdapter;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -47,6 +49,11 @@ public class ProfileActivity extends Activity implements OnClickListener,
 
 		personId = getIntent().getStringExtra("personId");
 		setContentView(R.layout.home_screen);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		setOnClickListeners();
 

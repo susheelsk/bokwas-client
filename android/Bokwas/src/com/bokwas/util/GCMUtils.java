@@ -55,14 +55,14 @@ public class GCMUtils {
 				try {
 					regId = gcm.register("6305380231");
 					this.regId = regId;
-					Log.d("GCMRegistrar", "GCM RegId : " + regId);
+					Log.d("BokwasHttpUtils", "GCM RegId : " + regId);
 					if (regId != null) {
 						UserDataStore.getStore().setGcmRegId(regId);
 						UserDataStore.getStore().save(context);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
-					Log.d("GCMRegistrar", "Error : " + e.getMessage());
+					Log.d("BokwasHttpUtils", "Error : " + e.getMessage());
 					return null;
 				}
 				return null;

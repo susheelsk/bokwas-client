@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.Message;
@@ -21,14 +23,30 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 	private String personId;
 	private String accessKey;
 	private APIListener listener;
+	private APIMessageListener messageListener;
+	private Context context;
+	private Message message;
 	private Activity activity;
+	
+	public interface APIMessageListener {
+		public void onMessage(Message message);
+	}
 
 	public GetPrivateMessagesApi(Activity activity, String personId, String accessKey, APIListener listener) {
 		super();
 		this.personId = personId;
 		this.accessKey = accessKey;
 		this.listener = listener;
+		this.context = activity;
 		this.activity = activity;
+	}
+	
+	public GetPrivateMessagesApi(Context context, String personId, String accessKey, APIMessageListener messageListener) {
+		super();
+		this.personId = personId;
+		this.accessKey = accessKey;
+		this.context = context;
+		this.messageListener = messageListener;
 	}
 
 	@Override
@@ -46,9 +64,16 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 					Message message = new Message(privateMessage.messageFromId, UserDataStore.getStore().getUserId(), Long.valueOf(privateMessage.messageTime), privateMessage.messageText,
 							privateMessage.messageId, false);
 					UserDataStore.getStore().addMessageToPerson(privateMessage.messageFromId, message);
+					this.message = message;
 				}
-				UserDataStore.getStore().save(activity);
+				UserDataStore.getStore().save(context);
 				return true;
+			}else if(apiResponse.status.statusCode == 451) {
+				UserDataStore.getStore().resetData(context);
+				if(activity!=null) {
+					Toast.makeText(activity, "Please restart Bokwas", Toast.LENGTH_SHORT).show();
+					activity.finish();
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,6 +86,9 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 		super.onPostExecute(result);
 		if (listener != null) {
 			listener.onAPIStatus(result);
+		}
+		if(message!=null) {
+			messageListener.onMessage(message);
 		}
 	}
 

@@ -28,7 +28,7 @@ import com.sromku.simple.fb.listeners.OnLoginListener;
 
 public class SplashScreen extends Activity {
 
-	private int SPLASH_TIME_OUT = 100;
+	private int SPLASH_TIME_OUT = 1000;
 	private String TAG = "SplashScreen";
 	private SimpleFacebook mSimpleFacebook;
 

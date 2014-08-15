@@ -2,16 +2,21 @@ package com.bokwas.util;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -47,7 +52,7 @@ public class GeneralUtil {
 	public synchronized static Tracker getTracker(TrackerName trackerId, Context context) {
 		if (!mTrackers.containsKey(TrackerName.APP_TRACKER)) {
 			GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
-			Tracker t = analytics.newTracker(PROPERTY_ID );
+			Tracker t = analytics.newTracker(PROPERTY_ID);
 			mTrackers.put(trackerId, t);
 		}
 		return mTrackers.get(trackerId);
@@ -80,6 +85,18 @@ public class GeneralUtil {
 		}
 	}
 
+	public static void setRecurringAlarm(Context context) {
+		Calendar updateTime = Calendar.getInstance();
+		updateTime.setTimeZone(TimeZone.getDefault());
+		updateTime.set(Calendar.HOUR_OF_DAY, 12);
+		updateTime.set(Calendar.MINUTE, 30);
+		Intent downloader = new Intent(context, BackgroudDataBroadcastReceiver.class);
+		downloader.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, updateTime.getTimeInMillis(), 10800000, pendingIntent);
+	}
+
 	public static Bitmap getImageBitmap(int id, Context context) {
 		Bitmap srcBmp = BitmapFactory.decodeResource(context.getResources(), id);
 		Bitmap modBmp = Bitmap.createBitmap(srcBmp, 0, 0, srcBmp.getWidth(), srcBmp.getHeight());
@@ -100,6 +117,79 @@ public class GeneralUtil {
 		});
 
 		popupMenu.show();
+	}
+	
+	public static void shareIntent(Context context, String data) {
+		Resources resources = context.getResources();
+
+		Intent emailIntent = new Intent();
+		emailIntent.setAction(Intent.ACTION_SEND);
+		// Native email client doesn't currently support HTML, but it doesn't
+		// hurt to try in case they fix it
+		emailIntent.putExtra(Intent.EXTRA_TEXT, data);
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.app_name));
+		emailIntent.setType("message/rfc822");
+
+		PackageManager pm = context.getPackageManager();
+		Intent sendIntent = new Intent(Intent.ACTION_SEND);
+		sendIntent.setType("text/plain");
+
+		Intent openInChooser = Intent.createChooser(emailIntent, "Share via");
+
+		List<ResolveInfo> resInfo = pm.queryIntentActivities(sendIntent, 0);
+		List<LabeledIntent> intentList = new ArrayList<LabeledIntent>();
+		for (int i = 0; i < resInfo.size(); i++) {
+			// Extract the label, append it, and repackage it in a LabeledIntent
+			ResolveInfo ri = resInfo.get(i);
+			String packageName = ri.activityInfo.packageName;
+			Log.d("Share", "PackageName : " + packageName);
+			if (packageName.contains("hike")) {
+				emailIntent.setPackage(packageName);
+			} else if (packageName.contains("twitter") || packageName.contains("facebook") || packageName.contains("whatsapp") || packageName.contains("hike") || packageName.contains("plus")
+					|| packageName.contains("naver") || packageName.contains("tencent")) {
+				Intent intent = new Intent();
+				intent.setComponent(new ComponentName(packageName, ri.activityInfo.name));
+				intent.setAction(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				if (packageName.contains("twitter")) {
+					intent.putExtra(Intent.EXTRA_TEXT, "Hi! I'm using Bokwas, a cool social networking app where we interact in a universe of alter egos. Get it here : http://bokwas.com");
+				} else if (packageName.contains("facebook")) {
+					// Warning: Facebook IGNORES our text. They say
+					// "These fields are intended for users to express themselves. Pre-filling these fields erodes the authenticity of the user voice."
+					// One workaround is to use the Facebook SDK to post, but
+					// that doesn't allow the user to choose how they want to
+					// share. We can also make a custom landing page, and the
+					// link
+					// will show the <meta content ="..."> text from that page
+					// with our link in Facebook.
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("mms")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("android.gm")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+					intent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.app_name));
+					intent.setType("message/rfc822");
+				} else if (packageName.contains("whatsapp")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("hike")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("plus")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("naver")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				} else if (packageName.contains("tencent")) {
+					intent.putExtra(Intent.EXTRA_TEXT, data);
+				}
+
+				intentList.add(new LabeledIntent(intent, packageName, ri.loadLabel(pm), ri.icon));
+			}
+		}
+
+		// convert intentList to array
+		LabeledIntent[] extraIntents = intentList.toArray(new LabeledIntent[intentList.size()]);
+
+		openInChooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+		context.startActivity(openInChooser);
 	}
 
 	public static void sharePhotoIntent(Activity activity, Bitmap img, String text) {

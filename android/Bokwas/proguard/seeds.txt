@@ -4006,6 +4006,10 @@ com.bokwas.R$drawable: int shape_undobarfocused
 com.bokwas.R$drawable: int shape_undobarselected
 com.bokwas.R$drawable: int share_icon
 com.bokwas.R$drawable: int spinner_16_inner_holo
+com.bokwas.R$drawable: int tab_active
+com.bokwas.R$drawable: int tab_dark_default
+com.bokwas.R$drawable: int tab_default
+com.bokwas.R$drawable: int tab_pressed
 com.bokwas.R$drawable: int texture_darkblue
 com.bokwas.R$drawable: int texture_darkorange
 com.bokwas.R$drawable: int texture_gray
@@ -4081,6 +4085,8 @@ com.bokwas.R$id: int header_logo
 com.bokwas.R$id: int header_picture
 com.bokwas.R$id: int hidden_view
 com.bokwas.R$id: int hybrid
+com.bokwas.R$id: int inviteFriendsButton
+com.bokwas.R$id: int inviteFriendsTextView
 com.bokwas.R$id: int large
 com.bokwas.R$id: int like_image
 com.bokwas.R$id: int like_line_seperator
@@ -4113,6 +4119,7 @@ com.bokwas.R$id: int oveflow_home
 com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
 com.bokwas.R$id: int overflow_feedback
+com.bokwas.R$id: int overflow_invite
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
 com.bokwas.R$id: int overflow_refresh
@@ -4397,7 +4404,6 @@ com.bokwas.apirequests.Data: Data()
 com.bokwas.apirequests.FbProfilePicBatchResponse: FbProfilePicBatchResponse()
 com.bokwas.apirequests.Header: Header()
 com.bokwas.apirequests.Picture: Picture()
-com.bokwas.datasets.UserDataStore: UserDataStore()
 com.bokwas.response.AddCommentResponse: AddCommentResponse()
 com.bokwas.response.AddPostResponse: AddPostResponse()
 com.bokwas.response.ApiResponse: ApiResponse()
@@ -4414,6 +4420,10 @@ com.bokwas.ui.MessageFriendsListAdapter$ViewHolder: MessageFriendsListAdapter$Vi
 com.bokwas.ui.MessageListAdapter$ViewHolder: MessageListAdapter$ViewHolder()
 com.bokwas.ui.NotificationDialogListAdapter$ViewHolder: NotificationDialogListAdapter$ViewHolder()
 com.bokwas.ui.ProfilePageFragment: ProfilePageFragment()
+com.bokwas.util.BackgroudDataBroadcastReceiver
+com.bokwas.util.BackgroudDataBroadcastReceiver: BackgroudDataBroadcastReceiver()
+com.bokwas.util.BackgroundDataService
+com.bokwas.util.BackgroundDataService: BackgroundDataService()
 com.bokwas.util.BokwasHttpClient: BokwasHttpClient()
 com.bokwas.util.DateUtil: DateUtil()
 com.bokwas.util.GCMIntentService
@@ -6889,6 +6899,10 @@ com.rockerhieu.emojicon.R$drawable: int orca_emoji_more_front_normal
 com.rockerhieu.emojicon.R$drawable: int orca_emoji_more_front_pressed
 com.rockerhieu.emojicon.R$drawable: int orca_emoji_tab_background
 com.rockerhieu.emojicon.R$drawable: int orca_emoji_tab_dark_background
+com.rockerhieu.emojicon.R$drawable: int tab_active
+com.rockerhieu.emojicon.R$drawable: int tab_dark_default
+com.rockerhieu.emojicon.R$drawable: int tab_default
+com.rockerhieu.emojicon.R$drawable: int tab_pressed
 com.rockerhieu.emojicon.R$drawable: R$drawable()
 com.rockerhieu.emojicon.R$id: int Emoji_GridView
 com.rockerhieu.emojicon.R$id: int com_facebook_login_activity_progress_bar

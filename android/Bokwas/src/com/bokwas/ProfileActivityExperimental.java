@@ -21,6 +21,7 @@ import com.bokwas.apirequests.GetPostsOfPersonApi;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Post;
 import com.bokwas.ui.ProfilePageFragment;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -43,6 +44,11 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		setContentView(R.layout.profile_activity);
 		this.savedInstanceState = savedInstanceState;
 		pdia = new ProgressDialog(this);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		profileId = getIntent().getStringExtra("profileId");
 		name = getIntent().getStringExtra("name");
@@ -99,7 +105,6 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 				e.printStackTrace();
 			}
 		}
-		setupUI();
 	}
 
 	@Override

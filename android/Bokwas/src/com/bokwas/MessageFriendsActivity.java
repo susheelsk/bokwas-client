@@ -10,11 +10,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.ui.MessageFriendsListAdapter;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -29,6 +31,11 @@ public class MessageFriendsActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.message_friends_page);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 		
 		setupUI();
 		
@@ -74,6 +81,11 @@ public class MessageFriendsActivity extends Activity{
 		
 		findViewById(R.id.overflowButton).setVisibility(View.GONE);
 		findViewById(R.id.messageHeaderButton).setVisibility(View.GONE);
+		
+		if(friends.size()<1) {
+			listview.setVisibility(View.GONE);
+			findViewById(R.id.inviteFriendsTextView).setVisibility(View.VISIBLE);
+		}
 	}
 	
 	@Override

@@ -31,6 +31,7 @@ public class BokwasHttpClient {
 		for (BasicNameValuePair pair : params) {
 			nameValuePairs.add(pair);
 		}
+		
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
 		httppost.addHeader("charset", "UTF-8");
 		Header[] headers = httppost.getHeaders("charset");
@@ -40,7 +41,9 @@ public class BokwasHttpClient {
 		
 		Log.d("BokwasHttpClient","Request Data : "+EntityUtils.toString(httppost.getEntity(),
 				"UTF-8"));
-
+		if(nameValuePairs.size()<1) {
+			return "{\"statusCode\":402,\"message\":\"Bad Request\"}";
+		}
 		HttpResponse response = httpclient.execute(httppost);
 		String responseString = EntityUtils.toString(response.getEntity(),
 				"UTF-8");

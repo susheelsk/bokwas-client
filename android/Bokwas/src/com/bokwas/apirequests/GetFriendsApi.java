@@ -38,6 +38,9 @@ public class GetFriendsApi extends AsyncTask<String, Void, Boolean> {
 		apiUrl = AppData.getBaseURL() + "/getfriends";
 		apiParams.add(new BasicNameValuePair("access_key", accessKey));
 		apiParams.add(new BasicNameValuePair("person_id", personId));
+		if(personId==null||accessKey==null) {
+			return false;
+		}
 		try {
 			String response = BokwasHttpClient.postData(apiUrl, apiParams);
 			if (response != null) {

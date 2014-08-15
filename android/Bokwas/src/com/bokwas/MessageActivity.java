@@ -21,11 +21,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.apirequests.SendMessageApi;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.ui.MessageListAdapter;
+import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
 import com.bokwas.util.TrackerName;
@@ -59,6 +61,11 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.message_page);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		receiverId = getIntent().getStringExtra("receiverId");
 		Log.d("BokwasNotifications", "Opening MessageActivity");

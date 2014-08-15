@@ -54,7 +54,7 @@ public class NotificationDialog extends Dialog{
 		superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
-
+		this.setCanceledOnTouchOutside(true);
 		adapter = new NotificationDialogListAdapter(activity, notificationList);
 		listView = (ListView) findViewById(R.id.like_list);
 		listView.setAdapter(adapter);

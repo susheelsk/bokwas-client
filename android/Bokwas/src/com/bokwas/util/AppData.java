@@ -8,6 +8,8 @@ public class AppData {
 	private static String prodUrl = "http://23.254.115.105:8080";
 	
 	private static AppData instance = null;
+	
+	public static boolean isReset = false;
 //	public static String devUrl = "http://10.0.0.3:8080/BokwasServer";
 
 	public static String getBaseURL() {

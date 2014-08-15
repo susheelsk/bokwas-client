@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,8 +16,8 @@ import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
@@ -40,6 +41,7 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.ui.HomescreenPostsListAdapter;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
+import com.bokwas.util.AppData;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.NotificationProgress;
@@ -69,6 +71,11 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.home_screen);
+		
+		if(AppData.isReset) {
+			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
+			finish();
+		}
 
 		setOnClickListeners();
 
@@ -82,11 +89,14 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			try {
 				UserDataStore.initData(this);
 				NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
+				isRefreshed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
+		updateFriendsAndMessagesApi();
+		
 		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
@@ -112,18 +122,59 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		super.onStop();
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
+	
+	private void updateFriendsAndMessagesApi() {
+		if (getIntent().getBooleanExtra("fromSplashscreen", false) && isRefreshed == false) {
+
+			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
+
+			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+
+				@Override
+				public void onAPIStatus(boolean status) {
+					setupNotificationBar();
+				}
+			}).execute("");
+
+			new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new APIListener() {
+
+				@Override
+				public void onAPIStatus(boolean status) {
+					int unSeenMessageSize = 0;
+					for (Friends friend : UserDataStore.getStore().getFriends()) {
+						for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
+							if (!message.isSeen()) {
+								unSeenMessageSize++;
+							}
+						}
+					}
+					if (unSeenMessageSize > 0) {
+						findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
+						((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
+					}
+				}
+			}).execute("");
+
+			// listView.setRefreshing();
+			isRefreshed = true;
+		}
+	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d("HomescreenActivity", "onResume()");
 		if (!UserDataStore.isInitialized()) {
 			try {
+				Log.d("HomescreenActivity", "onResume() isInit : false");
 				UserDataStore.initData(this);
+				isRefreshed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		setupUI();
+		setupNotificationBar();
 	}
 
 	private int getPixelsInDp(int sizeInDp) {
@@ -158,41 +209,6 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 		}
 
 		setupListViewListeners();
-
-		if (getIntent().getBooleanExtra("fromSplashscreen", false) && isRefreshed == false) {
-
-			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
-
-			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
-
-				@Override
-				public void onAPIStatus(boolean status) {
-					setupNotificationBar();
-				}
-			}).execute("");
-
-			new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new APIListener() {
-
-				@Override
-				public void onAPIStatus(boolean status) {
-					int unSeenMessageSize = 0;
-					for (Friends friend : UserDataStore.getStore().getFriends()) {
-						for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
-							if (!message.isSeen()) {
-								unSeenMessageSize++;
-							}
-						}
-					}
-					if (unSeenMessageSize > 0) {
-						findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
-						((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
-					}
-				}
-			}).execute("");
-
-			listView.setRefreshing();
-			isRefreshed = true;
-		}
 
 		if (GeneralUtil.listSavedInstanceHomeScreen != null) {
 			listView.getRefreshableView().onRestoreInstanceState(GeneralUtil.listSavedInstanceHomeScreen);
@@ -232,6 +248,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 					public void onAPIStatus(boolean status) {
 						listView.onRefreshComplete();
 						if (status) {
+							UserDataStore.getStore().sortPosts();
 							adapter.setPosts(UserDataStore.getStore().getPosts());
 							adapter.notifyDataSetChanged();
 						}
@@ -268,11 +285,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 
 	protected void setupNotificationBar() {
 		try {
-			if (UserDataStore.getStore().getUnseenNotifications().size() > 0) {
-				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
-				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
-				notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
-			}
+			// if (UserDataStore.getStore().getUnseenNotifications().size() > 0)
+			// {
+			findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
+			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -387,6 +405,11 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 					case R.id.overflow_feedback:
 						sendEmail("susheel@bokwas.com", "Feedback");
 						break;
+					case R.id.overflow_invite:
+						GeneralUtil
+								.shareIntent(
+										HomescreenActivity.this,
+										"Hi! I'm using Bokwas, a cool social networking app where we interact in a universe of alter-egos. We can comment on Facebook posts, chat with friends and a lot more, while in complete anonymity! Learn more about it, and get a chance to download the early preview at http://bokwas.com");
 					}
 					return true;
 				}
