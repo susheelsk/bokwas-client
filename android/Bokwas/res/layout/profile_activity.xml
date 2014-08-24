@@ -3,6 +3,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddddd"
+    android:background="@color/background_color"
     tools:context="com.bokas.ProfileActivityExperimental"
     tools:ignore="MergeRootFrame" />

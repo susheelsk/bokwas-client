@@ -146,7 +146,7 @@ public class NewPostActivity extends FragmentActivity implements OnClickListener
 	}
 
 	@Override
-	public void onClick(View view) {
+	public void onClick(final View view) {
 		if (view.getId() == R.id.post_like_button && editText.getText().toString().trim() != null && !editText.getText().toString().trim().equals("")) {
 			// final SuperActivityToast superActivityToast = new
 			// SuperActivityToast(NewPostActivity.this,
@@ -155,6 +155,8 @@ public class NewPostActivity extends FragmentActivity implements OnClickListener
 			// superActivityToast.setProgressIndeterminate(true);
 			// superActivityToast.setText("Adding new post...");
 			// superActivityToast.show();
+			
+			view.setClickable(false);
 
 			NotificationProgress.showNotificationProgress(this, "Adding a new post", GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 			new AddPostsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), editText.getText().toString(), new APIListener() {
@@ -164,7 +166,7 @@ public class NewPostActivity extends FragmentActivity implements OnClickListener
 					// if (superActivityToast.isShowing()) {
 					// superActivityToast.dismiss();
 					// }
-
+					view.setClickable(true);
 					NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWPOST);
 					if (status) {
 						Crouton.makeText(NewPostActivity.this, "Post added!", Style.INFO).show();

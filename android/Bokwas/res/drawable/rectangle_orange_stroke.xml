@@ -75,7 +75,7 @@
 
     <item android:bottom="2px">
         <shape android:shape="rectangle" >
-            <solid android:color="#ffdead" />
+            <solid android:color="@color/light_color" />
 
             <!--
              <stroke

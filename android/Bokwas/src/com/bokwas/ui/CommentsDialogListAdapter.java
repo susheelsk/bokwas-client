@@ -30,7 +30,6 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
-import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 
@@ -247,20 +246,23 @@ public class CommentsDialogListAdapter extends ArrayAdapter<Comment> {
 	}
 
 	private void deleteComment(final Comment comment, final Post post) {
-		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
-		superActivityToast.setIndeterminate(true);
-		superActivityToast.setProgressIndeterminate(true);
-		NotificationProgress.showNotificationProgress(activity, "Deleting the comment", GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			private SuperActivityToast superActivityToast;
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
+					superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
+					superActivityToast.setText("Deleting comment");
+					superActivityToast.setIndeterminate(true);
+					superActivityToast.setProgressIndeterminate(true);
+					superActivityToast.show();
 					new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), comment.getCommentId(), activity, new APIListener() {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
+							superActivityToast.dismiss();
 							if (status) {
 								Crouton.makeText(activity, "Comment deleted!", Style.INFO).show();
 								notifyDataSetChanged();

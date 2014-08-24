@@ -2872,7 +2872,7 @@ com.bokwas.R$bool: int ga_autoActivityTracking
 com.bokwas.R$bool: int ga_debug
 com.bokwas.R$bool: int ga_reportUncaughtExceptions
 com.bokwas.R$bool: R$bool()
-com.bokwas.R$color: int actionbar_bg
+com.bokwas.R$color: int background_color
 com.bokwas.R$color: int black
 com.bokwas.R$color: int com_facebook_blue
 com.bokwas.R$color: int com_facebook_loginview_text_color
@@ -2893,11 +2893,18 @@ com.bokwas.R$color: int common_signin_btn_light_text_focused
 com.bokwas.R$color: int common_signin_btn_light_text_pressed
 com.bokwas.R$color: int common_signin_btn_text_dark
 com.bokwas.R$color: int common_signin_btn_text_light
+com.bokwas.R$color: int dark_color
 com.bokwas.R$color: int dark_gray
 com.bokwas.R$color: int dark_slate_gray
+com.bokwas.R$color: int fb_post_color
 com.bokwas.R$color: int gray_1
 com.bokwas.R$color: int gray_2
+com.bokwas.R$color: int header_button
+com.bokwas.R$color: int header_text_color
+com.bokwas.R$color: int light_color
 com.bokwas.R$color: int light_gray
+com.bokwas.R$color: int post_footer_color
+com.bokwas.R$color: int text_color
 com.bokwas.R$color: int white
 com.bokwas.R$color: R$color()
 com.bokwas.R$dimen: int activity_horizontal_margin
@@ -4074,6 +4081,7 @@ com.bokwas.R$id: int feed_list
 com.bokwas.R$id: int fl_inner
 com.bokwas.R$id: int flip
 com.bokwas.R$id: int friend_list
+com.bokwas.R$id: int friend_search_edittext
 com.bokwas.R$id: int fullscreen_imageview
 com.bokwas.R$id: int gridview
 com.bokwas.R$id: int header
@@ -4099,6 +4107,7 @@ com.bokwas.R$id: int login_desc_textview
 com.bokwas.R$id: int login_text
 com.bokwas.R$id: int manualOnly
 com.bokwas.R$id: int messageButton
+com.bokwas.R$id: int messageButtonLayout
 com.bokwas.R$id: int messageCount
 com.bokwas.R$id: int messageHeaderButton
 com.bokwas.R$id: int messageHeaderCount
@@ -4120,6 +4129,7 @@ com.bokwas.R$id: int oveflow_newpost
 com.bokwas.R$id: int overflowButton
 com.bokwas.R$id: int overflow_feedback
 com.bokwas.R$id: int overflow_invite
+com.bokwas.R$id: int overflow_message
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
 com.bokwas.R$id: int overflow_refresh
@@ -4208,6 +4218,7 @@ com.bokwas.R$layout: int like_list_item
 com.bokwas.R$layout: int likes_dialog
 com.bokwas.R$layout: int load_more_footer
 com.bokwas.R$layout: int login_page
+com.bokwas.R$layout: int message_friends_listitem
 com.bokwas.R$layout: int message_friends_page
 com.bokwas.R$layout: int message_list_item_ours
 com.bokwas.R$layout: int message_list_item_theirs
@@ -4426,13 +4437,14 @@ com.bokwas.util.BackgroundDataService
 com.bokwas.util.BackgroundDataService: BackgroundDataService()
 com.bokwas.util.BokwasHttpClient: BokwasHttpClient()
 com.bokwas.util.DateUtil: DateUtil()
-com.bokwas.util.GCMIntentService
 com.bokwas.util.GCMIntentService: GCMIntentService()
 com.bokwas.util.GCMUtils: GCMUtils()
 com.bokwas.util.GcmBroadcastReceiver
 com.bokwas.util.GcmBroadcastReceiver: GcmBroadcastReceiver()
 com.bokwas.util.GeneralUtil: GeneralUtil()
 com.bokwas.util.LocalStorage: LocalStorage()
+com.bokwas.util.NotificationIntentService
+com.bokwas.util.NotificationIntentService: NotificationIntentService()
 com.bokwas.util.NotificationProgress: NotificationProgress()
 com.bokwas.util.TrackerName: com.bokwas.util.TrackerName[] values()
 com.bokwas.util.TrackerName: com.bokwas.util.TrackerName valueOf(java.lang.String)

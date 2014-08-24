@@ -3,7 +3,7 @@
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDDDD" >
+    android:background="@color/background_color" >
 
     <RelativeLayout
         android:id="@+id/hidden_view"
@@ -34,7 +34,7 @@
     <RelativeLayout
         android:id="@+id/message_submit"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/emojiconsLayout"
         android:layout_marginBottom="8dp" >
         
@@ -44,26 +44,27 @@
             android:layout_height="36dp"
             android:layout_alignBottom="@+id/message_edittext"
             android:layout_alignParentLeft="true"
-            android:layout_alignTop="@+id/message_edittext"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:src="@drawable/emoji_1f600"
             android:padding="4dp"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/message_edittext"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:minHeight="36dp"
             android:layout_toRightOf="@+id/emojiButton"
             android:layout_toLeftOf="@+id/messageButton"
             android:adjustViewBounds="true"
             android:background="@drawable/rectangle_white"
             android:hint="Send message"
             android:padding="4dp"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             emojicon:emojiconSize="22sp"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -74,12 +75,11 @@
             android:layout_height="36dp"
             android:layout_alignBottom="@+id/message_edittext"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/message_edittext"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/generic_button"
             android:text=">"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
     </RelativeLayout>

@@ -36,7 +36,7 @@
     </style>
 
     <style name="myTheme.ActionBar.Text" parent="@android:style/TextAppearance">
-        <item name="android:textColor">#ffffff</item>
+        <item name="android:textColor">@color/fb_post_color</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">24sp</item>
     </style>

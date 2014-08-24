@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import com.achep.header2actionbar.FadingActionBarHelper;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.apirequests.GetPostsOfPersonApi;
+import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.response.Post;
 import com.bokwas.ui.ProfilePageFragment;
@@ -123,7 +123,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		getActionBar().setIcon(null);
 		getActionBar().setTitle("bokwas");
 		getActionBar().setDisplayShowHomeEnabled(false);
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F99238")));
+		getActionBar().setBackgroundDrawable(new ColorDrawable(R.color.dark_color));
 		mFadingActionBarHelper = new FadingActionBarHelper(getActionBar(), getResources().getDrawable(R.drawable.actionbar_bg));
 
 		if (savedInstanceState == null) {
@@ -144,6 +144,11 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile_overflow, menu);
+		MenuItem messageItem = menu.findItem(R.id.overflow_message);
+		Friends friend = UserDataStore.getStore().getFriend(profileId);
+		if(friend==null) {
+			messageItem.setVisible(false);
+		}
 		return true;
 	}
 
@@ -159,6 +164,13 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		} else if (id == R.id.oveflow_home) {
 			onBackPressed();
 			return true;
+		}else if(id==R.id.overflow_message) {
+			Intent intent = new Intent(this, MessageActivity.class);
+			intent.putExtra("receiverId", profileId);
+			intent.putExtra("fromProfilePage", true);
+			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
+			startActivity(intent);
+			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}

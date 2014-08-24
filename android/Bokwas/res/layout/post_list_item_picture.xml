@@ -40,7 +40,7 @@
         android:lines="1"
         android:maxLines="1"
         android:text="Evil Philanthropist"
-        android:textColor="#777777"
+        android:textColor="@color/text_color"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -79,7 +79,7 @@
         android:autoLink="web"
         android:linksClickable="true"
         android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
-        android:textColor="#777777"
+        android:textColor="@color/text_color"
         android:textSize="12sp"
         android:textStyle="normal"
         emojicon:emojiconSize="22sp" />
@@ -121,7 +121,7 @@
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="March 7, 4:02pm"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="12sp"
             android:textStyle="normal" />
 
@@ -168,7 +168,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@+id/post_image"
                     android:text="12"
-                    android:textColor="#777777"
+                    android:textColor="@color/text_color"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -191,7 +191,7 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="3dp"
-                android:background="@drawable/selector_rectangle_grey"
+                android:background="@color/post_footer_color"
                 android:gravity="center" >
 
                 <ImageView
@@ -209,7 +209,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@+id/like_image"
                     android:text="12"
-                    android:textColor="#777777"
+                    android:textColor="@color/text_color"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>

@@ -74,7 +74,7 @@ public class GCMIntentService extends IntentService {
 
 	private void addLikes(Bundle extras) {
 		try {
-			if (!isAppRunning()) {
+			if (UserDataStore.isInitialized()) {
 				UserDataStore.initData(this);
 			}
 			String commentId = extras.getString("likesCommentId", "");
@@ -95,7 +95,7 @@ public class GCMIntentService extends IntentService {
 
 	private void addCommentToPost(Bundle extras) {
 		try {
-			if (!isAppRunning()) {
+			if (UserDataStore.isInitialized()) {
 				UserDataStore.initData(this);
 			}
 			Comment comment = new Comment(extras.getString("commentId"), Long.valueOf(extras.getString("commentTime")), extras.getString("commentText"), new ArrayList<Likes>(),
@@ -105,16 +105,6 @@ public class GCMIntentService extends IntentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private boolean isAppRunning() {
-		ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		List<RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
-
-		if (services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(getPackageName().toString())) {
-			return true;
-		}
-		return false;
 	}
 
 	private boolean isActivityRunning(String className) {
@@ -181,19 +171,21 @@ public class GCMIntentService extends IntentService {
 		String time = bundle.getString("time");
 		String message = bundle.getString("message");
 		String messageId = bundle.getString("messageId");
-		Friends friend = UserDataStore.getStore().getFriend(fromId);
-		if (friend == null) {
-			return;
-		}
-
+		
 		boolean isAppRunning = false;
-		if (!isAppRunning()) {
+		if (!UserDataStore.isInitialized()) {
 			Log.d("BokwasNotification", "App is not running");
 			UserDataStore.initData(this);
 		} else {
 			Log.d("BokwasNotification", "App is running");
 			isAppRunning = true;
 		}
+		
+		Friends friend = UserDataStore.getStore().getFriend(fromId);
+		if (friend == null) {
+			return;
+		}
+		
 		Message messageData = new Message(fromId, UserDataStore.getStore().getUserId(), Long.valueOf(time), message, messageId, false);
 		UserDataStore.getStore().addMessageToPerson(fromId, messageData);
 		UserDataStore.getStore().save(this);

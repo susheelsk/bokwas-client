@@ -28,7 +28,7 @@
         android:lines="1"
         android:maxLines="1"
         android:text="Evil Philanthropist"
-        android:textColor="#777777"
+        android:textColor="@color/text_color"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -66,7 +66,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
         android:text="The cops came to my house this morning claiming that my dog had chased someone on a bike. I told those idiots my dog doesn’t have a bike."
-        android:textColor="#777777"
+        android:textColor="@color/text_color"
         android:autoLink="web"
         android:linksClickable="true"
         android:textSize="12sp"
@@ -99,7 +99,7 @@
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="March 7, 4:02pm"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="12sp"
             android:textStyle="normal" />
 
@@ -145,7 +145,7 @@
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@+id/post_image"
                     android:text="12"
-                    android:textColor="#777777"
+                    android:textColor="@color/text_color"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -186,7 +186,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/like_image"
                     android:text="12"
-                    android:textColor="#777777"
+                    android:textColor="@color/text_color"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>

@@ -41,7 +41,6 @@ import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
-import com.bokwas.util.NotificationProgress;
 import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
@@ -159,8 +158,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.post_picture);
 			rowView.setTag(viewHolder);
 		}
+		
 		ViewHolder holder = (ViewHolder) rowView.getTag();
-
 		String postText = post.getPostText();
 		if (postText.length() > 250) {
 			holder.postText.setText(postText.subSequence(0, 250) + " ...");
@@ -356,7 +355,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		holder.likeButton.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View view) {
+				view.setClickable(false);
 				likePost(post);
 			}
 		});
@@ -425,7 +425,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
-		NotificationProgress.showNotificationProgress(activity, "Deleting the post", GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+		superActivityToast.show();
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -435,7 +435,7 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+							superActivityToast.dismiss();
 							if (status) {
 								Crouton.makeText(activity, "Post deleted!", Style.INFO).show();
 								notifyDataSetChanged();

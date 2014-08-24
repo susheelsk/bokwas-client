@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DDDDDD" >
+    android:background="@color/background_color" >
     
     <RelativeLayout
         android:id="@+id/hidden_view"
@@ -37,20 +37,63 @@
             android:visibility="gone"
             android:text="Invite Friends" />
 
-    <include
+    
+    <RelativeLayout
         android:id="@+id/header_layout"
-        layout="@layout/header_main" />
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        android:background="@color/dark_color"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/titlebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="bokwas"
+            android:textColor="@color/fb_post_color"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+        
+        <EditText android:id="@+id/friend_search_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:textColor="@color/text_color"
+        android:hint="Search friends"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_toRightOf="@+id/titlebar"
+        android:layout_centerVertical="true"
+        android:paddingLeft="6dp"
+        android:textSize="16sp"
+        android:background="@drawable/rectangle_orange"/>
+        
+        </RelativeLayout>
+    
+    <!-- <EditText android:id="@+id/friend_search_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textColor="@color/text_color"
+        android:hint="Search friends"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="52dp"
+        android:background="@drawable/rectangle_white"/> -->
     
     <ListView
         android:id="@+id/friend_list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
         android:layout_marginTop="48dp"
         android:saveEnabled="true"
         android:cacheColorHint="@android:color/transparent"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="4dp" />
+        android:divider="#999999"
+        android:dividerHeight="2dp" />
 
 </RelativeLayout>

@@ -17,8 +17,8 @@
         android:gravity="center_horizontal"
         android:layout_margin="2dp"
         android:text="Why connect to facebook?"
-        android:textColor="#ffffff"
-        android:background="#f99238"
+        android:textColor="@color/fb_post_color"
+        android:background="@color/dark_color"
         android:textSize="20sp"
         android:textStyle="bold"/>
     

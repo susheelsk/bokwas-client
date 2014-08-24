@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,7 +28,7 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 	private Activity activity;
 
 	public MessageFriendsListAdapter(Activity activity, List<Friends> friends) {
-		super(activity, R.layout.notification_list_item, friends);
+		super(activity, R.layout.message_friends_listitem, friends);
 		this.friends = friends;
 		this.activity = activity;
 		for (int i = 0; i < UserDataStore.getStore().getNotifications().size(); i++) {
@@ -65,7 +66,7 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 		final Friends friend = friends.get(position);
 		if (rowView == null) {
 			LayoutInflater inflater = activity.getLayoutInflater();
-			rowView = inflater.inflate(R.layout.notification_list_item, null);
+			rowView = inflater.inflate(R.layout.message_friends_listitem, null);
 			ViewHolder viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) rowView.findViewById(R.id.post_name);
 			viewHolder.picture = (ImageView) rowView.findViewById(R.id.post_profile_pic);
@@ -89,6 +90,7 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 			message = messages.get(messages.size() - 1).getMessage();
 		}
 		
+		holder.time.setTextColor(Color.parseColor("#777777"));
 		if(messages.size()>0) {
 			holder.time.setText(DateUtil.getSimpleTime(new Date(time)));
 		}else {
@@ -118,7 +120,6 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 				intent.putExtra("receiverId", friend.id);
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 				activity.startActivity(intent);
-				activity.finish();
 			}
 		});
 

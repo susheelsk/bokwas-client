@@ -1,6 +1,5 @@
 package com.bokwas.datasets;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -134,13 +133,13 @@ public class UserDataStore {
 		Post post = getPost(newNotification.getNotification_data().get("postId"));
 		Date today = new Date();
 		Date notificationDate = new Date(newNotification.getTimestamp());
-		int diffInDays = (int) DateUtil.getDateDiff(today, notificationDate, TimeUnit.DAYS);
+		int diffInMins = (int) DateUtil.getDateDiff(today, notificationDate, TimeUnit.MINUTES);
 		for (Notification notif : notificationList) {
 			if (notif.getNotification_id().equals(newNotification.getNotification_id())) {
 				// duplicate notification. Already exists
 				return;
 			}
-			if (notif.getNotification_data().get("postId").equals(newNotification.getNotification_data().get("postId")) && diffInDays < 2) {
+			if (notif.getNotification_data().get("postId").equals(newNotification.getNotification_data().get("postId")) && diffInMins < 20) {
 				// one notification for this post alreay exists and it came
 				// within 2 days
 				return;

@@ -5,7 +5,7 @@
     android:layout_gravity="center"
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp"
-    android:background="#DDDDDD"
+    android:background="@color/background_color"
     android:orientation="vertical" >
 
 
@@ -15,10 +15,10 @@
         android:layout_height="36dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="#F99238"
+        android:background="@color/dark_color"
         android:gravity="center"
         android:text="Likes"
-        android:textColor="#ffffff"
+        android:textColor="@color/fb_post_color"
         android:textSize="20sp"
         android:textStyle="bold" />
 

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.apirequests.SendMessageApi;
+import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.ui.MessageListAdapter;
 import com.bokwas.util.AppData;
@@ -157,6 +158,17 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 			hideEmojis();
 			return;
 		}
+		if(getIntent().getBooleanExtra("fromProfilePage", false)) {
+			Intent intent = new Intent(this, ProfileActivityExperimental.class);
+			intent.putExtra("profileId", receiverId);
+			Friends friend = UserDataStore.getStore().getFriend(receiverId);
+			intent.putExtra("name", friend.getBokwasName());
+			intent.putExtra("avatarId", Integer.valueOf(friend.getBokwasAvatarId()));
+			startActivity(intent);
+			overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
+			finish();
+			return;
+		}
 		Intent intent = new Intent(this, MessageFriendsActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
@@ -190,6 +202,7 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 	}
 
 	private void setupUI() {
+		NotificationProgress.clearNotification(this,GeneralUtil.GENERAL_NOTIFICATIONS);
 		findViewById(R.id.messageHeaderButton).setVisibility(View.GONE);
 		((TextView) findViewById(R.id.titlebar)).setText(UserDataStore.getStore().getFriend(receiverId).getBokwasName());
 

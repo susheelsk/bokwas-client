@@ -3,7 +3,7 @@
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dddddd" >
+    android:background="@color/background_color" >
 
     <include
         android:id="@+id/header_layout"
@@ -47,7 +47,7 @@
             android:lines="1"
             android:maxLines="1"
             android:text="Evil Philanthropist"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -72,7 +72,7 @@
             android:minLines="6"
             android:padding="4dp"
             android:paddingLeft="4dp"
-            android:textColor="#777777"
+            android:textColor="@color/text_color"
             android:textSize="16sp"
             android:textStyle="normal"
             emojicon:emojiconSize="22sp" />
@@ -100,7 +100,7 @@
                 android:layout_marginLeft="12dp"
                 android:gravity="center"
                 android:text="March 7, 4:02pm"
-                android:textColor="#777777"
+                android:textColor="@color/text_color"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:visibility="invisible" />
@@ -157,7 +157,7 @@
                         android:layout_marginLeft="4dp"
                         android:layout_toRightOf="@+id/like_image"
                         android:text="Post"
-                        android:textColor="#777777"
+                        android:textColor="@color/text_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </RelativeLayout>

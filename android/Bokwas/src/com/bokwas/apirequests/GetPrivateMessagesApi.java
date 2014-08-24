@@ -87,7 +87,7 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 		if (listener != null) {
 			listener.onAPIStatus(result);
 		}
-		if(message!=null) {
+		if(messageListener!=null) {
 			messageListener.onMessage(message);
 		}
 	}

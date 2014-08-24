@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -62,22 +65,33 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	private PullToRefreshListView listView;
 	private HomescreenPostsListAdapter adapter;
 	protected boolean isLoadingLastItems = false;
-	private boolean isRefreshed = false;
 	private ImageView floatButton;
 	private boolean isAnimRunning = false;
+	private BroadcastReceiver receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.home_screen);
-		
-		if(AppData.isReset) {
+
+		if (AppData.isReset) {
 			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
 			finish();
 		}
 
 		setOnClickListeners();
+
+		IntentFilter filter = new IntentFilter("NEW_MESSAGE");
+		filter.addAction("NEW_MESSAGE");
+		filter.addAction("SOME_OTHER_ACTION");
+		receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				setupUI();
+			}
+		};
+		registerReceiver(receiver, filter);
 
 		setupUI();
 
@@ -89,14 +103,11 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			try {
 				UserDataStore.initData(this);
 				NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
-				isRefreshed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		updateFriendsAndMessagesApi();
-		
 		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
@@ -118,46 +129,48 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 	}
 
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(receiver);
+	}
+
+	@Override
 	protected void onStop() {
 		super.onStop();
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
-	
+
 	private void updateFriendsAndMessagesApi() {
-		if (getIntent().getBooleanExtra("fromSplashscreen", false) && isRefreshed == false) {
 
-			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
+		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 
-			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+		new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
 
-				@Override
-				public void onAPIStatus(boolean status) {
-					setupNotificationBar();
-				}
-			}).execute("");
+			@Override
+			public void onAPIStatus(boolean status) {
+				setupNotificationBar();
+			}
+		}).execute("");
 
-			new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new APIListener() {
+		new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new APIListener() {
 
-				@Override
-				public void onAPIStatus(boolean status) {
-					int unSeenMessageSize = 0;
-					for (Friends friend : UserDataStore.getStore().getFriends()) {
-						for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
-							if (!message.isSeen()) {
-								unSeenMessageSize++;
-							}
+			@Override
+			public void onAPIStatus(boolean status) {
+				int unSeenMessageSize = 0;
+				for (Friends friend : UserDataStore.getStore().getFriends()) {
+					for (Message message : UserDataStore.getStore().getMessagesForPerson(friend.getId())) {
+						if (!message.isSeen()) {
+							unSeenMessageSize++;
 						}
 					}
-					if (unSeenMessageSize > 0) {
-						findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
-						((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
-					}
 				}
-			}).execute("");
+				if (unSeenMessageSize > 0) {
+					findViewById(R.id.messageHeaderCount).setVisibility(View.VISIBLE);
+					((TextView) findViewById(R.id.messageHeaderCount)).setText("" + unSeenMessageSize);
+				}
+			}
+		}).execute("");
 
-			// listView.setRefreshing();
-			isRefreshed = true;
-		}
 	}
 
 	@Override
@@ -168,7 +181,6 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			try {
 				Log.d("HomescreenActivity", "onResume() isInit : false");
 				UserDataStore.initData(this);
-				isRefreshed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -254,6 +266,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 						}
 					}
 				}).execute("");
+				updateFriendsAndMessagesApi();
 			}
 		});
 
@@ -281,16 +294,23 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 				}
 			}
 		});
+		if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("fromSplashscreen")) {
+			listView.setRefreshing();
+		}
+
 	}
 
 	protected void setupNotificationBar() {
 		try {
-			// if (UserDataStore.getStore().getUnseenNotifications().size() > 0)
-			// {
-			findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
-			TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
-			notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
-			// }
+			if (UserDataStore.getStore().getUnseenNotifications().size() > 0) {
+				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
+				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+				notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
+			}else {
+				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
+				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
+				notificationButton.setText(String.valueOf("!"));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

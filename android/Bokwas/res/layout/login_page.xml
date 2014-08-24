@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_texture_lightorange" >
+    android:background="@color/dark_color" >
 
     <ImageView
         android:id="@+id/facebookButton"
@@ -49,7 +49,7 @@
         android:gravity="center"
         android:scaleType="centerCrop"
         android:text="Why?"
-        android:textColor="#777777"
+        android:textColor="@color/text_color"
         android:textSize="14sp"
         android:textStyle="bold" />
 

@@ -2,6 +2,6 @@
 <resources>
 
     <!-- Action bar background -->
-    <item name="actionbar_bg" type="drawable">@color/actionbar_bg</item>
+    <item name="actionbar_bg" type="drawable">@color/dark_color</item>
 
 </resources>

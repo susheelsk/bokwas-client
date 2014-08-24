@@ -1,15 +1,17 @@
 package com.bokwas;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -61,7 +63,7 @@ import com.squareup.picasso.Picasso;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class PostActivity extends FragmentActivity implements OnClickListener,EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
+public class PostActivity extends FragmentActivity implements OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
 	private Post post;
 	private EditText editText;
@@ -75,42 +77,56 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 	private FragmentTransaction transaction;
 	private EmojiconsFragment emojiFragment;
 	private boolean isEmojiShown = false;
+	private BroadcastReceiver receiver;
+	protected SuperActivityToast superActivityToast;
+	private String TAG = "PostActivity";
 
-	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.post_screen);
-		
-		if(AppData.isReset) {
+
+		if (AppData.isReset) {
 			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
 			finish();
+			return;
 		}
 
 		manager = getSupportFragmentManager();
 		transaction = manager.beginTransaction();
 
 		String postId = getIntent().getStringExtra("postId");
+		
+		Log.d(TAG ,"postId : "+postId);
 		if (postId == null) {
-			Toast.makeText(this, "PostId not found", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Post not found", Toast.LENGTH_SHORT).show();
 			onBackPressed();
 			return;
 		}
 		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
 		transaction.hide(emojiFragment);
 		transaction.commit();
-		boolean isFromNoti = getIntent().getBooleanExtra("fromNoti", false);
 		if (!UserDataStore.isInitialized()) {
 			try {
 				UserDataStore.initData(this);
 				NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
-				refreshPost();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
+		IntentFilter filter = new IntentFilter("NEW_MESSAGE");
+		filter.addAction("NEW_MESSAGE");
+		filter.addAction("SOME_OTHER_ACTION");
+		receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				setupUI();
+			}
+		};
+		registerReceiver(receiver, filter);
+
 		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_ADDLIKES);
 		NotificationProgress.clearNotification(this, GeneralUtil.NOTIFICATION_PROGRESS_DELETECOMMENT);
@@ -139,13 +155,11 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			findViewById(R.id.commentButton).setVisibility(View.GONE);
 			findViewById(R.id.emojiButton).setVisibility(View.GONE);
 		}
-		ArrayList<Post> postList = new ArrayList<Post>();
-		postList.add(post);
-		
+
 		setupGoogleAnalytics();
-		
+
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -160,9 +174,9 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		}
 		setupUI();
 	}
-	
+
 	private void setupGoogleAnalytics() {
-		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
 		t.enableAutoActivityTracking(true);
 	}
 
@@ -170,6 +184,15 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 	protected void onStart() {
 		super.onStart();
 		GoogleAnalytics.getInstance(this).reportActivityStart(this);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(receiver);
+		if (superActivityToast != null) {
+			superActivityToast.dismiss();
+		}
 	}
 
 	@Override
@@ -187,7 +210,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			ImageView postPicture = (ImageView) findViewById(R.id.post_picture);
 			postPicture.setBackgroundResource(android.R.color.transparent);
 			postPicture.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(PostActivity.this, FullScreenImage.class);
@@ -208,7 +231,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			findViewById(R.id.comment_list).setVisibility(View.GONE);
 			findViewById(R.id.post_comment_button).setVisibility(View.VISIBLE);
 			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			
+
 		} else {
 			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
 			listView = (ListView) findViewById(R.id.comment_list);
@@ -304,7 +327,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
 		isEmojiShown = true;
 		findViewById(R.id.overflowButton).postDelayed(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				manager = getSupportFragmentManager();
@@ -313,7 +336,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 				transaction.commit();
 			}
 		}, 250);
-		
+
 	}
 
 	private void hideEmojis() {
@@ -337,18 +360,23 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		findViewById(R.id.commentButton).setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(final View view) {
 
 				if (editText.getText().toString().trim() != null && !editText.getText().toString().trim().equals("")) {
-
-					NotificationProgress.showNotificationProgress(PostActivity.this, "Adding a new comment", GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
+					view.setClickable(false);
+					superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
+					superActivityToast.setText("Adding comment");
+					superActivityToast.setIndeterminate(true);
+					superActivityToast.setProgressIndeterminate(true);
+					superActivityToast.show();
 
 					new AddCommentsApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), post.getPostedBy(), editText.getText().toString(), UserDataStore.getStore().getUserId(),
 							PostActivity.this, new APIListener() {
 
 								@Override
 								public void onAPIStatus(boolean status) {
-									NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_NEWCOMMENT);
+									view.setClickable(true);
+									superActivityToast.dismiss();
 									if (status) {
 										Toast.makeText(PostActivity.this, "Comment added!", Toast.LENGTH_SHORT).show();
 										editText.setText("");
@@ -370,13 +398,14 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 		findViewById(R.id.post_like_button).setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
-				likePost();
+			public void onClick(View view) {
+				likePost(view);
 			}
 		});
 	}
 
-	protected void likePost() {
+	protected void likePost(final View view) {
+		view.setClickable(false);
 		final SuperActivityToast superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
 		superActivityToast.setIndeterminate(true);
 		superActivityToast.setProgressIndeterminate(true);
@@ -388,6 +417,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 
 			@Override
 			public void onAPIStatus(boolean status) {
+				view.setClickable(true);
 				if (status) {
 					if (isLike) {
 						Crouton.makeText(PostActivity.this, "Post liked!", Style.INFO).show();
@@ -405,7 +435,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 
 	@Override
 	public void onBackPressed() {
-		if(isEmojiShown) {
+		if (isEmojiShown) {
 			hideEmojis();
 			return;
 		}
@@ -453,7 +483,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 						onBackPressed();
 						break;
 					case R.id.post_like:
-						likePost();
+						likePost(findViewById(R.id.post_like_button));
 						break;
 					case R.id.post_share:
 						sharePost();
@@ -504,7 +534,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 			startActivity(intent);
 			overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 			finish();
-		}else if(view.getId() == R.id.emojiButton) {
+		} else if (view.getId() == R.id.emojiButton) {
 			hideKeyboard();
 		}
 	}
@@ -518,7 +548,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 				if (status) {
 					comments = post.getComments();
 					setupUI();
-				}else {
+				} else {
 					Toast.makeText(PostActivity.this, "Can't find post", Toast.LENGTH_SHORT).show();
 					onBackPressed();
 				}
@@ -554,21 +584,22 @@ public class PostActivity extends FragmentActivity implements OnClickListener,Em
 	}
 
 	private void deletePost() {
-		final SuperActivityToast superActivityToast = new SuperActivityToast(this, SuperToast.Type.PROGRESS);
-		superActivityToast.setIndeterminate(true);
-		superActivityToast.setProgressIndeterminate(true);
-		NotificationProgress.showNotificationProgress(this, "Deleting the post", GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
 
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case DialogInterface.BUTTON_POSITIVE:
+					superActivityToast = new SuperActivityToast(PostActivity.this, SuperToast.Type.PROGRESS);
+					superActivityToast.setText("Deleting post");
+					superActivityToast.setIndeterminate(true);
+					superActivityToast.setProgressIndeterminate(true);
+					superActivityToast.show();
 					new DeleteApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), null, PostActivity.this, new APIListener() {
 
 						@Override
 						public void onAPIStatus(boolean status) {
-							NotificationProgress.clearNotificationProgress(GeneralUtil.NOTIFICATION_PROGRESS_DELETEPOST);
+							superActivityToast.dismiss();
 							if (status) {
 								Crouton.makeText(PostActivity.this, "Post deleted!", Style.INFO).show();
 								onBackPressed();

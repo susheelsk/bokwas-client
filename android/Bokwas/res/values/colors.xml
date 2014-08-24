@@ -1,7 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Action bar background -->
-    <color name="actionbar_bg">#F99238</color>
-
+	
+    <!-- Default Orange Theme -->
+    <color name="dark_color">#F99238</color>
+    <color name="light_color">#FFDEAD</color>
+    <color name="text_color">#777777</color>
+    <color name="background_color">#DDDDDD</color>
+    <color name="header_button">#FFDEAD</color>
+    <color name="fb_post_color">#FFFFFF</color>
+    <color name="post_footer_color">#EEEEEE</color>
+    <color name="header_text_color">#FFFFFF</color>
+    
+    <!-- Dark Orange Theme  -->
+    <!-- <color name="dark_color">#FF7919</color>
+    <color name="light_color">#FFDEAD</color>
+    <color name="text_color">#777777</color>
+    <color name="background_color">#ffeed6</color>
+    <color name="header_button">#FFDEAD</color>
+    <color name="fb_post_color">#FFFFFF</color>
+    <color name="post_footer_color">#EEEEEE</color>
+    <color name="header_text_color">#FFFFFF</color> -->
+    
+    <!-- Blue-Green Theme --> 
+    <!-- <color name="dark_color">#35A6A0</color>
+    <color name="light_color">#B1D6D4</color>
+    <color name="text_color">#777777</color>
+    <color name="background_color">#D7E1E3</color>
+    <color name="header_button">#B1D6D4</color>
+    <color name="fb_post_color">#FFFFFF</color>
+    <color name="post_footer_color">#EEEEEE</color>
+    <color name="header_text_color">#FFFFFF</color> -->
+    
+   <!-- Maroon -->
+   <!--  <color name="dark_color">#E93F42</color>
+    <color name="light_color">#FFCBCE</color>
+    <color name="text_color">#777777</color>
+    <color name="background_color">#FFE4E1</color>
+    <color name="header_button">#FF8E94</color>
+    <color name="fb_post_color">#FFFFFF</color>
+    <color name="post_footer_color">#EEEEEE</color>
+    <color name="header_text_color">#FFFFFF</color>--> 
+    
+    <!-- Green -->
+   <!--  <color name="dark_color">#66A594</color>
+    <color name="light_color">#a3c9be</color>
+    <color name="text_color">#777777</color>
+    <color name="background_color">#cce1db</color>
+    <color name="header_button">#FF8E94</color>
+    <color name="fb_post_color">#FFFFFF</color>
+    <color name="post_footer_color">#EEEEEE</color>
+    <color name="header_text_color">#FFFFFF</color> -->
+    
 </resources>
