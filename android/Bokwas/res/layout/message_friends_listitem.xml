@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/selector_rectangle_white"
     android:orientation="vertical" >
 
     <TextView
@@ -85,7 +86,7 @@
     <RelativeLayout
         android:id="@+id/post_footer_layout"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="24dp"
         android:layout_below="@+id/post_line_separator"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp" >
@@ -99,7 +100,7 @@
             android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="March 7, 4:02pm"
-            android:textColor="@android:color/transparent"
+            android:textColor="#777777"
             android:textSize="12sp"
             android:textStyle="normal" />
 

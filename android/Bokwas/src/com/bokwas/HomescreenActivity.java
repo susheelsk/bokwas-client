@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,8 @@ import com.bokwas.apirequests.GetPrivateMessagesApi;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.dialogboxes.GenericDialogOk;
+import com.bokwas.dialogboxes.GenericDialogOk.DialogType;
 import com.bokwas.dialogboxes.NotificationDialog;
 import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
@@ -170,6 +173,24 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 				}
 			}
 		}).execute("");
+		
+		new AsyncTask<String, Void, Boolean>() {
+
+			@Override
+			protected void onPostExecute(Boolean result) {
+				super.onPostExecute(result);
+				if(result) {
+					GenericDialogOk dialog = new GenericDialogOk(HomescreenActivity.this, "Update Available", "There is a new version of the app on the play store. Update now.",DialogType.DIALOG_UPDATE_APP);
+					dialog.show();
+				}
+			}
+
+			@Override
+			protected Boolean doInBackground(String... params) {
+				boolean result = GeneralUtil.web_update(HomescreenActivity.this);
+				return result;
+			}
+		}.execute("");
 
 	}
 

@@ -3,9 +3,9 @@ package com.bokwas.ui;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,15 +19,18 @@ import com.bokwas.R;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.dialogboxes.MessageDialog;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
 public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 
 	private List<Friends> friends;
-	private Activity activity;
+	private FragmentActivity activity;
+	protected MessageDialog dialog;
 
-	public MessageFriendsListAdapter(Activity activity, List<Friends> friends) {
+	public MessageFriendsListAdapter(FragmentActivity activity, List<Friends> friends) {
 		super(activity, R.layout.message_friends_listitem, friends);
 		this.friends = friends;
 		this.activity = activity;
@@ -120,10 +123,25 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 				intent.putExtra("receiverId", friend.id);
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 				activity.startActivity(intent);
+				
+//				dialog = new MessageDialog(activity, friend.id);
+//				dialog.show();
 			}
 		});
 
 		return rowView;
+	}
+	
+	public void onEmojiBackClicked() {
+		if(dialog!=null) {
+			dialog.onEmojiconBackspaceClicked();
+		}
+	}
+	
+	public void onEmojiClicked(Emojicon emojicon) {
+		if(dialog!=null) {
+			dialog.onEmojiconClicked(emojicon);
+		}
 	}
 
 }

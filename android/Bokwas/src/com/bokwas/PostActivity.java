@@ -24,12 +24,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +44,7 @@ import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
 import com.bokwas.ui.CommentsDialogListAdapter;
+import com.bokwas.ui.ExpandableHeightListView;
 import com.bokwas.util.AppData;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
@@ -69,7 +69,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 	private EditText editText;
 	private CommentsDialogListAdapter adapter;
 	private List<Comment> comments;
-	private ListView listView;
+	private ExpandableHeightListView listView;
 	private boolean isLike = true;
 	private ProgressDialog pdia;
 	private boolean isOutsidePost = false;
@@ -97,8 +97,8 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 		transaction = manager.beginTransaction();
 
 		String postId = getIntent().getStringExtra("postId");
-		
-		Log.d(TAG ,"postId : "+postId);
+
+		Log.d(TAG, "postId : " + postId);
 		if (postId == null) {
 			Toast.makeText(this, "Post not found", Toast.LENGTH_SHORT).show();
 			onBackPressed();
@@ -147,6 +147,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 			return;
 		}
 		comments = post.getComments();
+
 		setupUI();
 		if (post.isBokwasPost() && !UserDataStore.getStore().isPostFromFriendOrMe(post)) {
 			isOutsidePost = true;
@@ -228,13 +229,20 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 			});
 			postPicture.setVisibility(View.VISIBLE);
 			Picasso.with(this).load(post.getPicture()).resize(250, 250).centerCrop().placeholder(R.drawable.placeholder).into(postPicture);
-			findViewById(R.id.comment_list).setVisibility(View.GONE);
-			findViewById(R.id.post_comment_button).setVisibility(View.VISIBLE);
-			getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
+			listView = (ExpandableHeightListView) findViewById(R.id.comment_list);
+			listView.setExpanded(true);
+			listView.setAdapter(adapter);
+			if (comments == null || comments.size() < 1) {
+				listView.setBackgroundResource(android.R.color.transparent);
+			} else {
+				listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
+			}
 
 		} else {
 			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
-			listView = (ListView) findViewById(R.id.comment_list);
+			listView = (ExpandableHeightListView) findViewById(R.id.comment_list);
+			listView.setExpanded(true);
 			listView.setAdapter(adapter);
 			if (comments == null || comments.size() < 1) {
 				listView.setBackgroundResource(android.R.color.transparent);
@@ -242,6 +250,16 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 				listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
 			}
 		}
+
+		final ScrollView scrollView = (ScrollView) findViewById(R.id.post_screen_scrollview);
+		scrollView.post(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				scrollView.fullScroll(ScrollView.FOCUS_UP);
+			}
+		});
 
 		// setupNotificationBar();
 		int pixelsInDp = getPixelsInDp(12);
@@ -251,7 +269,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 		// ((ImageView)findViewById(R.id.newPostButton)).setImageResource(R.drawable.ic_menu_refresh);
 		// ((TextView) findViewById(R.id.messageHeaderButton)).setText("");
 		editText = (EditText) findViewById(R.id.comment_edittext);
-
+		
 		TextView postText = (TextView) findViewById(R.id.post_content);
 		postText.setMovementMethod(new ScrollingMovementMethod());
 		postText.setText(post.getPostText());
@@ -268,6 +286,12 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 			likeSize.setText(String.valueOf(likes.size()));
 		} else {
 			likeSize.setText(String.valueOf(0));
+		}
+
+		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+			findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
+		} else {
+			findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
 		}
 
 		TextView name = (TextView) findViewById(R.id.post_name);

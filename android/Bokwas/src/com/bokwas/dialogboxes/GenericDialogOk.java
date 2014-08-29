@@ -2,7 +2,9 @@ package com.bokwas.dialogboxes;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Gravity;
@@ -18,12 +20,19 @@ public class GenericDialogOk extends Dialog implements android.view.View.OnClick
 	private Activity activity;
 	private String title;
 	private String description;
+	private DialogType type;
 	
-	public GenericDialogOk(Activity activity, String title, String description) {
+	public enum DialogType {
+		DIALOG_GENERIC,
+		DIALOG_UPDATE_APP
+	}
+	
+	public GenericDialogOk(Activity activity, String title, String description,DialogType type) {
 		super(activity);
 		this.activity = activity;
 		this.title = title;
 		this.description = description;
+		this.type = type;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -51,6 +60,25 @@ public class GenericDialogOk extends Dialog implements android.view.View.OnClick
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.dialog_button_ok) {
+			switch(type) {
+			case DIALOG_GENERIC :
+				
+				break;
+			case DIALOG_UPDATE_APP :
+				String url = "";
+				String my_package_name = "com.bokwas";
+				try {
+					// Check whether Google Play store is installed or not:
+					activity.getPackageManager().getPackageInfo("com.android.vending", 0);
+					url = "market://details?id=" + my_package_name;
+				} catch (final Exception e) {
+					url = "https://play.google.com/store/apps/details?id=" + my_package_name;
+				}
+				// Open the app page in Google Play store:
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				activity.startActivity(intent);
+				break;
+			}
 			dismiss();
 		}
 	}

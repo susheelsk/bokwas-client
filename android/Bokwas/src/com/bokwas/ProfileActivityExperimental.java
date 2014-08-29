@@ -1,8 +1,5 @@
 package com.bokwas;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,11 +12,8 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.achep.header2actionbar.FadingActionBarHelper;
-import com.bokwas.apirequests.GetPosts.APIListener;
-import com.bokwas.apirequests.GetPostsOfPersonApi;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
-import com.bokwas.response.Post;
 import com.bokwas.ui.ProfilePageFragment;
 import com.bokwas.util.AppData;
 import com.bokwas.util.GeneralUtil;
@@ -37,6 +31,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 	private boolean isBokwasPost = false;
 	private Bundle savedInstanceState;
 	private ProgressDialog pdia;
+	private ProfilePageFragment profilePageFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +39,8 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		setContentView(R.layout.profile_activity);
 		this.savedInstanceState = savedInstanceState;
 		pdia = new ProgressDialog(this);
-		
-		if(AppData.isReset) {
+
+		if (AppData.isReset) {
 			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
 			finish();
 		}
@@ -81,18 +76,18 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 				refreshPosts();
 			}
 		}
-
+		profilePageFragment = new ProfilePageFragment();
 		setupUI();
-		
+
 		setupGoogleAnalytics();
 
 	}
-	
+
 	private void setupGoogleAnalytics() {
-		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
 		t.enableAutoActivityTracking(true);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -127,7 +122,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		mFadingActionBarHelper = new FadingActionBarHelper(getActionBar(), getResources().getDrawable(R.drawable.actionbar_bg));
 
 		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, new ProfilePageFragment()).commit();
+			getFragmentManager().beginTransaction().add(R.id.container, profilePageFragment).commit();
 		}
 	}
 
@@ -146,9 +141,11 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		getMenuInflater().inflate(R.menu.profile_overflow, menu);
 		MenuItem messageItem = menu.findItem(R.id.overflow_message);
 		Friends friend = UserDataStore.getStore().getFriend(profileId);
-		if(friend==null) {
+		if (friend == null) {
 			messageItem.setVisible(false);
 		}
+		MenuItem refreshItem = menu.findItem(R.id.overflow_refresh);
+		refreshItem.setVisible(false);
 		return true;
 	}
 
@@ -164,7 +161,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		} else if (id == R.id.oveflow_home) {
 			onBackPressed();
 			return true;
-		}else if(id==R.id.overflow_message) {
+		} else if (id == R.id.overflow_message) {
 			Intent intent = new Intent(this, MessageActivity.class);
 			intent.putExtra("receiverId", profileId);
 			intent.putExtra("fromProfilePage", true);
@@ -175,7 +172,7 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void refreshPosts() {
+	private void refreshPosts() {/*
 		Toast.makeText(this, "Loading more posts", Toast.LENGTH_SHORT).show();
 		long since;
 		List<Post> posts = new ArrayList<Post>();
@@ -187,10 +184,10 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 				posts = UserDataStore.getStore().getFbPostsOfPerson(profileId);
 				since = posts.get(posts.size() - 1).getTimestamp();
 			}
-		}else {
+		} else {
 			since = System.currentTimeMillis();
 		}
-		
+
 		new GetPostsOfPersonApi(this, UserDataStore.getStore().getAccessKey(), String.valueOf(since), isBokwasPost, UserDataStore.getStore().getUserId(), profileId, new APIListener() {
 
 			@Override
@@ -204,7 +201,9 @@ public class ProfileActivityExperimental extends Activity implements OnClickList
 				}
 			}
 		}).execute("");
-	}
+	*/
+		profilePageFragment.refreshPosts();
+		}
 
 	public FadingActionBarHelper getFadingActionBarHelper() {
 		return mFadingActionBarHelper;

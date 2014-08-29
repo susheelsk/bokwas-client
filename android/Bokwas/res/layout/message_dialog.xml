@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:myNamespace="http://schemas.android.com/apk/res/com.bokwas" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:background="@drawable/rectangle_white_stroke"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/dark_color"
+            android:gravity="center_vertical|left"
+            android:paddingLeft="8dp"
+            android:text="Messages"
+            android:textColor="@color/fb_post_color"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/message_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/message_submit"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="36dp"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="16dp" >
+        </ListView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_above="@+id/comment_edittext"
+            android:layout_marginBottom="4dp"
+            android:background="@color/text_color" />
+
+        <!--
+    <EditText
+        android:id="@+id/comment_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toLeftOf="@+id/commentButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:background="@drawable/rectangle_white"
+        android:adjustViewBounds="true"
+        android:hint="Comment on this post"
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textStyle="bold" />
+    
+    <Button
+        android:id="@+id/commentButton"
+        android:layout_width="36dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/comment_edittext"
+        android:layout_alignBottom="@+id/comment_edittext"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/rectangle_transparent"
+        android:text=">"
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textStyle="bold" />
+        -->
+
+        <RelativeLayout
+            android:id="@+id/message_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp" >
+
+            <ImageView
+                android:id="@+id/emojiButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignBottom="@+id/message_edittext"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:padding="4dp"
+                android:src="@drawable/emoji_1f600"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/message_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/messageButton"
+                android:layout_toRightOf="@+id/emojiButton"
+                android:adjustViewBounds="true"
+                android:background="@drawable/rectangle_white_stroke"
+                android:hint="Send message"
+                android:maxLines="4"
+                android:minHeight="36dp"
+                android:padding="4dp"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                emojicon:emojiconSize="22sp" />
+
+            <Button
+                android:id="@+id/messageButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignBottom="@+id/message_edittext"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/generic_button"
+                android:text=">"
+                android:textColor="@color/text_color"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</merge>

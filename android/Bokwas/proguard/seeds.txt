@@ -2778,7 +2778,6 @@ com.bokwas.Manifest$permission: Manifest$permission()
 com.bokwas.MessageActivity
 com.bokwas.MessageActivity: MessageActivity()
 com.bokwas.MessageActivity: void onClick(android.view.View)
-com.bokwas.MessageActivity: void onEmojiconBackspaceClicked(android.view.View)
 com.bokwas.MessageFriendsActivity
 com.bokwas.MessageFriendsActivity: MessageFriendsActivity()
 com.bokwas.NewPostActivity
@@ -2789,9 +2788,6 @@ com.bokwas.PostActivity
 com.bokwas.PostActivity: PostActivity()
 com.bokwas.PostActivity: void onClick(android.view.View)
 com.bokwas.PostActivity: void onEmojiconBackspaceClicked(android.view.View)
-com.bokwas.ProfileActivity
-com.bokwas.ProfileActivity: ProfileActivity()
-com.bokwas.ProfileActivity: void onClick(android.view.View)
 com.bokwas.ProfileActivityExperimental
 com.bokwas.ProfileActivityExperimental: ProfileActivityExperimental()
 com.bokwas.ProfileActivityExperimental: void onClick(android.view.View)
@@ -4002,6 +3998,7 @@ com.bokwas.R$drawable: int refresh_icon
 com.bokwas.R$drawable: int selector_kitkat_square_undobutton
 com.bokwas.R$drawable: int selector_kitkat_undobutton
 com.bokwas.R$drawable: int selector_rectangle_grey
+com.bokwas.R$drawable: int selector_rectangle_white
 com.bokwas.R$drawable: int selector_undobutton
 com.bokwas.R$drawable: int shadow
 com.bokwas.R$drawable: int shadow_circle
@@ -4013,6 +4010,7 @@ com.bokwas.R$drawable: int shape_undobarfocused
 com.bokwas.R$drawable: int shape_undobarselected
 com.bokwas.R$drawable: int share_icon
 com.bokwas.R$drawable: int spinner_16_inner_holo
+com.bokwas.R$drawable: int splashscreen_bg
 com.bokwas.R$drawable: int tab_active
 com.bokwas.R$drawable: int tab_dark_default
 com.bokwas.R$drawable: int tab_default
@@ -4156,6 +4154,8 @@ com.bokwas.R$id: int post_picture
 com.bokwas.R$id: int post_popupmenu
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_relative_view
+com.bokwas.R$id: int post_screen_linear_layout
+com.bokwas.R$id: int post_screen_scrollview
 com.bokwas.R$id: int post_share
 com.bokwas.R$id: int post_show_like
 com.bokwas.R$id: int post_show_refresh
@@ -4218,6 +4218,7 @@ com.bokwas.R$layout: int like_list_item
 com.bokwas.R$layout: int likes_dialog
 com.bokwas.R$layout: int load_more_footer
 com.bokwas.R$layout: int login_page
+com.bokwas.R$layout: int message_dialog
 com.bokwas.R$layout: int message_friends_listitem
 com.bokwas.R$layout: int message_friends_page
 com.bokwas.R$layout: int message_list_item_ours
@@ -4225,7 +4226,6 @@ com.bokwas.R$layout: int message_list_item_theirs
 com.bokwas.R$layout: int message_page
 com.bokwas.R$layout: int newpost_dialog
 com.bokwas.R$layout: int notification_list_item
-com.bokwas.R$layout: int post_activity
 com.bokwas.R$layout: int post_list_item_bokwas
 com.bokwas.R$layout: int post_list_item_new
 com.bokwas.R$layout: int post_list_item_picture
@@ -4425,6 +4425,11 @@ com.bokwas.response.GetPersonInfoResponse: GetPersonInfoResponse()
 com.bokwas.response.GetPostsResponse: GetPostsResponse()
 com.bokwas.response.GetPrivateMessagesResponse: GetPrivateMessagesResponse()
 com.bokwas.ui.CommentsDialogListAdapter$ViewHolder: CommentsDialogListAdapter$ViewHolder()
+com.bokwas.ui.ExpandableHeightListView
+com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context)
+com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context,android.util.AttributeSet)
+com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context,android.util.AttributeSet,int)
+com.bokwas.ui.ExpandableHeightListView: void setExpanded(boolean)
 com.bokwas.ui.HomescreenPostsListAdapter$ViewHolder: HomescreenPostsListAdapter$ViewHolder()
 com.bokwas.ui.LikesDialogListAdapter$ViewHolder: LikesDialogListAdapter$ViewHolder()
 com.bokwas.ui.MessageFriendsListAdapter$ViewHolder: MessageFriendsListAdapter$ViewHolder()
@@ -7444,3 +7449,48 @@ de.keyboardsurfer.mobile.app.android.widget.crouton.R$styleable: int[] com_faceb
 de.keyboardsurfer.mobile.app.android.widget.crouton.R$styleable: int com_facebook_profile_picture_view_is_cropped
 de.keyboardsurfer.mobile.app.android.widget.crouton.R$styleable: int com_facebook_profile_picture_view_preset_size
 de.keyboardsurfer.mobile.app.android.widget.crouton.R$styleable: R$styleable()
+org.jsoup.Connection$Method: org.jsoup.Connection$Method[] values()
+org.jsoup.Connection$Method: org.jsoup.Connection$Method valueOf(java.lang.String)
+org.jsoup.examples.HtmlToPlainText: HtmlToPlainText()
+org.jsoup.examples.ListLinks: ListLinks()
+org.jsoup.helper.DescendableLinkedList: DescendableLinkedList()
+org.jsoup.helper.HttpConnection$Response: HttpConnection$Response()
+org.jsoup.helper.StringUtil: StringUtil()
+org.jsoup.nodes.Attributes: Attributes()
+org.jsoup.nodes.Document$OutputSettings: Document$OutputSettings()
+org.jsoup.nodes.Document$QuirksMode: org.jsoup.nodes.Document$QuirksMode[] values()
+org.jsoup.nodes.Document$QuirksMode: org.jsoup.nodes.Document$QuirksMode valueOf(java.lang.String)
+org.jsoup.nodes.Entities$EscapeMode: org.jsoup.nodes.Entities$EscapeMode[] values()
+org.jsoup.nodes.Entities$EscapeMode: org.jsoup.nodes.Entities$EscapeMode valueOf(java.lang.String)
+org.jsoup.nodes.Node: Node()
+org.jsoup.parser.HtmlTreeBuilder: HtmlTreeBuilder()
+org.jsoup.parser.HtmlTreeBuilderState: org.jsoup.parser.HtmlTreeBuilderState[] values()
+org.jsoup.parser.HtmlTreeBuilderState: org.jsoup.parser.HtmlTreeBuilderState valueOf(java.lang.String)
+org.jsoup.parser.Token$Comment: Token$Comment()
+org.jsoup.parser.Token$Doctype: Token$Doctype()
+org.jsoup.parser.Token$EOF: Token$EOF()
+org.jsoup.parser.Token$EndTag: Token$EndTag()
+org.jsoup.parser.Token$StartTag: Token$StartTag()
+org.jsoup.parser.Token$Tag: Token$Tag()
+org.jsoup.parser.Token$TokenType: org.jsoup.parser.Token$TokenType[] values()
+org.jsoup.parser.Token$TokenType: org.jsoup.parser.Token$TokenType valueOf(java.lang.String)
+org.jsoup.parser.TokeniserState: org.jsoup.parser.TokeniserState[] values()
+org.jsoup.parser.TokeniserState: org.jsoup.parser.TokeniserState valueOf(java.lang.String)
+org.jsoup.parser.TreeBuilder: TreeBuilder()
+org.jsoup.parser.XmlTreeBuilder: XmlTreeBuilder()
+org.jsoup.safety.Whitelist: Whitelist()
+org.jsoup.select.CombiningEvaluator: CombiningEvaluator()
+org.jsoup.select.CombiningEvaluator$Or: CombiningEvaluator$Or()
+org.jsoup.select.Elements: Elements()
+org.jsoup.select.Evaluator: Evaluator()
+org.jsoup.select.Evaluator$AllElements: Evaluator$AllElements()
+org.jsoup.select.Evaluator$IsEmpty: Evaluator$IsEmpty()
+org.jsoup.select.Evaluator$IsFirstChild: Evaluator$IsFirstChild()
+org.jsoup.select.Evaluator$IsFirstOfType: Evaluator$IsFirstOfType()
+org.jsoup.select.Evaluator$IsLastChild: Evaluator$IsLastChild()
+org.jsoup.select.Evaluator$IsLastOfType: Evaluator$IsLastOfType()
+org.jsoup.select.Evaluator$IsOnlyChild: Evaluator$IsOnlyChild()
+org.jsoup.select.Evaluator$IsOnlyOfType: Evaluator$IsOnlyOfType()
+org.jsoup.select.Evaluator$IsRoot: Evaluator$IsRoot()
+org.jsoup.select.StructuralEvaluator: StructuralEvaluator()
+org.jsoup.select.StructuralEvaluator$Root: StructuralEvaluator$Root()

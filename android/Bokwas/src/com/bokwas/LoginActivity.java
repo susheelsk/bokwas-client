@@ -19,6 +19,7 @@ import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.GenericDialogOk;
+import com.bokwas.dialogboxes.GenericDialogOk.DialogType;
 import com.bokwas.util.GCMUtils;
 import com.bokwas.util.GeneralUtil;
 import com.bokwas.util.TrackerName;
@@ -247,7 +248,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		} else if (view.getId() == R.id.whyFacebookLoginButton) {
 			GenericDialogOk dialog = new GenericDialogOk(this, "Why connect to facebook?",
-					"We retrieve only posts from facebook so that you can talk about it on Bokwas. We do NOT post anything back on facebook.");
+					"We retrieve only posts from facebook so that you can talk about it on Bokwas. We do NOT post anything back on facebook.",DialogType.DIALOG_GENERIC);
 			dialog.show();
 		}
 	}

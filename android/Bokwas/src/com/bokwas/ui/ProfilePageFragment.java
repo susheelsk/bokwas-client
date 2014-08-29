@@ -16,6 +16,8 @@
 package com.bokwas.ui;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -31,7 +33,10 @@ import android.widget.TextView;
 
 import com.achep.header2actionbar.HeaderFragment;
 import com.bokwas.R;
+import com.bokwas.apirequests.GetPostsOfPersonApi;
+import com.bokwas.apirequests.GetPostsOfPersonApi.OnGetPostsOfPerson;
 import com.bokwas.datasets.UserDataStore;
+import com.bokwas.response.Post;
 import com.bokwas.ui.HomescreenPostsListAdapter.PostShare;
 import com.bokwas.util.GeneralUtil;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
@@ -42,7 +47,6 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 public class ProfilePageFragment extends HeaderFragment {
 
 	private ListView mListView;
-	private String[] mListViewTitles;
 	private FrameLayout mContentOverlay;
 	private AsyncLoadSomething mAsyncLoadSomething;
 	private boolean mLoaded;
@@ -50,15 +54,26 @@ public class ProfilePageFragment extends HeaderFragment {
 	private String name;
 	private int avatarId;
 	private String fbProfilePic;
+	private boolean isBokwasPost;
+	private Activity activity;
+	private List<Post> posts;
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		this.activity = activity;
 		profileId = activity.getIntent().getStringExtra("profileId");
 		name = activity.getIntent().getStringExtra("name");
 		avatarId = activity.getIntent().getIntExtra("avatarId", -1);
 		fbProfilePic = activity.getIntent().getStringExtra("fbProfilePic");
+		posts = new ArrayList<Post>();
+		if (fbProfilePic == null || fbProfilePic.equals("")) {
+			isBokwasPost = true;
+		} else {
+			isBokwasPost = false;
+		}
 		setHeaders();
+		refreshPosts();
 	}
 
 	private void setHeaders() {
@@ -67,16 +82,17 @@ public class ProfilePageFragment extends HeaderFragment {
 		setOnHeaderScrollChangedListener(new OnHeaderScrollChangedListener() {
 			@Override
 			public void onHeaderScrollChanged(float progress, int height, int scroll) {
-				height -= getActivity().getActionBar().getHeight();
-				progress = (float) scroll / height;
-				if (progress > 1f)
-					progress = 1f;
+				try {
+					height -= getActivity().getActionBar().getHeight();
+					progress = (float) scroll / height;
+					if (progress > 1f)
+						progress = 1f;
 
-				progress = (1 - (float) Math.cos(progress * Math.PI)) * 0.5f;
+					progress = (1 - (float) Math.cos(progress * Math.PI)) * 0.5f;
 
-				// ((ProfileActivityExperimental)
-				// getActivity()).getFadingActionBarHelper().setActionBarAlpha((int)
-				// (255 * progress));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -92,7 +108,7 @@ public class ProfilePageFragment extends HeaderFragment {
 	@Override
 	public View onCreateHeaderView(LayoutInflater inflater, ViewGroup container) {
 		View view = inflater.inflate(R.layout.fragment_header, container, false);
-		if(name!=null && name.length()>18) {
+		if (name != null && name.length() > 18) {
 			name = name.split(" ")[0];
 		}
 		((TextView) view.findViewById(R.id.name)).setText(name);
@@ -110,7 +126,7 @@ public class ProfilePageFragment extends HeaderFragment {
 	public View onCreateContentView(LayoutInflater inflater, ViewGroup container) {
 		mListView = (ListView) inflater.inflate(R.layout.fragment_listview, container, false);
 		if (mLoaded)
-			setListViewTitles(mListViewTitles);
+			setListViewTitles(posts);
 		return mListView;
 	}
 
@@ -124,16 +140,44 @@ public class ProfilePageFragment extends HeaderFragment {
 		return mContentOverlay;
 	}
 
-	private void setListViewTitles(String[] titles) {
+	public void refreshPosts() {
+		long since;
+		if (posts.size() > 0) {
+			if (isBokwasPost) {
+				since = posts.get(posts.size() - 1).getTimestamp();
+			} else {
+				since = posts.get(posts.size() - 1).getTimestamp();
+			}
+		} else {
+			since = System.currentTimeMillis();
+		}
+
+		new GetPostsOfPersonApi(activity, UserDataStore.getStore().getAccessKey(), String.valueOf(since), isBokwasPost, UserDataStore.getStore().getUserId(), profileId, new OnGetPostsOfPerson() {
+
+			@Override
+			public void onGetPostsOfPerson(List<Post> newPosts) {
+				for (Post post : newPosts) {
+					if (posts.contains(post) == false) {
+						posts.add(post);
+					}
+				}
+				setListViewTitles(posts);
+			}
+		}).execute("");
+	}
+
+	private void setListViewTitles(List<Post> posts) {
+		if (posts == null || posts.size() < 1) {
+			return;
+		}
 		mLoaded = true;
-		mListViewTitles = titles;
 		if (mListView == null)
 			return;
 
 		mListView.setVisibility(View.VISIBLE);
 
 		if (avatarId != -1) {
-			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), UserDataStore.getStore().getBokwasPostsOfPerson(profileId), new PostShare() {
+			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), posts, new PostShare() {
 
 				@Override
 				public void onPostShare(int position) {
@@ -141,7 +185,7 @@ public class ProfilePageFragment extends HeaderFragment {
 				}
 			}));
 		} else {
-			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), UserDataStore.getStore().getFbPostsOfPerson(profileId), new PostShare() {
+			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), posts, new PostShare() {
 
 				@Override
 				public void onPostShare(int position) {
@@ -176,7 +220,7 @@ public class ProfilePageFragment extends HeaderFragment {
 
 			try {
 				// Emulate long downloading
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -196,7 +240,6 @@ public class ProfilePageFragment extends HeaderFragment {
 
 			if (audioFragment.mContentOverlay != null)
 				audioFragment.mContentOverlay.setVisibility(View.GONE);
-			audioFragment.setListViewTitles(titles);
 		}
 	}
 

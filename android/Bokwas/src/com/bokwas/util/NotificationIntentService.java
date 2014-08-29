@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -88,7 +89,7 @@ public class NotificationIntentService extends IntentService {
 				intent.putExtra("postId", bundle.getString("postId"));
 				Log.d("PostActivity", "PostId : " + bundle.getString("postId"));
 				intent.putExtra("fromNoti", true);
-				buildNotification("Bokwas", bundle.getString("message"), intent, null);
+				buildNotification(bundle.getString("title", "Bokwas"), bundle.getString("message"), intent, null);
 				return;
 			} else if (bundle.getString("type").equals("ADDCOMMENT_NOTI")) {
 				addCommentToPost(bundle);
@@ -101,7 +102,7 @@ public class NotificationIntentService extends IntentService {
 				if (UserDataStore.getStore().getPost(bundle.getString("postId")).getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 					commentMessage = bundle.getString("commentPersonBokwasName") + " has commented on your post";
 				}
-				buildNotification("Bokwas", commentMessage, intent, null);
+				buildNotification(bundle.getString("title", "Bokwas"), commentMessage, intent, null);
 			} else if (bundle.getString("type").equals("PRIVATE_MESSAGE_NOTI")) {
 				addMessage(bundle);
 				String fromId = bundle.getString("fromId");
@@ -117,9 +118,23 @@ public class NotificationIntentService extends IntentService {
 					sendBroadcast(intent);
 				}
 				return;
+			} else if (bundle.getString("type").equals("UPDATE_MESSAGE_NOTI")) {
+				String url = "";
+				String my_package_name = "com.bokwas";
+				try {
+					// Check whether Google Play store is installed or not:
+					this.getPackageManager().getPackageInfo("com.android.vending", 0);
+					url = "market://details?id=" + my_package_name;
+				} catch (final Exception e) {
+					url = "https://play.google.com/store/apps/details?id=" + my_package_name;
+				}
+				// Open the app page in Google Play store:
+				intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+				buildNotification(bundle.getString("title", "Bokwas"), bundle.getString("message"), intent, null);
 			} else {
 				intent = new Intent(this, HomescreenActivity.class);
-				buildNotification("Bokwas", bundle.getString("message"), intent, null);
+				buildNotification(bundle.getString("title", "Bokwas"), bundle.getString("message"), intent, null);
 				return;
 			}
 

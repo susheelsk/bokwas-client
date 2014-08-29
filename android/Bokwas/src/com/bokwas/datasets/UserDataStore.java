@@ -95,11 +95,17 @@ public class UserDataStore {
 		return null;
 	}
 
-	public void removeOldMessages() {
+	private void removeOldMessages() {
 		for (Friends friend : getFriends()) {
 			if (getMessagesForPerson(friend.getId()) != null) {
 				if (getMessagesForPerson(friend.getId()).size() > 200) {
 					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
+				}
+				Date lastMessageDate = new Date(getMessagesForPerson(friend.getId()).get(getMessagesForPerson(friend.getId()).size()-1).getTimestamp());
+				Date nowMessageDate = new Date();
+				long daysDiff = DateUtil.getDateDiff(lastMessageDate, nowMessageDate, TimeUnit.DAYS);
+				if(daysDiff >= 1) {
+					messageMap.put(friend.getId(), new ArrayList<Message>());
 				}
 			}
 		}
@@ -180,8 +186,10 @@ public class UserDataStore {
 		notificationList.remove(getNotification(notificationId));
 	}
 
+	@SuppressWarnings("unused")
 	public void removeOldNotifications() {
 		List<Integer> removeIds = new ArrayList<Integer>();
+		List<Notification> removeNotifications = new ArrayList<Notification>();
 		int i = 0;
 		Date today = new Date();
 		for (Notification notification : notificationList) {
@@ -190,13 +198,16 @@ public class UserDataStore {
 			Post post = getPost(notification.getNotification_data().get("postId"));
 			if (post == null || diffInDays > 15) {
 				removeIds.add(i);
+				removeNotifications.add(notification);
 			}
 			i++;
 		}
+		i = 0;
 		if (removeIds.size() > 0) {
 			for (Integer removalId : removeIds) {
 				Log.d("BokwasNotifications", "Removing notification");
-				notificationList.remove((int) removalId);
+				notificationList.remove(removeNotifications.get(i));
+				i++;
 			}
 		}
 	}
@@ -429,6 +440,7 @@ public class UserDataStore {
 			getStore().save(context);
 		}
 		getStore().removeOldNotifications();
+		getStore().removeOldMessages();
 	}
 
 	public static synchronized boolean isInitialized() {

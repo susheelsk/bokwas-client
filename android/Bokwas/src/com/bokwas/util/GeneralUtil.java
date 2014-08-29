@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.jsoup.Jsoup;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -118,7 +120,37 @@ public class GeneralUtil {
 
 		popupMenu.show();
 	}
-	
+
+	public static boolean web_update(Context context) {
+		try {
+			String curVersion = context.getPackageManager().getPackageInfo("com.bokwas", 0).versionName;
+			String newVersion = curVersion;
+			if(context.getSharedPreferences(GeneralUtil.sharedPreferences, Context.MODE_PRIVATE).contains("web_update"+curVersion)) {
+				return false;
+			}
+			newVersion = Jsoup.connect("https://play.google.com/store/apps/details?id=" + "com.bsb.games.iq" + "&hl=en").timeout(30000)
+					.userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").referrer("http://www.google.com").get()
+					.select("div[itemprop=softwareVersion]").first().ownText();
+			Log.d("Bokwas","Version on play store : "+newVersion);
+			Log.d("Bokwas","Version on phone : "+curVersion);
+			context.getSharedPreferences(GeneralUtil.sharedPreferences, Context.MODE_PRIVATE).edit().putBoolean("web_update"+curVersion, true).commit();
+			return (value(curVersion) < value(newVersion)) ? true : false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	private static long value(String string) {
+		string = string.trim();
+		if (string.contains(".")) {
+			final int index = string.lastIndexOf(".");
+			return value(string.substring(0, index)) * 100 + value(string.substring(index + 1));
+		} else {
+			return Long.valueOf(string);
+		}
+	}
+
 	public static void shareIntent(Context context, String data) {
 		Resources resources = context.getResources();
 

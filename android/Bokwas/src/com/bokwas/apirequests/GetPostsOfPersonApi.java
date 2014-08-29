@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -25,6 +26,12 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 	private String isbokwaspost;
 	private String postPersonId;
 	private APIListener postsListener;
+	private OnGetPostsOfPerson onGetPostsOfPerson;
+	private List<Post> posts;
+	
+	public interface OnGetPostsOfPerson {
+		public void onGetPostsOfPerson(List<Post> posts);
+	}
 
 	public GetPostsOfPersonApi(Context context, String accessKey, String since, boolean isBokwasPost, String personId, String postPersonId, APIListener postsListener) {
 		this.context = context;
@@ -39,6 +46,21 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 		}
 
 		this.postsListener = postsListener;
+	}
+	
+	public GetPostsOfPersonApi(Activity context, String accessKey, String since, boolean isBokwasPost, String personId, String postPersonId, OnGetPostsOfPerson onGetPostsOfPerson) {
+		this.context = context;
+		this.accessKey = accessKey;
+		this.personId = personId;
+		this.postPersonId = postPersonId;
+		this.since = since;
+		if (isBokwasPost) {
+			this.isbokwaspost = "true";
+		} else {
+			this.isbokwaspost = "false";
+		}
+
+		this.onGetPostsOfPerson = onGetPostsOfPerson;
 	}
 
 	@Override
@@ -60,6 +82,7 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 					Log.d("GetPostsOfPerson", "Access_Key : " + getPostsResponse.getAccess_key());
 				}
 				List<Post> posts = getPostsResponse.getPosts();
+				this.posts = posts;
 				Log.d("GetPostsOfPerson", "Posts size : " + posts.size());
 				for (Post post : posts) {
 					UserDataStore.getStore().addPost(post);
@@ -79,6 +102,9 @@ public class GetPostsOfPersonApi extends AsyncTask<String, Void, Boolean> {
 		if (result) {
 			if (postsListener != null) {
 				postsListener.onAPIStatus(true);
+			}
+			if(onGetPostsOfPerson != null) {
+				onGetPostsOfPerson.onGetPostsOfPerson(posts);
 			}
 		} else {
 			if (postsListener != null) {

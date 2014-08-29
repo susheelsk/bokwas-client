@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -31,7 +31,7 @@ import com.bokwas.util.TrackerName;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-public class MessageFriendsActivity extends Activity {
+public class MessageFriendsActivity extends FragmentActivity {
 
 	private ListView listview;
 	private MessageFriendsListAdapter adapter;
@@ -176,5 +176,15 @@ public class MessageFriendsActivity extends Activity {
 			return dateB.compareTo(dateA);
 		}
 	}
+
+//	@Override
+//	public void onEmojiconBackspaceClicked(View v) {
+//		adapter.onEmojiBackClicked();
+//	}
+//
+//	@Override
+//	public void onEmojiconClicked(Emojicon emojicon) {
+//		adapter.onEmojiClicked(emojicon);
+//	}
 
 }

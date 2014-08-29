@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/emojiconsLayout"
         android:layout_marginBottom="8dp" >
-        
+
         <ImageView
             android:id="@+id/emojiButton"
             android:layout_width="36dp"
@@ -46,8 +46,8 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
-            android:src="@drawable/emoji_1f600"
             android:padding="4dp"
+            android:src="@drawable/emoji_1f600"
             android:textColor="@color/text_color"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -56,18 +56,18 @@
             android:id="@+id/message_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="4"
-            android:minHeight="36dp"
-            android:layout_toRightOf="@+id/emojiButton"
             android:layout_toLeftOf="@+id/messageButton"
+            android:layout_toRightOf="@+id/emojiButton"
             android:adjustViewBounds="true"
             android:background="@drawable/rectangle_white"
             android:hint="Send message"
+            android:maxLines="4"
+            android:minHeight="36dp"
             android:padding="4dp"
             android:textColor="@color/text_color"
-            emojicon:emojiconSize="22sp"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            emojicon:emojiconSize="22sp" />
 
         <Button
             android:id="@+id/messageButton"
@@ -84,10 +84,11 @@
             android:textStyle="bold" />
     </RelativeLayout>
     
-    <RelativeLayout android:id="@+id/emojiconsLayout"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/emojiconsLayout"
         android:layout_width="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
 
         <fragment
             android:id="@+id/emojicons"

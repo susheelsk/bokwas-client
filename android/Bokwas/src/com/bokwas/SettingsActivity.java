@@ -20,9 +20,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bokwas.apirequests.GetPosts;
@@ -100,6 +102,10 @@ public class SettingsActivity extends Activity implements OnClickListener {
 
 	private void setupUI() {
 		
+		((TextView)findViewById(R.id.login_text)).setText("Change your profile information");
+		
+		((Button)findViewById(R.id.nextButton)).setText("Save");
+		
 		setupAvatarChooser();
 
 		setupNicknameTextbox();
@@ -163,7 +169,6 @@ public class SettingsActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);

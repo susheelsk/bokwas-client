@@ -36,14 +36,12 @@ import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
-import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MessageActivity extends FragmentActivity implements OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
+public class MessageActivity extends FragmentActivity implements OnClickListener {
 
 	private EditText editText;
 	private String receiverId;
@@ -62,8 +60,8 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.message_page);
-		
-		if(AppData.isReset) {
+
+		if (AppData.isReset) {
 			Toast.makeText(this, "Please restart the app", Toast.LENGTH_SHORT).show();
 			finish();
 		}
@@ -109,16 +107,16 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
 		transaction.hide(emojiFragment);
 		transaction.commit();
-		
+
 		setupGoogleAnalytics();
 
 	}
-	
+
 	private void setupGoogleAnalytics() {
-		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER,this);
+		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
 		t.enableAutoActivityTracking(true);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -158,7 +156,7 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 			hideEmojis();
 			return;
 		}
-		if(getIntent().getBooleanExtra("fromProfilePage", false)) {
+		if (getIntent().getBooleanExtra("fromProfilePage", false)) {
 			Intent intent = new Intent(this, ProfileActivityExperimental.class);
 			intent.putExtra("profileId", receiverId);
 			Friends friend = UserDataStore.getStore().getFriend(receiverId);
@@ -202,7 +200,7 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 	}
 
 	private void setupUI() {
-		NotificationProgress.clearNotification(this,GeneralUtil.GENERAL_NOTIFICATIONS);
+		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 		findViewById(R.id.messageHeaderButton).setVisibility(View.GONE);
 		((TextView) findViewById(R.id.titlebar)).setText(UserDataStore.getStore().getFriend(receiverId).getBokwasName());
 
@@ -277,16 +275,6 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		} else if (view.getId() == R.id.emojiButton) {
 			hideKeyboard();
 		}
-	}
-
-	@Override
-	public void onEmojiconBackspaceClicked(View v) {
-		EmojiconsFragment.backspace(editText);
-	}
-
-	@Override
-	public void onEmojiconClicked(Emojicon emojicon) {
-		EmojiconsFragment.input(editText, emojicon);
 	}
 
 }
