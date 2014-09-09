@@ -2778,6 +2778,7 @@ com.bokwas.Manifest$permission: Manifest$permission()
 com.bokwas.MessageActivity
 com.bokwas.MessageActivity: MessageActivity()
 com.bokwas.MessageActivity: void onClick(android.view.View)
+com.bokwas.MessageActivity: void onEmojiconBackspaceClicked(android.view.View)
 com.bokwas.MessageFriendsActivity
 com.bokwas.MessageFriendsActivity: MessageFriendsActivity()
 com.bokwas.NewPostActivity
@@ -4134,6 +4135,7 @@ com.bokwas.R$id: int overflow_refresh
 com.bokwas.R$id: int overflow_settings
 com.bokwas.R$id: int picker_subtitle
 com.bokwas.R$id: int playerDoc
+com.bokwas.R$id: int post_activiy_root_layout
 com.bokwas.R$id: int post_comment
 com.bokwas.R$id: int post_comment_button
 com.bokwas.R$id: int post_comment_number
@@ -4154,7 +4156,7 @@ com.bokwas.R$id: int post_picture
 com.bokwas.R$id: int post_popupmenu
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_relative_view
-com.bokwas.R$id: int post_screen_linear_layout
+com.bokwas.R$id: int post_screen_relative_layout
 com.bokwas.R$id: int post_screen_scrollview
 com.bokwas.R$id: int post_share
 com.bokwas.R$id: int post_show_like
@@ -4415,6 +4417,8 @@ com.bokwas.apirequests.Data: Data()
 com.bokwas.apirequests.FbProfilePicBatchResponse: FbProfilePicBatchResponse()
 com.bokwas.apirequests.Header: Header()
 com.bokwas.apirequests.Picture: Picture()
+com.bokwas.dialogboxes.GenericDialogOk$DialogType: com.bokwas.dialogboxes.GenericDialogOk$DialogType[] values()
+com.bokwas.dialogboxes.GenericDialogOk$DialogType: com.bokwas.dialogboxes.GenericDialogOk$DialogType valueOf(java.lang.String)
 com.bokwas.response.AddCommentResponse: AddCommentResponse()
 com.bokwas.response.AddPostResponse: AddPostResponse()
 com.bokwas.response.ApiResponse: ApiResponse()
@@ -4432,6 +4436,7 @@ com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content
 com.bokwas.ui.ExpandableHeightListView: void setExpanded(boolean)
 com.bokwas.ui.HomescreenPostsListAdapter$ViewHolder: HomescreenPostsListAdapter$ViewHolder()
 com.bokwas.ui.LikesDialogListAdapter$ViewHolder: LikesDialogListAdapter$ViewHolder()
+com.bokwas.ui.MessageDialogFragment: MessageDialogFragment()
 com.bokwas.ui.MessageFriendsListAdapter$ViewHolder: MessageFriendsListAdapter$ViewHolder()
 com.bokwas.ui.MessageListAdapter$ViewHolder: MessageListAdapter$ViewHolder()
 com.bokwas.ui.NotificationDialogListAdapter$ViewHolder: NotificationDialogListAdapter$ViewHolder()

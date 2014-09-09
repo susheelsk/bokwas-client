@@ -180,8 +180,12 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 			protected void onPostExecute(Boolean result) {
 				super.onPostExecute(result);
 				if(result) {
-					GenericDialogOk dialog = new GenericDialogOk(HomescreenActivity.this, "Update Available", "There is a new version of the app on the play store. Update now.",DialogType.DIALOG_UPDATE_APP);
-					dialog.show();
+					try {
+						GenericDialogOk dialog = new GenericDialogOk(HomescreenActivity.this, "Update Available", "There is a new version of the app on the play store. Update now.",DialogType.DIALOG_UPDATE_APP);
+						dialog.show();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 

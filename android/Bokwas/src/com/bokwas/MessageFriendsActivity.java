@@ -37,6 +37,7 @@ public class MessageFriendsActivity extends FragmentActivity {
 	private MessageFriendsListAdapter adapter;
 	private BroadcastReceiver receiver;
 	private EditText searchText;
+	private boolean isMessageDialogShown;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class MessageFriendsActivity extends FragmentActivity {
 			}
 		};
 		registerReceiver(receiver, filter);
-
+		
 		setupUI();
 
 		setupGoogleAnalytics();
@@ -150,6 +151,9 @@ public class MessageFriendsActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
+		if(isMessageDialogShown) {
+			return;
+		}
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_right);
@@ -176,15 +180,76 @@ public class MessageFriendsActivity extends FragmentActivity {
 			return dateB.compareTo(dateA);
 		}
 	}
-
+	
+//	private void showMessageDialog(String receiverId) {
+//		isMessageDialogShown = true;
+//		messageFragment.setReceiverId(receiverId);
+//		listview.postDelayed(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				manager = getSupportFragmentManager();
+//				transaction = manager.beginTransaction();
+//				transaction.show(messageFragment);
+//				transaction.commit();
+//				messageFragment.setupUI();
+//			}
+//		}, 250);
+//	}
+//	
+//	private void setupFragmentManager() {
+//		manager = getSupportFragmentManager();
+//		transaction = manager.beginTransaction();
+//		emojiFragment = (EmojiconsFragment) manager.findFragmentById(R.id.emojicons);
+//		messageFragment = (MessageDialogFragment) manager.findFragmentById(R.id.messageFragment);
+//		transaction.hide(emojiFragment);
+//		transaction.hide(messageFragment);
+//		transaction.commit();
+//	}
+//
 //	@Override
 //	public void onEmojiconBackspaceClicked(View v) {
-//		adapter.onEmojiBackClicked();
+//		messageFragment.onEmojiconBackspaceClicked();
 //	}
 //
 //	@Override
 //	public void onEmojiconClicked(Emojicon emojicon) {
-//		adapter.onEmojiClicked(emojicon);
+//		messageFragment.onEmojiconClicked(emojicon);
+//	}
+//
+//	@Override
+//	public void showEmojis(View view) {
+//		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+//		imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//		listview.postDelayed(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				manager = getSupportFragmentManager();
+//				transaction = manager.beginTransaction();
+//				transaction.show(emojiFragment);
+//				transaction.commit();
+//			}
+//		}, 250);
+//	}
+//
+//	@Override
+//	public void hideEmojis(View view) {
+//		InputMethodManager imm = (InputMethodManager) this.getSystemService(Service.INPUT_METHOD_SERVICE);
+//		imm.showSoftInput(view, 0);
+//		manager = getSupportFragmentManager();
+//		transaction = manager.beginTransaction();
+//		transaction.hide(emojiFragment);
+//		transaction.commit();
+//	}
+//
+//	@Override
+//	public void onDissmiss() {
+//		isMessageDialogShown = false;
+//		manager = getSupportFragmentManager();
+//		transaction = manager.beginTransaction();
+//		transaction.hide(messageFragment);
+//		transaction.commit();
 //	}
 
 }

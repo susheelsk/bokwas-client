@@ -79,6 +79,7 @@
                     android:paddingBottom="8dp"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
+                    android:background="@drawable/header_button"
                     android:src="@drawable/message_icon"
                     android:textColor="@color/fb_post_color" />
 

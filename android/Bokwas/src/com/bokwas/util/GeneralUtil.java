@@ -86,6 +86,18 @@ public class GeneralUtil {
 			throw e;
 		}
 	}
+	
+	public static Bitmap loadFullBitmapFromView(View view) throws Exception {
+		try {
+			view.setDrawingCacheEnabled(true);
+			view.buildDrawingCache();
+			Bitmap bm = view.getDrawingCache();
+			return bm;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 
 	public static void setRecurringAlarm(Context context) {
 		Calendar updateTime = Calendar.getInstance();

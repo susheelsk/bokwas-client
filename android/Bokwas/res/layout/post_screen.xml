@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/post_activiy_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -24,19 +25,16 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_below="@+id/header_layout"
-        android:scrollY="0px"
         android:layout_marginBottom="48dp"
-        android:layout_marginTop="48dp" >
+        android:layout_marginTop="48dp"
+        android:scrollY="0px" >
 
-        <LinearLayout
-            android:id="@+id/post_screen_linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+        <RelativeLayout
+            android:id="@+id/post_screen_relative_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+            
 
                 <RelativeLayout
                     android:id="@+id/post_relative_view"
@@ -263,18 +261,17 @@
                     android:id="@+id/comment_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/post_relative_view"
-                    android:layout_alignParentBottom="true"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="12dp"
                     android:layout_marginTop="2dp"
+                    android:layout_below="@+id/post_relative_view"
+                    android:layout_alignParentBottom="true"
                     android:background="@drawable/rectangle_white_stroke"
                     android:dividerHeight="12dp"
                     android:padding="4dp" >
                 </com.bokwas.ui.ExpandableHeightListView>
-            </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 
     <RelativeLayout

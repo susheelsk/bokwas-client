@@ -648,7 +648,8 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 	}
 
 	protected void sharePost() {
-		final View view = getWindow().getDecorView().findViewById(android.R.id.content);
+//		final View view = getWindow().getDecorView().findViewById(android.R.id.content);
+		final View view = findViewById(R.id.post_activiy_root_layout);
 		view.findViewById(R.id.comment_edittext).setVisibility(View.INVISIBLE);
 		view.findViewById(R.id.commentButton).setVisibility(View.INVISIBLE);
 		view.findViewById(R.id.emojiButton).setVisibility(View.INVISIBLE);
@@ -656,7 +657,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 		view.findViewById(R.id.messageHeaderButton).setVisibility(View.INVISIBLE);
 		view.layout(0, 0, getWindow().getDecorView().getWidth(), getWindow().getDecorView().getHeight());
 		try {
-			Bitmap bitmap = GeneralUtil.loadBitmapFromView(view);
+			Bitmap bitmap = GeneralUtil.loadFullBitmapFromView(view);
 			GeneralUtil.sharePhotoIntent(PostActivity.this, bitmap, "Check out what I saw on Bokwas");
 
 		} catch (Exception e) {

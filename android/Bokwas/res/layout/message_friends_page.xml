@@ -60,13 +60,13 @@
         <EditText
             android:id="@+id/friend_search_edittext"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="28dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="8dp"
             android:layout_toRightOf="@+id/titlebar"
-            android:background="@drawable/rectangle_white_stroke"
+            android:background="@drawable/rectangle_white"
             android:hint="Search friends"
             android:paddingLeft="6dp"
             android:textColor="@color/text_color"
@@ -96,7 +96,7 @@
         android:divider="#999999"
         android:dividerHeight="2dp"
         android:saveEnabled="true" />
-
+    
     <!-- <RelativeLayout
         android:id="@+id/messages_dialog_layout"
         android:layout_width="match_parent"

@@ -36,12 +36,14 @@ import com.github.johnpersano.supertoasts.SuperActivityToast;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class MessageActivity extends FragmentActivity implements OnClickListener {
+public class MessageActivity extends FragmentActivity implements OnClickListener , EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
 	private EditText editText;
 	private String receiverId;
@@ -275,6 +277,16 @@ public class MessageActivity extends FragmentActivity implements OnClickListener
 		} else if (view.getId() == R.id.emojiButton) {
 			hideKeyboard();
 		}
+	}
+
+	@Override
+	public void onEmojiconBackspaceClicked(View v) {
+		EmojiconsFragment.backspace(editText);
+	}
+
+	@Override
+	public void onEmojiconClicked(Emojicon emojicon) {
+		EmojiconsFragment.input(editText, emojicon);
 	}
 
 }

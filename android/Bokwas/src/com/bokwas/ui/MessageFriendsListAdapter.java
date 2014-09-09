@@ -22,7 +22,6 @@ import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.MessageDialog;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
-import com.rockerhieu.emojicon.emoji.Emojicon;
 
 public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 
@@ -92,11 +91,11 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 			time = messages.get(messages.size() - 1).getTimestamp();
 			message = messages.get(messages.size() - 1).getMessage();
 		}
-		
+
 		holder.time.setTextColor(Color.parseColor("#777777"));
-		if(messages.size()>0) {
+		if (messages.size() > 0) {
 			holder.time.setText(DateUtil.getSimpleTime(new Date(time)));
-		}else {
+		} else {
 			holder.time.setText("");
 		}
 
@@ -124,24 +123,10 @@ public class MessageFriendsListAdapter extends ArrayAdapter<Friends> {
 				activity.overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
 				activity.startActivity(intent);
 				
-//				dialog = new MessageDialog(activity, friend.id);
-//				dialog.show();
 			}
 		});
 
 		return rowView;
-	}
-	
-	public void onEmojiBackClicked() {
-		if(dialog!=null) {
-			dialog.onEmojiconBackspaceClicked();
-		}
-	}
-	
-	public void onEmojiClicked(Emojicon emojicon) {
-		if(dialog!=null) {
-			dialog.onEmojiconClicked(emojicon);
-		}
 	}
 
 }

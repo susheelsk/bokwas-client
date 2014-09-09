@@ -66,6 +66,19 @@ public class UserDataStore {
 		}
 		return messages;
 	}
+	
+	public List<Message> getTodaysMessagesForPerson(String personId) {
+		List<Message> messages = new ArrayList<Message>();
+		for(Message message : getMessagesForPerson(personId)) {
+			if(DateUtil.getDateDiff(new Date(), new Date(message.getTimestamp()), TimeUnit.DAYS)<1) {
+				messages.add(message);
+			}else {
+				break;
+			}
+		}
+		Collections.sort(messages, new MessageComparator());
+		return messages;
+	}
 
 	public void addMessageToPerson(String personId, Message message) {
 		if (personId != null) {
@@ -100,6 +113,9 @@ public class UserDataStore {
 			if (getMessagesForPerson(friend.getId()) != null) {
 				if (getMessagesForPerson(friend.getId()).size() > 200) {
 					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
+				}
+				if(getMessagesForPerson(friend.getId()).size()<1) {
+					continue;
 				}
 				Date lastMessageDate = new Date(getMessagesForPerson(friend.getId()).get(getMessagesForPerson(friend.getId()).size()-1).getTimestamp());
 				Date nowMessageDate = new Date();
