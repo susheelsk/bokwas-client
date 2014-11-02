@@ -28,7 +28,7 @@ public class DateUtil {
 		if(diffInHours >= 1 && diffInHours < 24) {
 			if(diffInHours == 1) {
 				return "An hour ago";
-			}else if(diffInHours > 6) {
+			}else if(diffInHours >= 24) {
 				if(diffInDays<1) {
 					return "Earlier today";
 				}

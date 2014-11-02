@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.bokwas.HomescreenActivity;
 import com.bokwas.MessageActivity;
 import com.bokwas.PostActivity;
 import com.bokwas.R;
@@ -67,16 +66,20 @@ public class NotificationIntentService extends IntentService {
 	}
 
 	private void logReceivedNotification(Bundle bundle) {
-		JSONObject json = new JSONObject();
-		Set<String> keys = bundle.keySet();
-		for (String key : keys) {
-			try {
-				json.put(key, bundle.get(key));
-			} catch (JSONException e) {
-				// Handle exception here
+		try {
+			JSONObject json = new JSONObject();
+			Set<String> keys = bundle.keySet();
+			for (String key : keys) {
+				try {
+					json.put(key, bundle.get(key));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
+			Log.d(TAG, "NotificationData : " + json.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		Log.d(TAG, "NotificationData : " + json.toString());
 	}
 
 	private void sendNotification(Bundle bundle) {
@@ -133,7 +136,7 @@ public class NotificationIntentService extends IntentService {
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 				buildNotification(bundle.getString("title", "Bokwas"), bundle.getString("message"), intent, null);
 			} else {
-				intent = new Intent(this, HomescreenActivity.class);
+				intent = new Intent(this, SplashScreen.class);
 				buildNotification(bundle.getString("title", "Bokwas"), bundle.getString("message"), intent, null);
 				return;
 			}

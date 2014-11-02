@@ -3,6 +3,7 @@
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/selector_undobutton"
     android:orientation="vertical" >
 
     <ImageView
@@ -192,6 +193,13 @@
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
+    
+    <View android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_below="@+id/post_footer_layout"
+        android:visibility="gone"
+        android:background="#bbbbbb"/>
 
     <ImageView
         android:id="@+id/post_profile_pic"

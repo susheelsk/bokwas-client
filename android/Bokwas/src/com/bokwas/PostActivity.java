@@ -27,6 +27,7 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -43,8 +44,8 @@ import com.bokwas.dialogboxes.LikesDialog;
 import com.bokwas.response.Comment;
 import com.bokwas.response.Likes;
 import com.bokwas.response.Post;
-import com.bokwas.ui.CommentsDialogListAdapter;
-import com.bokwas.ui.ExpandableHeightListView;
+import com.bokwas.ui.CommentViewAdapter;
+import com.bokwas.ui.CommentViewAdapter.CommentViewListener;
 import com.bokwas.util.AppData;
 import com.bokwas.util.DateUtil;
 import com.bokwas.util.GeneralUtil;
@@ -67,9 +68,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 
 	private Post post;
 	private EditText editText;
-	private CommentsDialogListAdapter adapter;
 	private List<Comment> comments;
-	private ExpandableHeightListView listView;
 	private boolean isLike = true;
 	private ProgressDialog pdia;
 	private boolean isOutsidePost = false;
@@ -158,7 +157,7 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 		}
 
 		setupGoogleAnalytics();
-
+		
 	}
 
 	@Override
@@ -203,125 +202,149 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 	}
 
 	private void setupUI() {
-		if (post.isBokwasPost()) {
-			findViewById(R.id.post_relative_view).setBackgroundResource(R.drawable.rectangle_orange_stroke);
-		}
+		try {
+			if (post.isBokwasPost()) {
+				findViewById(R.id.post_relative_view).setBackgroundResource(R.drawable.rectangle_orange_stroke);
+			}
 
-		if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
-			ImageView postPicture = (ImageView) findViewById(R.id.post_picture);
-			postPicture.setBackgroundResource(android.R.color.transparent);
-			postPicture.setOnClickListener(new OnClickListener() {
+			if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
+				ImageView postPicture = (ImageView) findViewById(R.id.post_picture);
+				postPicture.setBackgroundResource(android.R.color.transparent);
+				postPicture.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(PostActivity.this, FullScreenImage.class);
+						intent.putExtra("url", post.getPicture());
+						intent.putExtra("activity", PostActivity.this.getClass().getSimpleName());
+						intent.putExtra("postId", post.getPostId());
+						intent.putExtra("name", post.getName());
+						if (post.isBokwasPost()) {
+							intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
+						} else {
+							intent.putExtra("fbProfilePic", post.getProfilePicture());
+						}
+						PostActivity.this.startActivity(intent);
+					}
+				});
+				postPicture.setVisibility(View.VISIBLE);
+				Picasso.with(this).load(post.getPicture()).resize(250, 250).centerCrop().placeholder(R.drawable.placeholder).into(postPicture);
+
+				setupComments();
+			} else {
+				setupComments();
+			}
+
+			final ScrollView scrollView = (ScrollView) findViewById(R.id.post_screen_scrollview);
+			scrollView.post(new Runnable() {
 
 				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(PostActivity.this, FullScreenImage.class);
-					intent.putExtra("url", post.getPicture());
-					intent.putExtra("activity", PostActivity.this.getClass().getSimpleName());
-					intent.putExtra("postId", post.getPostId());
-					intent.putExtra("name", post.getName());
-					if (post.isBokwasPost()) {
-						intent.putExtra("avatarId", Integer.valueOf(post.getAvatarId()));
-					} else {
-						intent.putExtra("fbProfilePic", post.getProfilePicture());
-					}
-					PostActivity.this.startActivity(intent);
+				public void run() {
+					// TODO Auto-generated method stub
+					scrollView.fullScroll(ScrollView.FOCUS_UP);
 				}
 			});
-			postPicture.setVisibility(View.VISIBLE);
-			Picasso.with(this).load(post.getPicture()).resize(250, 250).centerCrop().placeholder(R.drawable.placeholder).into(postPicture);
-			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
-			listView = (ExpandableHeightListView) findViewById(R.id.comment_list);
-			listView.setExpanded(true);
-			listView.setAdapter(adapter);
-			if (comments == null || comments.size() < 1) {
-				listView.setBackgroundResource(android.R.color.transparent);
+
+			// setupNotificationBar();
+			int pixelsInDp = getPixelsInDp(12);
+			findViewById(R.id.messageHeaderButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
+			((ImageView) findViewById(R.id.messageHeaderButton)).setImageResource(R.drawable.share_icon);
+			// findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
+			// ((ImageView)findViewById(R.id.newPostButton)).setImageResource(R.drawable.ic_menu_refresh);
+			// ((TextView) findViewById(R.id.messageHeaderButton)).setText("");
+			editText = (EditText) findViewById(R.id.comment_edittext);
+
+			TextView postText = (TextView) findViewById(R.id.post_content);
+			postText.setMovementMethod(new ScrollingMovementMethod());
+			postText.setText(post.getPostText());
+			TextView time = (TextView) findViewById(R.id.post_time);
+			Date date = new Date(post.getTimestamp());
+			String dateString = DateUtil.formatToYesterdayOrToday(date);
+			time.setText(dateString);
+			TextView commentSize = (TextView) findViewById(R.id.post_comment_number);
+			commentSize.setText(String.valueOf(post.getComments().size()));
+
+			TextView likeSize = (TextView) findViewById(R.id.post_like_number);
+			List<Likes> likes = post.getLikes();
+			if (likes.size() > 0) {
+				likeSize.setText(String.valueOf(likes.size()));
 			} else {
-				listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
+				likeSize.setText(String.valueOf(0));
 			}
 
-		} else {
-			adapter = new CommentsDialogListAdapter(PostActivity.this, comments, post);
-			listView = (ExpandableHeightListView) findViewById(R.id.comment_list);
-			listView.setExpanded(true);
-			listView.setAdapter(adapter);
-			if (comments == null || comments.size() < 1) {
-				listView.setBackgroundResource(android.R.color.transparent);
+			if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
+				findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
 			} else {
-				listView.setBackgroundResource(R.drawable.rectangle_white_stroke);
+				findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
 			}
-		}
 
-		final ScrollView scrollView = (ScrollView) findViewById(R.id.post_screen_scrollview);
-		scrollView.post(new Runnable() {
+			TextView name = (TextView) findViewById(R.id.post_name);
+			ImageView picture = (ImageView) findViewById(R.id.post_profile_pic);
+			if (post.isBokwasPost()) {
+				if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
+					name.setText(UserDataStore.getStore().getBokwasName());
+					String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
+					picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
+				} else {
+					name.setText(post.getName());
+					String avatarId = post.getAvatarId();
+					picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
+				}
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				scrollView.fullScroll(ScrollView.FOCUS_UP);
-			}
-		});
-
-		// setupNotificationBar();
-		int pixelsInDp = getPixelsInDp(12);
-		findViewById(R.id.messageHeaderButton).setPadding(pixelsInDp, pixelsInDp, pixelsInDp, pixelsInDp);
-		((ImageView) findViewById(R.id.messageHeaderButton)).setImageResource(R.drawable.share_icon);
-		// findViewById(R.id.newPostButton).setVisibility(View.VISIBLE);
-		// ((ImageView)findViewById(R.id.newPostButton)).setImageResource(R.drawable.ic_menu_refresh);
-		// ((TextView) findViewById(R.id.messageHeaderButton)).setText("");
-		editText = (EditText) findViewById(R.id.comment_edittext);
-		
-		TextView postText = (TextView) findViewById(R.id.post_content);
-		postText.setMovementMethod(new ScrollingMovementMethod());
-		postText.setText(post.getPostText());
-		TextView time = (TextView) findViewById(R.id.post_time);
-		Date date = new Date(post.getTimestamp());
-		String dateString = DateUtil.formatToYesterdayOrToday(date);
-		time.setText(dateString);
-		TextView commentSize = (TextView) findViewById(R.id.post_comment_number);
-		commentSize.setText(String.valueOf(post.getComments().size()));
-
-		TextView likeSize = (TextView) findViewById(R.id.post_like_number);
-		List<Likes> likes = post.getLikes();
-		if (likes.size() > 0) {
-			likeSize.setText(String.valueOf(likes.size()));
-		} else {
-			likeSize.setText(String.valueOf(0));
-		}
-
-		if (post.isAlreadyLiked(UserDataStore.getStore().getUserId())) {
-			findViewById(R.id.like_image).setBackgroundResource(R.drawable.facebook_icon_enable);
-		} else {
-			findViewById(R.id.like_image).setBackgroundResource(R.drawable.like_icon);
-		}
-
-		TextView name = (TextView) findViewById(R.id.post_name);
-		ImageView picture = (ImageView) findViewById(R.id.post_profile_pic);
-		if (post.isBokwasPost()) {
-			if (post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
-				name.setText(UserDataStore.getStore().getBokwasName());
-				String avatarId = String.valueOf(UserDataStore.getStore().getAvatarId());
-				picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
 			} else {
 				name.setText(post.getName());
-				String avatarId = post.getAvatarId();
-				picture.setImageBitmap(GeneralUtil.getImageBitmap(GeneralUtil.getAvatarResourceId(avatarId), this));
+				UrlImageViewHelper.setUrlDrawable(picture, post.getProfilePicture(), null, 60000 * 100);
 			}
 
-		} else {
-			name.setText(post.getName());
-			UrlImageViewHelper.setUrlDrawable(picture, post.getProfilePicture(), null, 60000 * 100);
-		}
+			editText.setOnTouchListener(new OnTouchListener() {
 
-		editText.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (isEmojiShown) {
-					hideEmojis();
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (isEmojiShown) {
+						hideEmojis();
+					}
+					return false;
 				}
-				return false;
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void setupComments() {
+		/*
+		 * adapter = new CommentsDialogListAdapter(PostActivity.this, comments,
+		 * post); listView = (ExpandableHeightListView)
+		 * findViewById(R.id.comment_list); listView.setExpanded(true);
+		 * listView.setAdapter(adapter); if (comments == null || comments.size()
+		 * < 1) { listView.setBackgroundResource(android.R.color.transparent); }
+		 * else {
+		 * listView.setBackgroundResource(R.drawable.rectangle_white_stroke); }
+		 */
+		LinearLayout commentLayout = (LinearLayout) findViewById(R.id.comment_layout);
+		commentLayout.removeAllViews();
+		if (comments == null || comments.size() < 1) {
+			findViewById(R.id.comment_layout).setBackgroundResource(android.R.color.transparent);
+			return;
+		} else {
+			int i = 0;
+			for (Comment comment : comments) {
+				CommentViewAdapter commentViewAdapter = new CommentViewAdapter(this, comment, post,new CommentViewListener() {
+					
+					@Override
+					public void onUpdateUI() {
+						setupComments();
+					}
+				});
+				View commentView = commentViewAdapter.getView();
+				if(i<comments.size()-1) {
+					commentView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
+				}
+				commentLayout.addView(commentView);
+				i++;
 			}
-		});
+			commentLayout.setBackgroundResource(R.drawable.rectangle_white_stroke);
+		}
 	}
 
 	private int getPixelsInDp(int sizeInDp) {
@@ -404,9 +427,10 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 									if (status) {
 										Toast.makeText(PostActivity.this, "Comment added!", Toast.LENGTH_SHORT).show();
 										editText.setText("");
-										if (adapter != null) {
-											adapter.notifyDataSetChanged();
-										}
+										// if (adapter != null) {
+										// adapter.notifyDataSetChanged();
+										// }
+										setupComments();
 										comments = post.getComments();
 										setupUI();
 									} else {
@@ -648,7 +672,8 @@ public class PostActivity extends FragmentActivity implements OnClickListener, E
 	}
 
 	protected void sharePost() {
-//		final View view = getWindow().getDecorView().findViewById(android.R.id.content);
+		// final View view =
+		// getWindow().getDecorView().findViewById(android.R.id.content);
 		final View view = findViewById(R.id.post_activiy_root_layout);
 		view.findViewById(R.id.comment_edittext).setVisibility(View.INVISIBLE);
 		view.findViewById(R.id.commentButton).setVisibility(View.INVISIBLE);

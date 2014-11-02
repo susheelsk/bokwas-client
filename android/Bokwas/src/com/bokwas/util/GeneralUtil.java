@@ -44,6 +44,7 @@ public class GeneralUtil {
 	public static final int GENERAL_NOTIFICATIONS = 500;
 	public static final String sharedPreferences = "bokwasSharePreferences";
 	public static final String isLoggedInKey = "isLoggedIn";
+	public static final String versionPrefKey = "versionPrefKey";
 	public static final String userGender = "userGender";
 
 	public static Parcelable listSavedInstanceHomeScreen = null;
@@ -244,7 +245,7 @@ public class GeneralUtil {
 
 		// Native email client doesn't currently support HTML, but it doesn't
 		// hurt to try in case they fix it
-		share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + path));
+		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(path));
 		share.putExtra(Intent.EXTRA_SUBJECT, activity.getResources().getString(R.string.app_name));
 		share.setType("message/rfc822");
 

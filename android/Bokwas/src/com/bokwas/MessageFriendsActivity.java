@@ -6,20 +6,26 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
+import com.achep.header2actionbar.FadingActionBarHelper;
+import com.bokwas.apirequests.GetFriendsApi;
+import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.datasets.Friends;
 import com.bokwas.datasets.Message;
 import com.bokwas.datasets.UserDataStore;
@@ -36,7 +42,6 @@ public class MessageFriendsActivity extends FragmentActivity {
 	private ListView listview;
 	private MessageFriendsListAdapter adapter;
 	private BroadcastReceiver receiver;
-	private EditText searchText;
 	private boolean isMessageDialogShown;
 
 	@Override
@@ -64,6 +69,45 @@ public class MessageFriendsActivity extends FragmentActivity {
 
 		setupGoogleAnalytics();
 	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.message_friends_overflow, menu);
+ 
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.overflow_search)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+        
+        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				List<Friends> tempFriendList = new ArrayList<Friends>();
+				List<Friends> friendsList = UserDataStore.getStore().getFriends();
+				int textlength = newText.length();
+				for (Friends f : friendsList) {
+					if (textlength <= f.getBokwasName().length()) {
+						if (f.getBokwasName().toLowerCase().contains(newText.toString().toLowerCase())) {
+							tempFriendList.add(f);
+						}
+					}
+				}
+				adapter = new MessageFriendsListAdapter(MessageFriendsActivity.this, tempFriendList);
+				listview.setAdapter(adapter);
+				return false;
+			}
+		});
+        return true;
+    }
 
 	private void setupGoogleAnalytics() {
 		Tracker t = GeneralUtil.getTracker(TrackerName.APP_TRACKER, this);
@@ -91,8 +135,8 @@ public class MessageFriendsActivity extends FragmentActivity {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			setupUI();
 		}
-		setupUI();
 	}
 
 	@Override
@@ -104,40 +148,45 @@ public class MessageFriendsActivity extends FragmentActivity {
 	private void setupUI() {
 		NotificationProgress.clearNotification(this, GeneralUtil.GENERAL_NOTIFICATIONS);
 		listview = (ListView) findViewById(R.id.friend_list);
-		searchText = (EditText) findViewById(R.id.friend_search_edittext);
-		searchText.setSelected(false);
-		final List<Friends> friendsList = UserDataStore.getStore().getFriends();
-		searchText.addTextChangedListener(new TextWatcher() {
-
-			@SuppressLint("DefaultLocale")
-			@Override
-			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-				int textlength = cs.length();
-
-				List<Friends> tempFriendList = new ArrayList<Friends>();
-				for (Friends f : friendsList) {
-					if (textlength <= f.getBokwasName().length()) {
-						if (f.getBokwasName().toLowerCase().contains(cs.toString().toLowerCase())) {
-							tempFriendList.add(f);
-						}
-					}
-				}
-				adapter = new MessageFriendsListAdapter(MessageFriendsActivity.this, tempFriendList);
-				listview.setAdapter(adapter);
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		getActionBar().setIcon(null);
+		getActionBar().setTitle("bokwas");
+		getActionBar().setDisplayShowHomeEnabled(false);
+		getActionBar().setBackgroundDrawable(new ColorDrawable(R.color.dark_color));
+		new FadingActionBarHelper(getActionBar(), getResources().getDrawable(R.drawable.actionbar_bg));
+//		searchText = (EditText) findViewById(R.id.friend_search_edittext);
+//		searchText.setSelected(false);
+//		final List<Friends> friendsList = UserDataStore.getStore().getFriends();
+//		searchText.addTextChangedListener(new TextWatcher() {
+//
+//			@SuppressLint("DefaultLocale")
+//			@Override
+//			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+//				int textlength = cs.length();
+//
+//				List<Friends> tempFriendList = new ArrayList<Friends>();
+//				for (Friends f : friendsList) {
+//					if (textlength <= f.getBokwasName().length()) {
+//						if (f.getBokwasName().toLowerCase().contains(cs.toString().toLowerCase())) {
+//							tempFriendList.add(f);
+//						}
+//					}
+//				}
+//				adapter = new MessageFriendsListAdapter(MessageFriendsActivity.this, tempFriendList);
+//				listview.setAdapter(adapter);
+//			}
+//
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void afterTextChanged(Editable s) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
 		List<Friends> friends = UserDataStore.getStore().getFriends();
 		Collections.sort(friends, new MessageFriendsComparator());
 		adapter = new MessageFriendsListAdapter(this, friends);
@@ -179,6 +228,27 @@ public class MessageFriendsActivity extends FragmentActivity {
 
 			return dateB.compareTo(dateA);
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.overflow_refresh) { 
+			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+				
+				@Override
+				public void onAPIStatus(boolean status) {
+					if(status) {
+						setupUI();
+					}
+				}
+			}).execute("");
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 //	private void showMessageDialog(String receiverId) {

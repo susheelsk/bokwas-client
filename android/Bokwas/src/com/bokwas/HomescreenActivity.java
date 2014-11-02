@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -173,28 +174,38 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 				}
 			}
 		}).execute("");
-		
-		new AsyncTask<String, Void, Boolean>() {
+		int versionCode = 0;
+		try {
+			versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		final String versionKey = "checkVersion" + versionCode;
+		if (!getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getBoolean(versionKey, false)) {
+			new AsyncTask<String, Void, Boolean>() {
 
-			@Override
-			protected void onPostExecute(Boolean result) {
-				super.onPostExecute(result);
-				if(result) {
-					try {
-						GenericDialogOk dialog = new GenericDialogOk(HomescreenActivity.this, "Update Available", "There is a new version of the app on the play store. Update now.",DialogType.DIALOG_UPDATE_APP);
-						dialog.show();
-					} catch (Exception e) {
-						e.printStackTrace();
+				@Override
+				protected void onPostExecute(Boolean result) {
+					super.onPostExecute(result);
+					if (result) {
+						try {
+							GenericDialogOk dialog = new GenericDialogOk(HomescreenActivity.this, "Update Available", "There is a new version of the app on the play store. Update now.", "OK",
+									DialogType.DIALOG_UPDATE_APP);
+							getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit().putBoolean("checkVersion" + versionKey, true).commit();
+							dialog.show();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
-			}
 
-			@Override
-			protected Boolean doInBackground(String... params) {
-				boolean result = GeneralUtil.web_update(HomescreenActivity.this);
-				return result;
-			}
-		}.execute("");
+				@Override
+				protected Boolean doInBackground(String... params) {
+					boolean result = GeneralUtil.web_update(HomescreenActivity.this);
+					return result;
+				}
+			}.execute("");
+		}
 
 	}
 
@@ -331,7 +342,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
 				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
 				notificationButton.setText(String.valueOf(UserDataStore.getStore().getUnseenNotifications().size()));
-			}else {
+			} else {
 				findViewById(R.id.notificationButtonLayout).setVisibility(View.VISIBLE);
 				TextView notificationButton = (TextView) findViewById(R.id.notificationButton);
 				notificationButton.setText(String.valueOf("!"));
@@ -454,7 +465,7 @@ public class HomescreenActivity extends Activity implements OnClickListener, Pos
 						GeneralUtil
 								.shareIntent(
 										HomescreenActivity.this,
-										"Hi! I'm using Bokwas, a cool social networking app where we interact in a universe of alter-egos. We can comment on Facebook posts, chat with friends and a lot more, while in complete anonymity! Learn more about it, and get a chance to download the early preview at http://bokwas.com");
+										"Hi! I'm using Bokwas, a cool social networking app where we interact in a universe of alter-egos. We can comment on Facebook posts, chat with friends and a lot more, while in complete anonymity! Find the app here : http://bokwas.com");
 					}
 					return true;
 				}

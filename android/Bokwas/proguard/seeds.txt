@@ -4051,10 +4051,12 @@ com.bokwas.R$id: int com_facebook_usersettingsfragment_profile_name
 com.bokwas.R$id: int commentButton
 com.bokwas.R$id: int comment_delete
 com.bokwas.R$id: int comment_edittext
+com.bokwas.R$id: int comment_layout
 com.bokwas.R$id: int comment_like
 com.bokwas.R$id: int comment_line_seperator
 com.bokwas.R$id: int comment_list
 com.bokwas.R$id: int comment_popupmenu
+com.bokwas.R$id: int comment_report_abuse
 com.bokwas.R$id: int comment_show_like
 com.bokwas.R$id: int comment_submit
 com.bokwas.R$id: int container
@@ -4080,7 +4082,6 @@ com.bokwas.R$id: int feed_list
 com.bokwas.R$id: int fl_inner
 com.bokwas.R$id: int flip
 com.bokwas.R$id: int friend_list
-com.bokwas.R$id: int friend_search_edittext
 com.bokwas.R$id: int fullscreen_imageview
 com.bokwas.R$id: int gridview
 com.bokwas.R$id: int header
@@ -4132,6 +4133,7 @@ com.bokwas.R$id: int overflow_message
 com.bokwas.R$id: int overflow_popupmenu
 com.bokwas.R$id: int overflow_profile
 com.bokwas.R$id: int overflow_refresh
+com.bokwas.R$id: int overflow_search
 com.bokwas.R$id: int overflow_settings
 com.bokwas.R$id: int picker_subtitle
 com.bokwas.R$id: int playerDoc
@@ -4156,6 +4158,7 @@ com.bokwas.R$id: int post_picture
 com.bokwas.R$id: int post_popupmenu
 com.bokwas.R$id: int post_profile_pic
 com.bokwas.R$id: int post_relative_view
+com.bokwas.R$id: int post_report_abuse
 com.bokwas.R$id: int post_screen_relative_layout
 com.bokwas.R$id: int post_screen_scrollview
 com.bokwas.R$id: int post_share
@@ -4236,6 +4239,7 @@ com.bokwas.R$layout: int profile_activity
 com.bokwas.R$layout: int pull_to_refresh_header
 com.bokwas.R$layout: int pull_to_refresh_header_horizontal
 com.bokwas.R$layout: int pull_to_refresh_header_vertical
+com.bokwas.R$layout: int searchable
 com.bokwas.R$layout: int spash_screen
 com.bokwas.R$layout: int superactivitytoast_button
 com.bokwas.R$layout: int superactivitytoast_progresscircle
@@ -4247,6 +4251,7 @@ com.bokwas.R$layout: int supercardtoast_progresshorizontal
 com.bokwas.R$layout: int supertoast
 com.bokwas.R$layout: R$layout()
 com.bokwas.R$menu: int comment_menu
+com.bokwas.R$menu: int message_friends_overflow
 com.bokwas.R$menu: int overflow_menu
 com.bokwas.R$menu: int post_activity_menu
 com.bokwas.R$menu: int post_menu
@@ -4429,7 +4434,6 @@ com.bokwas.response.GetPersonInfoResponse: GetPersonInfoResponse()
 com.bokwas.response.GetPostsResponse: GetPostsResponse()
 com.bokwas.response.GetPrivateMessagesResponse: GetPrivateMessagesResponse()
 com.bokwas.ui.CommentsDialogListAdapter$ViewHolder: CommentsDialogListAdapter$ViewHolder()
-com.bokwas.ui.ExpandableHeightListView
 com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context)
 com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context,android.util.AttributeSet)
 com.bokwas.ui.ExpandableHeightListView: ExpandableHeightListView(android.content.Context,android.util.AttributeSet,int)

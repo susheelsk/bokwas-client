@@ -34,6 +34,7 @@ import com.bokwas.R;
 import com.bokwas.apirequests.AddLikesApi;
 import com.bokwas.apirequests.DeleteApi;
 import com.bokwas.apirequests.GetPosts.APIListener;
+import com.bokwas.apirequests.ReportAbuseApi;
 import com.bokwas.datasets.UserDataStore;
 import com.bokwas.dialogboxes.CommentsDialog;
 import com.bokwas.dialogboxes.LikesDialog;
@@ -167,9 +168,13 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 			holder.postText.setText(postText);
 		}
 
-		if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
+		try {
+			if (post.getType().equals("photo") && post.getPicture() != null && !post.getPicture().equals("")) {
 //			UrlImageViewHelper.setUrlDrawable(holder.picture, post.getPicture(), R.drawable.placeholder, 60000 * 100);
-			Picasso.with(activity).load(post.getPicture()).resize((int)convertDpToPixel(250, activity),(int) convertDpToPixel(250, activity)).centerCrop().placeholder(R.drawable.placeholder).into(holder.picture);
+				Picasso.with(activity).load(post.getPicture()).resize((int)convertDpToPixel(250, activity),(int) convertDpToPixel(250, activity)).centerCrop().placeholder(R.drawable.placeholder).into(holder.picture);
+			}
+		} catch (Exception e2) {
+			e2.printStackTrace();
 		}
 		
 		holder.picture.setOnClickListener(new OnClickListener() {
@@ -270,14 +275,19 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 				popup.getMenuInflater().inflate(R.menu.post_menu, popup.getMenu());
 				MenuItem deleteItem = popup.getMenu().findItem(R.id.post_delete);
 				MenuItem commentItem = popup.getMenu().findItem(R.id.post_comment);
+				MenuItem reportAbuseItem = popup.getMenu().findItem(R.id.post_report_abuse);
 				MenuItem likeItem = popup.getMenu().findItem(R.id.post_like);
 				commentItem.setVisible(false);
 				MenuItem showLikesItem = popup.getMenu().findItem(R.id.post_show_like);
+				if(!post.isBokwasPost()) {
+					reportAbuseItem.setVisible(false);
+				}
 				if (!UserDataStore.getStore().isPostFromFriendOrMe(post)) {
 					likeItem.setVisible(false);
 				}
 				if (post.isBokwasPost() && post.getPostedBy().equals(UserDataStore.getStore().getUserId())) {
 					deleteItem.setVisible(true);
+					reportAbuseItem.setVisible(false);
 				} else {
 					deleteItem.setVisible(false);
 				}
@@ -321,6 +331,8 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 						case R.id.post_show_like:
 							showLikes(post);
 							break;
+						case R.id.post_report_abuse:
+							reportAbuse(post);
 						}
 						return true;
 					}
@@ -456,6 +468,45 @@ public class HomescreenPostsListAdapter extends ArrayAdapter<Post> {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		builder.setMessage("Delete the post?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
+
+	}
+	
+	private void reportAbuse(final Post post) {
+
+		final SuperActivityToast superActivityToast = new SuperActivityToast(activity, SuperToast.Type.PROGRESS);
+		superActivityToast.setIndeterminate(true);
+		superActivityToast.setProgressIndeterminate(true);
+		superActivityToast.show();
+		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					new ReportAbuseApi(UserDataStore.getStore().getAccessKey(), post.getPostId(), UserDataStore.getStore().getUserId(), null, activity, new APIListener() {
+
+						@Override
+						public void onAPIStatus(boolean status) {
+							superActivityToast.dismiss();
+							if (status) {
+								Crouton.makeText(activity, "Reported!", Style.INFO).show();
+								notifyDataSetChanged();
+							} else {
+								Crouton.makeText(activity, "Something went wrong", Style.ALERT).show();
+							}
+						}
+					}).execute("");
+					// Yes button clicked
+					break;
+
+				case DialogInterface.BUTTON_NEGATIVE:
+					// No button clicked
+					break;
+				}
+			}
+		};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setMessage("Do you want to report this post as abuse?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
 
 	}
 

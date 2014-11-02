@@ -12,6 +12,7 @@ import com.bokwas.MessageActivity;
 import com.bokwas.R;
 import com.bokwas.apirequests.GetFriendsApi;
 import com.bokwas.apirequests.GetNotificationsApi;
+import com.bokwas.apirequests.GetPosts;
 import com.bokwas.apirequests.GetPosts.APIListener;
 import com.bokwas.apirequests.GetPrivateMessagesApi;
 import com.bokwas.datasets.Friends;
@@ -30,34 +31,53 @@ public class BackgroundDataService extends IntentService{
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if(UserDataStore.isInitialized()) {
-			return;
-		}
-		if (!getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getBoolean(GeneralUtil.isLoggedInKey, false)) {
-			return;
-		}
-		UserDataStore.initData(this);
-		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
+		try {
+			if(UserDataStore.isInitialized()) {
+				return;
+			}
+			if (!getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).getBoolean(GeneralUtil.isLoggedInKey, false)) {
+				return;
+			}
+			UserDataStore.initData(this);
+			new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 
-		new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
+			new GetNotificationsApi(UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), new APIListener() {
 
-			@Override
-			public void onAPIStatus(boolean status) {
+				@Override
+				public void onAPIStatus(boolean status) {
+					
+				}
+			}).execute("");
+
+			new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new GetPrivateMessagesApi.APIMessageListener() {
 				
-			}
-		}).execute("");
-
-		new GetPrivateMessagesApi(this, UserDataStore.getStore().getUserId(), UserDataStore.getStore().getAccessKey(), new GetPrivateMessagesApi.APIMessageListener() {
+				@Override
+				public void onMessage(Message message) {
+					try {
+						Intent intent = new Intent(BackgroundDataService.this, MessageActivity.class);
+						intent.putExtra("receiverId", message.getFromId());
+						intent.putExtra("fromNoti", true);
+						Friends friend = UserDataStore.getStore().getFriend(message.getFromId());
+						buildMessageNotification(friend, intent, message.getMessage());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).execute("");
 			
-			@Override
-			public void onMessage(Message message) {
-				Intent intent = new Intent(BackgroundDataService.this, MessageActivity.class);
-				intent.putExtra("receiverId", message.getFromId());
-				intent.putExtra("fromNoti", true);
-				Friends friend = UserDataStore.getStore().getFriend(message.getFromId());
-				buildMessageNotification(friend, intent, message.getMessage());
-			}
-		}).execute("");
+
+			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getUserId(), new APIListener() {
+
+				@Override
+				public void onAPIStatus(boolean status) {
+					if (status) {
+						UserDataStore.getStore().sortPosts();
+					}
+				}
+			}).execute("");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void buildMessageNotification(Friends friend, Intent intent,String message) {

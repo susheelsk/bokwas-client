@@ -27,7 +27,7 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 	private Context context;
 	private Message message;
 	private Activity activity;
-	
+
 	public interface APIMessageListener {
 		public void onMessage(Message message);
 	}
@@ -40,7 +40,7 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 		this.context = activity;
 		this.activity = activity;
 	}
-	
+
 	public GetPrivateMessagesApi(Context context, String personId, String accessKey, APIMessageListener messageListener) {
 		super();
 		this.personId = personId;
@@ -68,9 +68,9 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 				}
 				UserDataStore.getStore().save(context);
 				return true;
-			}else if(apiResponse.status.statusCode == 451) {
+			} else if (apiResponse.status.statusCode == 451) {
 				UserDataStore.getStore().resetData(context);
-				if(activity!=null) {
+				if (activity != null) {
 					Toast.makeText(activity, "Please restart Bokwas", Toast.LENGTH_SHORT).show();
 					activity.finish();
 				}
@@ -87,8 +87,10 @@ public class GetPrivateMessagesApi extends AsyncTask<String, Void, Boolean> {
 		if (listener != null) {
 			listener.onAPIStatus(result);
 		}
-		if(messageListener!=null) {
-			messageListener.onMessage(message);
+		if (messageListener != null) {
+			if (message != null) {
+				messageListener.onMessage(message);
+			}
 		}
 	}
 

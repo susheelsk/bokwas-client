@@ -17,6 +17,9 @@
         <item
             android:id="@+id/post_delete"
             android:title="Delete"/>
+        <item
+            android:id="@+id/post_report_abuse"
+            android:title="Report Abuse"/>
     </group>
 
 </menu>

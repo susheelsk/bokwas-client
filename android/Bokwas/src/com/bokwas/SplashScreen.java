@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -107,6 +108,14 @@ public class SplashScreen extends Activity {
 	}
 
 	private void initAppData() {
+		try {
+			SharedPreferences.Editor editor = getSharedPreferences(GeneralUtil.sharedPreferences, MODE_PRIVATE).edit();
+			editor.putInt(GeneralUtil.versionPrefKey, getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+			editor.commit();
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		NotificationProgress.clearNotificationProgress(GeneralUtil.GENERAL_NOTIFICATIONS);
 		if (LocalStorage.getObj(this, UserDataStore.class) != null) {
 			UserDataStore.setInstance(LocalStorage.getObj(this, UserDataStore.class));
@@ -142,7 +151,7 @@ public class SplashScreen extends Activity {
 			public void run() {
 
 				if (UserDataStore.getStore().getPosts().size() > 0) {
-					Intent i = new Intent(SplashScreen.this, HomescreenActivity.class);
+					Intent i = new Intent(SplashScreen.this, HomescreenActivity.class);// getSharedPreferences
 					i.putExtra("fromSplashscreen", true);
 					startActivity(i);
 				} else {

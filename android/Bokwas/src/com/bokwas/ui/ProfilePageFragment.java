@@ -157,9 +157,12 @@ public class ProfilePageFragment extends HeaderFragment {
 			@Override
 			public void onGetPostsOfPerson(List<Post> newPosts) {
 				for (Post post : newPosts) {
-					if (posts.contains(post) == false) {
+					if (posts.contains(post) == false && name.toLowerCase().contains(post.getName().toLowerCase())) {
 						posts.add(post);
 					}
+				}
+				if (mContentOverlay != null) {
+					mContentOverlay.setVisibility(View.GONE);
 				}
 				setListViewTitles(posts);
 			}
@@ -177,7 +180,7 @@ public class ProfilePageFragment extends HeaderFragment {
 		mListView.setVisibility(View.VISIBLE);
 
 		if (avatarId != -1) {
-			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), posts, new PostShare() {
+			setListViewAdapter(mListView, new HomescreenPostsListAdapter(this.activity, posts, new PostShare() {
 
 				@Override
 				public void onPostShare(int position) {
@@ -185,7 +188,7 @@ public class ProfilePageFragment extends HeaderFragment {
 				}
 			}));
 		} else {
-			setListViewAdapter(mListView, new HomescreenPostsListAdapter(getActivity(), posts, new PostShare() {
+			setListViewAdapter(mListView, new HomescreenPostsListAdapter(this.activity, posts, new PostShare() {
 
 				@Override
 				public void onPostShare(int position) {
@@ -238,8 +241,8 @@ public class ProfilePageFragment extends HeaderFragment {
 				return;
 			}
 
-			if (audioFragment.mContentOverlay != null)
-				audioFragment.mContentOverlay.setVisibility(View.GONE);
+//			if (audioFragment.mContentOverlay != null)
+//				audioFragment.mContentOverlay.setVisibility(View.GONE);
 		}
 	}
 

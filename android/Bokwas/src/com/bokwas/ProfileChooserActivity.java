@@ -250,6 +250,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 			Log.d("ProfileChooserActivity", "AccessToken : " + UserDataStore.getStore().getUserAccessToken());
 			if (UserDataStore.getStore().getGcmRegId() == null || UserDataStore.getStore().getGcmRegId().equals("")) {
 				Crouton.makeText(this, "Can't retrieve push notification id. Clear data and try again to support notifications", Style.ALERT).show();
+				return;
 			}
 			new GetPosts(this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getBokwasName(), String.valueOf(UserDataStore.getStore().getAvatarId()), UserDataStore
 					.getStore().getGcmRegId(), true, new APIListener() {
@@ -267,7 +268,7 @@ public class ProfileChooserActivity extends Activity implements OnClickListener 
 						}).execute("");
 					} else {
 						pdia.dismiss();
-						Toast.makeText(ProfileChooserActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(ProfileChooserActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}).execute("");

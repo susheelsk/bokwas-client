@@ -63,6 +63,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	private void moveToProfileScreen() {
+		try {
+			if(pdia!=null) {
+				pdia.cancel();
+				pdia.dismiss();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Intent intent = new Intent(this, ProfileChooserActivity.class);
 		startActivity(intent);
 		overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_left);
@@ -91,7 +99,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	public void getUserData() {
-		final ProgressDialog pdia = new ProgressDialog(this);
+		pdia = new ProgressDialog(this);
 		pdia.setMessage("Fetching details...");
 		pdia.setCancelable(false);
 		pdia.setCanceledOnTouchOutside(false);
@@ -134,12 +142,23 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 
 	protected void checkIfReturningUser() {
-		new GetPersonInfo(this, UserDataStore.getStore().getUserId(), new APIListener() {
+		new GetPersonInfo(this, UserDataStore.getStore().getUserId(), new com.bokwas.apirequests.GetPersonInfo.APIListener() {
 			
 			@Override
-			public void onAPIStatus(boolean status) {
-				if(pdia!=null && pdia.isShowing()) {
-					pdia.cancel();
+			public void onAPIStatus(boolean status,String extraMessage) {
+				
+				if(!status && extraMessage!=null) {
+					try {
+						if(pdia!=null) {
+							pdia.cancel();
+							pdia.dismiss();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					GenericDialogOk dialog = new GenericDialogOk(LoginActivity.this, "Bokwas", extraMessage,"Invite",DialogType.DIALOG_INVITE);
+					dialog.show();
+					return;
 				}
 				if(status) {
 					new GetPosts(LoginActivity.this, UserDataStore.getStore().getUserAccessToken(), UserDataStore.getStore().getBokwasName(), String.valueOf(UserDataStore.getStore().getAvatarId()), UserDataStore
@@ -161,8 +180,16 @@ public class LoginActivity extends Activity implements OnClickListener {
 									}
 								}).execute("");
 							} else {
-								moveToProfileScreen();
-								Toast.makeText(LoginActivity.this, "Something went wrong. Try again", Toast.LENGTH_SHORT).show();
+								try {
+									if(pdia!=null) {
+										pdia.cancel();
+										pdia.dismiss();
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+//								moveToProfileScreen();
+//								Toast.makeText(LoginActivity.this, "Something went wrong. Try again after a while", Toast.LENGTH_SHORT).show();
 							}
 						}
 
@@ -181,6 +208,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
 	
 	private void moveToHomePage() {
+		try {
+			if(pdia!=null) {
+				pdia.cancel();
+				pdia.dismiss();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		new GetFriendsApi(this, UserDataStore.getStore().getAccessKey(), UserDataStore.getStore().getUserId(), null).execute("");
 		Intent intent = new Intent(this, HomescreenActivity.class);
 		intent.putExtra("fromSplashscreen", true);
 		UserDataStore.getStore().setInit(true);
@@ -248,7 +284,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		} else if (view.getId() == R.id.whyFacebookLoginButton) {
 			GenericDialogOk dialog = new GenericDialogOk(this, "Why connect to facebook?",
-					"We retrieve only posts from facebook so that you can talk about it on Bokwas. We do NOT post anything back on facebook.",DialogType.DIALOG_GENERIC);
+					"We retrieve only posts from facebook so that you can talk about it on Bokwas. We do NOT post anything back on facebook.","OK",DialogType.DIALOG_GENERIC);
 			dialog.show();
 		}
 	}

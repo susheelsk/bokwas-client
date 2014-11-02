@@ -112,7 +112,8 @@ public class UserDataStore {
 		for (Friends friend : getFriends()) {
 			if (getMessagesForPerson(friend.getId()) != null) {
 				if (getMessagesForPerson(friend.getId()).size() > 200) {
-					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
+//					messageMap.put(friend.getId(), getMessagesForPerson(friend.getId()).subList(0, 200));
+					messageMap.put(friend.getId(), new ArrayList<Message>());
 				}
 				if(getMessagesForPerson(friend.getId()).size()<1) {
 					continue;

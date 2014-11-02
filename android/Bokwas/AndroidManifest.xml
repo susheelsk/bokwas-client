@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bokwas"
-    android:versionCode="5"
-    android:versionName="1.0.4" >
+    android:versionCode="7"
+    android:versionName="1.0.6" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permissions.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
@@ -92,7 +93,7 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:noHistory="false"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name="com.bokwas.HomescreenActivityExperimental"
@@ -100,7 +101,7 @@
         <activity
             android:name="com.bokwas.NewPostActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="unspecified"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="adjustNothing" >
@@ -115,10 +116,10 @@
         <activity
             android:name="com.bokwas.PostActivity"
             android:label="@string/app_name"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name="com.bokwas.SettingsActivity"
             android:label="@string/app_name"
@@ -127,17 +128,17 @@
         <activity
             android:name="com.bokwas.MessageActivity"
             android:label="@string/app_name"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.bokwas.MessageFriendsActivity"
             android:label="@string/app_name"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="unspecified"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+            android:theme="@style/myTheme" />
         <activity
             android:name="com.bokwas.FullScreenImage"
             android:label="@string/app_name"
