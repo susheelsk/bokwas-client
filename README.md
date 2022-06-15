@@ -10,6 +10,5 @@ Setting Code On Your Machine
 
 At the moment you can pull the project and the code should compile. Please note to download and setup facebook SDK for android on your eclipse IDE. The process is well explained in here -> https://developers.facebook.com/docs/android/getting-started/
 
-License
-
-Fuck License. We own this shit. 
+![bokwas](https://user-images.githubusercontent.com/1933531/173737058-a808cb61-e657-4beb-bd70-ab1fd5784a3f.png)
+![bokwas2](https://user-images.githubusercontent.com/1933531/173737063-23b0554b-e00b-42bc-a99e-52546f0b2da5.png)
